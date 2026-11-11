@@ -669,12 +669,12 @@
 
   <!-- Filter Bar -->
   <div class="filter-bar" id="filterBar">
-      <button class="filter-chip active" data-cat="all">전체 보기 (40)</button>
-      <button class="filter-chip" data-cat="skirts">치마·교복 (10)</button>
-      <button class="filter-chip" data-cat="swimwear">수영복·비키니 (10)</button>
-      <button class="filter-chip" data-cat="rashguards">래쉬가드 (10)</button>
-      <button class="filter-chip" data-cat="homewear">홈웨어·팬츠 (10)</button>
-      <button class="filter-chip" data-cat="custom" id="customFilterChip">내 사진 컬렉션 (0)</button>
+      <button class="filter-chip active" data-cat="all" onclick="setFilter('all')">전체 보기 (40)</button>
+      <button class="filter-chip" data-cat="skirts" onclick="setFilter('skirts')">치마·교복 (10)</button>
+      <button class="filter-chip" data-cat="swimwear" onclick="setFilter('swimwear')">수영복·비키니 (10)</button>
+      <button class="filter-chip" data-cat="rashguards" onclick="setFilter('rashguards')">래쉬가드 (10)</button>
+      <button class="filter-chip" data-cat="homewear" onclick="setFilter('homewear')">홈웨어·팬츠 (10)</button>
+      <button class="filter-chip" data-cat="custom" id="customFilterChip" onclick="setFilter('custom')">내 사진 컬렉션 (0)</button>
     </div>
 
   <!-- Showroom Grid -->
@@ -752,7 +752,7 @@
             <div style="display:flex; gap:6px; align-items:center;">
               <button class="delete-item-btn" id="modalDeleteBtn">🗑️ 삭제</button>
               <button class="modal-fav-btn" id="modalFavBtn" style="padding:6px 12px; font-size:12px;">🤍 찜하기</button>
-              <button class="modal-fav-btn" id="modalEditBtn" style="padding:6px 12px; font-size:12px; background:var(--pickle-surface-fill-soft); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">✏️ 수정</button>
+              <button class="modal-fav-btn" id="modalEditBtn" onclick="handleStartEdit(event)" style="padding:6px 12px; font-size:12px; background:var(--pickle-surface-fill-soft); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">✏️ 수정</button>
             </div>
           </div>
           <div class="modal-tags" id="modalTags" style="margin-top:8px;"></div>
@@ -786,8 +786,8 @@
             <textarea id="editDescInput" rows="3" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--pickle-border-hairline); background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); font-size:13px; resize:none; box-sizing:border-box;"></textarea>
           </div>
           <div style="display:flex; gap:8px; margin-top:6px;">
-            <button id="saveEditBtn" class="submit-btn" style="flex:1; padding:9px; font-size:13px;">수정 완료 ✓</button>
-            <button id="cancelEditBtn" class="submit-btn" style="flex:1; padding:9px; font-size:13px; background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">취소</button>
+            <button id="saveEditBtn" class="submit-btn" onclick="handleSaveEdit(event)" style="flex:1; padding:9px; font-size:13px;">수정 완료 ✓</button>
+            <button id="cancelEditBtn" class="submit-btn" onclick="handleCancelEdit(event)" style="flex:1; padding:9px; font-size:13px; background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">취소</button>
           </div>
         </div>
       </div>
@@ -1095,6 +1095,109 @@
     const editDescInput = document.getElementById("editDescInput");
     const saveEditBtn = document.getElementById("saveEditBtn");
     const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+    // Window Global Handlers for Bulletproof Mobile Touch / Click
+    window.setFilter = function(cat) {
+      const valid = ["all", "skirts", "swimwear", "rashguards", "homewear", "custom"];
+      if (!valid.includes(cat)) cat = "all";
+      state.filter = cat;
+      document.querySelectorAll(".filter-chip").forEach(c => {
+        c.classList.toggle("active", c.getAttribute("data-cat") === cat);
+      });
+      renderGrid();
+      commitState(false);
+    };
+
+    window.handleStartEdit = function(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      if (!state.selectedId) return;
+      const all = getAllItems();
+      const item = all.find(i => i.id === state.selectedId);
+      if (!item) return;
+
+      const editTitle = document.getElementById("editTitleInput");
+      const editCat = document.getElementById("editCatSelect");
+      const editTags = document.getElementById("editTagsInput");
+      const editDesc = document.getElementById("editDescInput");
+      const editContainer = document.getElementById("modalEditContainer");
+      const infoView = document.getElementById("modalInfoView");
+
+      if (editTitle) editTitle.value = item.title || "";
+      if (editCat) editCat.value = item.cat || "skirts";
+      if (editTags) editTags.value = (item.tags || []).join(", ");
+      if (editDesc) editDesc.value = item.desc || "";
+
+      if (infoView) infoView.style.display = "none";
+      if (editContainer) editContainer.style.display = "flex";
+    };
+
+    window.handleCancelEdit = function(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const editContainer = document.getElementById("modalEditContainer");
+      const infoView = document.getElementById("modalInfoView");
+      if (editContainer) editContainer.style.display = "none";
+      if (infoView) infoView.style.display = "block";
+    };
+
+    window.handleSaveEdit = async function(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      if (!state.selectedId) return;
+      const targetId = state.selectedId;
+
+      const editTitle = document.getElementById("editTitleInput");
+      const editCat = document.getElementById("editCatSelect");
+      const editTags = document.getElementById("editTagsInput");
+      const editDesc = document.getElementById("editDescInput");
+      const editContainer = document.getElementById("modalEditContainer");
+      const infoView = document.getElementById("modalInfoView");
+
+      const newTitle = (editTitle ? editTitle.value.trim() : "") || "이름 없음";
+      const newCat = editCat ? editCat.value : "skirts";
+      const catNames = {
+        "skirts": "치마·교복",
+        "swimwear": "수영복·비키니",
+        "rashguards": "래쉬가드",
+        "homewear": "홈웨어·팬츠",
+        "custom": "내 소장품"
+      };
+      const newCatName = catNames[newCat] || "소장품";
+      const newTagsRaw = editTags ? editTags.value.trim() : "";
+      const newTags = newTagsRaw ? newTagsRaw.split(",").map(t => t.trim()).filter(Boolean) : ["아이템"];
+      const newDesc = editDesc ? editDesc.value.trim() : "";
+
+      const customItem = state.customItems.find(i => i.id === targetId);
+      if (customItem) {
+        customItem.title = newTitle;
+        customItem.cat = newCat;
+        customItem.catName = newCatName;
+        customItem.tags = newTags;
+        customItem.desc = newDesc;
+      } else {
+        if (!state.itemOverrides) state.itemOverrides = {};
+        state.itemOverrides[targetId] = {
+          title: newTitle,
+          cat: newCat,
+          catName: newCatName,
+          tags: newTags,
+          desc: newDesc
+        };
+      }
+
+      const mTitle = document.getElementById("modalTitle");
+      const mCat = document.getElementById("modalCat");
+      const mTags = document.getElementById("modalTags");
+      const mDesc = document.getElementById("modalDesc");
+      if (mTitle) mTitle.textContent = newTitle;
+      if (mCat) mCat.textContent = newCatName;
+      if (mTags) mTags.innerHTML = newTags.map(t => `<span class="tag-chip" style="font-size:11px; padding:3px 8px;">${t}</span>`).join("");
+      if (mDesc) mDesc.textContent = newDesc || "상세 설명이 없습니다.";
+
+      if (editContainer) editContainer.style.display = "none";
+      if (infoView) infoView.style.display = "block";
+
+      renderGrid();
+      await commitState(true, "✏️ 아이템 정보가 수정되었습니다 ✓");
+    };
 
     // Upload Elements
     const openUploadBtn = document.getElementById("openUploadBtn");
