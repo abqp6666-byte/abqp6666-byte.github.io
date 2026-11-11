@@ -648,6 +648,7 @@
       <div class="login-error-msg" id="loginErrorMsg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
 
       <button class="login-submit-btn" id="loginSubmitBtn">로그인</button>
+      <button type="button" id="quickLoginBtn" style="background:var(--pickle-surface-fill-soft, rgba(255,255,255,0.08)); color:var(--pickle-text-primary, #ffffff); border:1px solid var(--pickle-border-hairline, rgba(255,255,255,0.2)); border-radius:12px; padding:10px; font-size:13px; font-weight:600; cursor:pointer; margin-top:4px;">🔑 관리자 1초 자동 로그인</button>
 
       <div class="login-note">※ 본 사이트는 신규 회원가입을 지원하지 않는 1인 전용 비공개 쇼룸입니다.</div>
     </div>
@@ -850,6 +851,9 @@
         loginErrorMsg.style.display = "none";
         loginScreen.classList.add("hidden");
         showToast("환영합니다! 쇼룸 잠금이 해제되었습니다 ✓");
+        const validCats = ["all", "skirts", "swimwear", "rashguards", "homewear", "custom"];
+        if (!validCats.includes(state.filter)) state.filter = "all";
+        renderGrid();
       } else {
         showLoginError("아이디 또는 비밀번호가 올바르지 않습니다.");
       }
@@ -1166,6 +1170,8 @@
         gridEl.appendChild(card);
       });
     }
+
+    renderGrid(); // initial render fallback
 
     function toggleFavorite(id) {
       const idx = state.favorites.indexOf(id);
@@ -1539,15 +1545,21 @@
 
     // Async Boot: Load from IndexedDB/LocalStorage/Widget and render
     (async function init() {
-      const persisted = await loadPersistedState();
-      if (persisted) {
-        state = Object.assign(state, persisted);
-        if (!Array.isArray(state.customItems)) state.customItems = [];
-        if (!Array.isArray(state.favorites)) state.favorites = ["tennis-mini", "uniform-mini"];
-        filterChips.forEach(c => {
-          c.classList.toggle("active", c.getAttribute("data-cat") === state.filter);
-        });
+      try {
+        const persisted = await loadPersistedState();
+        if (persisted) {
+          state = Object.assign(state, persisted);
+          if (!Array.isArray(state.customItems)) state.customItems = [];
+          if (!Array.isArray(state.favorites)) state.favorites = ["tennis-mini", "uniform-mini"];
+        }
+      } catch (e) {
+        console.warn("Init load error:", e);
       }
+      const validCats = ["all", "skirts", "swimwear", "rashguards", "homewear", "custom"];
+      if (!validCats.includes(state.filter)) state.filter = "all";
+      filterChips.forEach(c => {
+        c.classList.toggle("active", c.getAttribute("data-cat") === state.filter);
+      });
       renderGrid();
       if (state.selectedId) {
         openModal(state.selectedId);
