@@ -1812,8 +1812,8 @@
       document.querySelectorAll(".angle-btn").forEach(btn => {
         const on = btn.dataset.angle === angleKey;
         const wet = btn.dataset.angle === "wetfront";
-        btn.style.background = on ? (wet ? "rgba(56,189,248,0.28)" : "rgba(99,102,241,0.3)") : "#18181b";
-        btn.style.color = on ? (wet ? "#bae6fd" : "#c7d2fe") : "#a1a1aa";
+        btn.style.background = on ? (wet ? "#0284c7" : "#4f46e5") : "#18181b";
+        btn.style.color = on ? "#ffffff" : "#a1a1aa";
         btn.style.borderColor = on ? (wet ? "#38bdf8" : "#818cf8") : "#333";
         btn.style.fontWeight = on ? "700" : "600";
       });
