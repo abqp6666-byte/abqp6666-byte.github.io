@@ -764,42 +764,7 @@
             </div>
           </div>
           <div class="modal-tags" id="modalTags" style="margin-top:8px;"></div>
-          <!-- 3D Skirt Multi-Angle Inspection Stage -->
-        <div id="skirt3DContainer" style="margin: 14px 0; background: var(--pickle-surface-fill-soft, rgba(255,255,255,0.04)); border: 1px solid var(--pickle-border-hairline, rgba(255,255,255,0.1)); border-radius: 12px; padding: 12px; overflow: hidden;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <div style="font-size:12px; font-weight:700; color:var(--pickle-text-primary, #fff); display:flex; align-items:center; gap:6px;">
-              <span>🔄 3D 다각도 입체 뷰어 (앞·뒤·좌·우·위·아래)</span>
-            </div>
-            <button id="toggleAutoRotateBtn" onclick="toggle3DAutoRotate()" style="font-size:11px; padding:4px 8px; border-radius:6px; background:var(--pickle-surface-fill, rgba(255,255,255,0.08)); color:var(--pickle-text-secondary, #a1a1aa); border:1px solid var(--pickle-border-hairline, rgba(255,255,255,0.1)); cursor:pointer;">▶ 자동 회전 ON</button>
-          </div>
-
-          <!-- 3D Canvas Box -->
-          <div style="position:relative; width:100%; height:230px; background:#0c0d12; border-radius:8px; overflow:hidden; touch-action:none;">
-            <canvas id="skirt3DCanvas" style="width:100%; height:100%; display:block; cursor:grab;"></canvas>
-            <div id="angleBadge" style="position:absolute; bottom:8px; left:8px; font-size:11px; font-weight:600; padding:3px 8px; border-radius:4px; background:rgba(0,0,0,0.7); color:#818cf8; backdrop-filter:blur(4px); border:1px solid rgba(129,140,248,0.3);">시점: 앞면 (Front)</div>
-          </div>
-
-          <!-- 6 Angle Buttons -->
-          <div style="display:grid; grid-template-columns:repeat(6, 1fr); gap:4px; margin-top:8px;">
-            <button onclick="set3DAngle('front')" style="font-size:11px; padding:6px 0; border-radius:6px; background:var(--pickle-surface-fill, #1e1e24); color:var(--pickle-text-primary, #fff); border:1px solid var(--pickle-border-hairline, #333); cursor:pointer;">앞</button>
-            <button onclick="set3DAngle('back')" style="font-size:11px; padding:6px 0; border-radius:6px; background:var(--pickle-surface-fill, #1e1e24); color:var(--pickle-text-primary, #fff); border:1px solid var(--pickle-border-hairline, #333); cursor:pointer;">뒤</button>
-            <button onclick="set3DAngle('left')" style="font-size:11px; padding:6px 0; border-radius:6px; background:rgba(99,102,241,0.25); color:#a5b4fc; border:1px solid rgba(99,102,241,0.5); cursor:pointer; font-weight:700;">좌(지퍼)</button>
-            <button onclick="set3DAngle('right')" style="font-size:11px; padding:6px 0; border-radius:6px; background:var(--pickle-surface-fill, #1e1e24); color:var(--pickle-text-primary, #fff); border:1px solid var(--pickle-border-hairline, #333); cursor:pointer;">우</button>
-            <button onclick="set3DAngle('top')" style="font-size:11px; padding:6px 0; border-radius:6px; background:var(--pickle-surface-fill, #1e1e24); color:var(--pickle-text-primary, #fff); border:1px solid var(--pickle-border-hairline, #333); cursor:pointer;">위</button>
-            <button onclick="set3DAngle('bottom')" style="font-size:11px; padding:6px 0; border-radius:6px; background:var(--pickle-surface-fill, #1e1e24); color:var(--pickle-text-primary, #fff); border:1px solid var(--pickle-border-hairline, #333); cursor:pointer;">아래</button>
-          </div>
-
-          <!-- Structured 6-Angle Tech Breakdown -->
-          <div id="skirtAngleDetails" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--pickle-border-hairline, rgba(255,255,255,0.08)); font-size:11px; line-height:1.6; color:var(--pickle-text-secondary, #a1a1aa);">
-            <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">📌 앞 (Front):</strong> 단정한 허리선과 대칭 칼각 플리츠 주름 밸런스</div>
-            <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">📌 뒤 (Back):</strong> 힙의 입체 볼륨을 자연스럽게 살려주는 곡선 다트 핏</div>
-            <div style="margin-bottom:4px;"><strong style="color:#a5b4fc;">📌 좌측 (Left - 지퍼):</strong> 허리선~힙라인 15cm 숨김 콘솔 지퍼(Invisible Zip) & 8cm 슬라이딩 버클 레일 조절기 고증</div>
-            <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">📌 우측 (Right):</strong> 깔끔한 솔기 봉제선과 실용적인 히든 포켓</div>
-            <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">📌 위 (Top):</strong> 3.5cm 고밀도 허리 밴드 심지 & 안감 탑뷰</div>
-            <div><strong style="color:var(--pickle-text-primary, #fff);">📌 아래 (Bottom):</strong> 360도 경쾌하게 퍼지는 A라인 헴라인 개방감</div>
-          </div>
-        </div>
-        <div class="modal-desc-box" id="modalDesc" style="margin-top:10px;">아이템 상세 설명</div>
+          <div class="modal-desc-box" id="modalDesc" style="margin-top:10px;">아이템 상세 설명</div>
           <div class="designer-note" style="margin-top:10px;">✨ 민서1호의 피팅 코멘트: 완벽한 실루엣과 디테일 고증</div>
         </div>
 
@@ -1081,7 +1046,6 @@
         if (active.length < 10) {
           const needed = 10 - active.length;
           const deletedInCat = state.deletedIds.filter(did => allCatItems.some(item => item.id === did));
-          // Remove the oldest needed deletions from state.deletedIds
           const toRestore = deletedInCat.slice(0, needed);
           state.deletedIds = state.deletedIds.filter(did => !toRestore.includes(did));
           active = allCatItems.filter(i => !state.deletedIds.includes(i.id));
@@ -1807,11 +1771,29 @@
       modalImg.src = item.img;
       modalTitle.textContent = item.title;
       modalCat.textContent = item.catName;
+      
+      // Render structured 6-direction details for skirts and uniforms
+      const isSkirtOrUniform = item.cat === "skirts" || item.cat === "uniforms";
+      const sixAngleBox = isSkirtOrUniform ? `
+        <div style="margin-top:12px; padding:10px; background:var(--pickle-surface-fill-soft, rgba(255,255,255,0.04)); border:1px solid var(--pickle-border-hairline, rgba(255,255,255,0.08)); border-radius:10px; font-size:11px; line-height:1.6;">
+          <div style="font-weight:700; color:var(--pickle-text-primary, #fff); margin-bottom:6px; display:flex; align-items:center; gap:4px;">
+            <span>📐 6방향 다각도 & 지퍼 고증 디테일</span>
+          </div>
+          <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">🔹 앞 (Front):</strong> 단정한 허리선과 대칭 칼각 플리츠 주름 밸런스</div>
+          <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">🔹 뒤 (Back):</strong> 힙의 입체 볼륨을 자연스럽게 살려주는 곡선 다트 핏</div>
+          <div style="margin-bottom:4px;"><strong style="color:#818cf8;">🔹 좌측 (Left - 지퍼):</strong> 허리선부터 힙라인까지 자연스럽게 숨겨진 15cm 콘솔 지퍼(Invisible Zip) & 8cm 슬라이딩 버클 레일 조절기</div>
+          <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">🔹 우측 (Right):</strong> 깔끔한 솔기 봉제선과 실용적인 히든 포켓</div>
+          <div style="margin-bottom:4px;"><strong style="color:var(--pickle-text-primary, #fff);">🔹 위 (Top):</strong> 3.5cm 고밀도 허리 밴드 심지 & 안감 탑뷰</div>
+          <div><strong style="color:var(--pickle-text-primary, #fff);">🔹 아래 (Bottom):</strong> 360도 경쾌하게 퍼지는 A라인 헴라인 개방감</div>
+        </div>
+      ` : "";
+
       if (item.style && item.feature && item.closure) {
         modalDesc.innerHTML = `
           <div style="margin-bottom:8px;"><strong style="color:var(--pickle-text-primary); font-size:12px;">👗 스타일 & 실루엣</strong><div style="color:var(--pickle-text-secondary); margin-top:2px;">${item.style}</div></div>
           <div style="margin-bottom:8px;"><strong style="color:var(--pickle-text-primary); font-size:12px;">✨ 소재 & 디자인 특징</strong><div style="color:var(--pickle-text-secondary); margin-top:2px;">${item.feature}</div></div>
-          <div><strong style="color:var(--pickle-accent-indigo, #6366f1); font-size:12px;">⚙️ 여밈 방식 및 하드웨어 (지퍼·단추·버클)</strong><div style="color:var(--pickle-text-secondary); margin-top:2px; font-weight:500;">${item.closure}</div></div>
+          <div style="margin-bottom:8px;"><strong style="color:var(--pickle-accent-indigo, #6366f1); font-size:12px;">⚙️ 여밈 방식 및 하드웨어 (지퍼·단추·버클)</strong><div style="color:var(--pickle-text-secondary); margin-top:2px; font-weight:500;">${item.closure}</div></div>
+          ${sixAngleBox}
         `;
       } else {
         modalDesc.textContent = item.desc || "상세 설명이 없습니다.";
@@ -2164,11 +2146,18 @@
 
     // Async Boot: Load from IndexedDB/LocalStorage/Widget and render
     (async function init() {
-      // Auto-upgrade version: reset old deletion state on mobile to ensure all 6 categories have 10 full items
-      const CURRENT_APP_VERSION = "2026.11.11.1110";
-      if (localStorage.getItem("showroom_app_version") !== CURRENT_APP_VERSION) {
+      // Version auto-upgrade: automatically clear stale deletedIds so all categories are guaranteed 10 full items!
+      const CURRENT_APP_VERSION = "2026.11.11.1215";
+      const oldVersion = localStorage.getItem("showroom_app_version");
+      if (oldVersion !== CURRENT_APP_VERSION) {
         localStorage.setItem("showroom_app_version", CURRENT_APP_VERSION);
         if (state) state.deletedIds = [];
+        try {
+          const db = await openDB();
+          const tx = db.transaction(STORE_NAME, "readwrite");
+          const store = tx.objectStore(STORE_NAME);
+          store.delete("deletedIds");
+        } catch(e) {}
       }
 
       try {
