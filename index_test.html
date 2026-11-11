@@ -1915,6 +1915,7 @@
             bottom: "하단 (Bottom - 헴라인)"
           };
           currentModalAngleNames = isSkirtOrUniform ? techNames : softNames;
+          if (!currentModalAngles.wetfront) currentModalAngleNames.front = "앞면 (Front)";
 
           const btnWrap = document.getElementById("angleButtons");
           if (btnWrap) {
