@@ -1815,6 +1815,13 @@
 
     // Async Boot: Load from IndexedDB/LocalStorage/Widget and render
     (async function init() {
+      // Auto-upgrade version: reset old deletion state on mobile to ensure all 6 categories have 10 full items
+      const CURRENT_APP_VERSION = "2026.11.11.1110";
+      if (localStorage.getItem("showroom_app_version") !== CURRENT_APP_VERSION) {
+        localStorage.setItem("showroom_app_version", CURRENT_APP_VERSION);
+        if (state) state.deletedIds = [];
+      }
+
       try {
         const persisted = await loadPersistedState();
         if (persisted) {
