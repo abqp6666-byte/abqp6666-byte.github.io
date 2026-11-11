@@ -1020,8 +1020,13 @@
     }
 
     function getAllItems() {
-      const raw = [...ITEMS, ...state.customItems];
+      if (!state.deletedIds) state.deletedIds = [];
       if (!state.itemOverrides) state.itemOverrides = {};
+      
+      const activeDefault = ITEMS.filter(i => !state.deletedIds.includes(i.id));
+      const activeCustom = (state.customItems || []).filter(i => !state.deletedIds.includes(i.id));
+      const raw = [...activeDefault, ...activeCustom];
+      
       return raw.map(item => {
         if (state.itemOverrides[item.id]) {
           return Object.assign({}, item, state.itemOverrides[item.id]);
@@ -1134,26 +1139,34 @@
     };
 
     window.handleDeleteItem = function(e) {
-      if (e) e.preventDefault();
-      if (!state.selectedId) return;
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (!state.selectedId) {
+        alert("삭제할 아이템이 선택되지 않았습니다.");
+        return;
+      }
       const targetId = state.selectedId;
       const allItems = getAllItems();
       const item = allItems.find(i => i.id === targetId);
       const title = item ? item.title : '이 사진';
 
-      if (confirm(`'${title}' 사진을 쇼룸에서 삭제할까요?\n(언제든 복원하거나 새로 추가할 수 있습니다)`)) {
-        if (state.customItems.some(i => i.id === targetId)) {
-          state.customItems = state.customItems.filter(i => i.id !== targetId);
-        } else {
-          if (!state.deletedIds) state.deletedIds = [];
-          if (!state.deletedIds.includes(targetId)) {
-            state.deletedIds.push(targetId);
-          }
+      if (confirm(`'${title}' 사진을 쇼룸에서 완전히 삭제할까요?\n\n확인을 누르면 쇼룸 목록에서 즉시 제거됩니다.\n(상단 [💾 백업/복원] 메뉴에서 언제든 복구할 수 있습니다)`)) {
+        if (!state.deletedIds) state.deletedIds = [];
+        if (!state.deletedIds.includes(targetId)) {
+          state.deletedIds.push(targetId);
         }
-        state.favorites = state.favorites.filter(fid => fid !== targetId);
+        if (state.customItems) {
+          state.customItems = state.customItems.filter(i => i.id !== targetId);
+        }
+        if (state.favorites) {
+          state.favorites = state.favorites.filter(fid => fid !== targetId);
+        }
+
         closeModal();
         renderGrid();
-        commitState(true, "사진이 삭제되었습니다 ✓");
+        commitState(true, "사진이 정상적으로 삭제되었습니다 ✓");
       }
     };
 
@@ -1296,13 +1309,27 @@
     let currentUploadBase64 = null;
 
     function updateFilterCounts() {
-      if (customFilterChip) {
-        customFilterChip.textContent = `내 사진 컬렉션 (${state.customItems.length})`;
+      const all = getAllItems();
+      const countFor = (cat) => cat === "all" ? all.length : all.filter(i => i.cat === cat).length;
+      const customCount = (state.customItems || []).filter(i => !(state.deletedIds || []).includes(i.id)).length;
+
+      document.querySelectorAll(".filter-chip").forEach(chip => {
+        const cat = chip.dataset.cat;
+        if (cat === "all") chip.textContent = `전체 보기 (${all.length})`;
+        else if (cat === "skirts") chip.textContent = `치마 (${countFor('skirts')})`;
+        else if (cat === "uniforms") chip.textContent = `교복 (${countFor('uniforms')})`;
+        else if (cat === "bikini") chip.textContent = `비키니 (${countFor('bikini')})`;
+        else if (cat === "indoor_swim") chip.textContent = `실내 수영복 (${countFor('indoor_swim')})`;
+        else if (cat === "rashguards") chip.textContent = `래쉬가드 (${countFor('rashguards')})`;
+        else if (cat === "homewear") chip.textContent = `돌핀팬츠 (${countFor('homewear')})`;
+        else if (cat === "custom") chip.textContent = `내 사진 (${customCount})`;
+      });
+
+      if (favCountBadge) {
+        favCountBadge.textContent = `❤️ 찜 ${state.favorites.length}개`;
       }
-      favCountBadge.textContent = `❤️ 찜 ${state.favorites.length}개`;
       if (gridCountText) {
-        const all = getAllItems();
-        const curCount = state.filter === "all" ? all.length : (state.filter === "custom" ? state.customItems.length : all.filter(i => i.cat === state.filter).length);
+        const curCount = state.filter === "all" ? all.length : (state.filter === "custom" ? customCount : all.filter(i => i.cat === state.filter).length);
         gridCountText.textContent = `전체 ${curCount}개`;
       }
     }
@@ -1404,9 +1431,7 @@
       modalDesc.textContent = item.desc || "상세 설명이 없습니다.";
       modalTags.innerHTML = (item.tags || []).map(t => `<span class="tag-chip" style="font-size:11px; padding:3px 8px;">${t}</span>`).join('');
 
-      if (modalDeleteBtn) {
-        modalDeleteBtn.style.display = "inline-block";
-      }
+      if (modalDeleteBtn) { modalDeleteBtn.style.display = "inline-flex"; }
 
       if (modalEditContainer) modalEditContainer.style.display = "none";
       if (modalInfoView) modalInfoView.style.display = "block";
@@ -1520,22 +1545,7 @@
       }
     });
 
-    if (modalDeleteBtn) {
-      modalDeleteBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (!state.selectedId) return;
-        const targetId = state.selectedId;
-        const item = state.customItems.find(i => i.id === targetId);
-        if (confirm(`'${item ? item.title : '이 사진'}'을(를) 쇼룸에서 삭제할까요?`)) {
-          state.customItems = state.customItems.filter(i => i.id !== targetId);
-          state.favorites = state.favorites.filter(fid => fid !== targetId);
-          closeModal();
-          renderGrid();
-          commitState(true, "사진이 삭제되었습니다");
-          throttleSignal(`유저가 등록했던 사진 '${item ? item.title : ''}'을(를) 삭제했습니다.`);
-        }
-      });
-    }
+    // modalDeleteBtn handled by window.handleDeleteItem
 
     function setFilter(cat) {
       const valid = ["all", "skirts", "uniforms", "bikini", "indoor_swim", "rashguards", "homewear", "custom"];
@@ -1772,6 +1782,7 @@
         if (persisted) {
           state = Object.assign(state, persisted);
           if (!Array.isArray(state.customItems)) state.customItems = [];
+          if (!Array.isArray(state.deletedIds)) state.deletedIds = [];
           if (!Array.isArray(state.favorites)) state.favorites = ["tennis-mini", "uniform-mini"];
         }
       } catch (e) {
@@ -1794,6 +1805,7 @@
         if (newState) {
           state = Object.assign(state, newState);
           if (!Array.isArray(state.customItems)) state.customItems = [];
+          if (!Array.isArray(state.deletedIds)) state.deletedIds = [];
           filterChips.forEach(c => {
             c.classList.toggle("active", c.getAttribute("data-cat") === state.filter);
           });
