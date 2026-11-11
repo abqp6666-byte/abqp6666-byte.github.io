@@ -748,7 +748,10 @@
           </div>
           <div style="display:flex; gap:6px; align-items:center;">
             <button class="delete-item-btn" id="modalDeleteBtn">🗑️ 삭제</button>
-            <button class="modal-fav-btn" id="modalFavBtn">🤍 찜하기</button>
+            <div style="display:flex; gap:8px; width:100%;">
+          <button class="modal-fav-btn" id="modalFavBtn" style="flex:1;">🤍 찜하기</button>
+          <button class="modal-fav-btn" id="modalEditBtn" style="flex:1; background:var(--pickle-surface-fill-soft); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">✏️ 수정</button>
+        </div>
           </div>
         </div>
         <div class="modal-tags" id="modalTags"></div>
@@ -939,6 +942,7 @@
       selectedId: null,
       favorites: ["tennis-mini", "uniform-mini"],
       customItems: [],
+      itemOverrides: {},
       metrics: {
         total_items: 20,
         favorites_count: 2,
@@ -1116,7 +1120,14 @@
     }
 
     function getAllItems() {
-      return [...ITEMS, ...state.customItems];
+      const raw = [...ITEMS, ...state.customItems];
+      if (!state.itemOverrides) state.itemOverrides = {};
+      return raw.map(item => {
+        if (state.itemOverrides[item.id]) {
+          return Object.assign({}, item, state.itemOverrides[item.id]);
+        }
+        return item;
+      });
     }
 
     let lastSignalTime = 0;
@@ -1352,6 +1363,8 @@
 
     function closeModal() {
       modalOverlay.classList.remove("active");
+      if (modalEditContainer) modalEditContainer.style.display = "none";
+      if (modalInfoView) modalInfoView.style.display = "block";
       state.selectedId = null;
       commitState(false);
     }
@@ -1360,6 +1373,86 @@
     modalOverlay.addEventListener("click", (e) => {
       if (e.target === modalOverlay) closeModal();
     });
+
+    
+    const catMapLookup = {
+      "skirts": "치마 컬렉션",
+      "swimwear": "비키니·수영복",
+      "rashguards": "래쉬가드",
+      "homewear": "홈웨어·팬츠",
+      "mannequin": "마네킹 바디",
+      "custom": "내 소장품"
+    };
+
+    if (modalEditBtn) {
+      modalEditBtn.addEventListener("click", () => {
+        if (!state.selectedId) return;
+        const all = getAllItems();
+        const item = all.find(i => i.id === state.selectedId);
+        if (!item) return;
+
+        editTitleInput.value = item.title || "";
+        editCatSelect.value = item.cat || "skirts";
+        editTagsInput.value = (item.tags || []).join(", ");
+        editDescInput.value = item.desc || "";
+
+        modalInfoView.style.display = "none";
+        modalEditContainer.style.display = "flex";
+      });
+    }
+
+    if (cancelEditBtn) {
+      cancelEditBtn.addEventListener("click", () => {
+        modalEditContainer.style.display = "none";
+        modalInfoView.style.display = "block";
+      });
+    }
+
+    if (saveEditBtn) {
+      saveEditBtn.addEventListener("click", async () => {
+        if (!state.selectedId) return;
+        const targetId = state.selectedId;
+        const newTitle = editTitleInput.value.trim() || "이름 없음";
+        const newCat = editCatSelect.value;
+        const newCatName = catMapLookup[newCat] || "소장품";
+        const newTagsRaw = editTagsInput.value.trim();
+        const newTags = newTagsRaw ? newTagsRaw.split(",").map(t => t.trim()).filter(Boolean) : ["아이템"];
+        const newDesc = editDescInput.value.trim();
+
+        // Check if custom item
+        const customItem = state.customItems.find(i => i.id === targetId);
+        if (customItem) {
+          customItem.title = newTitle;
+          customItem.cat = newCat;
+          customItem.catName = newCatName;
+          customItem.tags = newTags;
+          customItem.desc = newDesc;
+        } else {
+          // Default item override
+          if (!state.itemOverrides) state.itemOverrides = {};
+          state.itemOverrides[targetId] = {
+            title: newTitle,
+            cat: newCat,
+            catName: newCatName,
+            tags: newTags,
+            desc: newDesc
+          };
+        }
+
+        // Update modal display immediately
+        modalTitle.textContent = newTitle;
+        modalCat.textContent = newCatName;
+        modalTags.innerHTML = newTags.map(t => `<span class="tag-chip" style="font-size:11px; padding:3px 8px;">${t}</span>`).join("");
+        modalDesc.textContent = newDesc || "상세 설명이 없습니다.";
+
+        modalEditContainer.style.display = "none";
+        modalInfoView.style.display = "block";
+
+        renderGrid();
+        await commitState(true, "✏️ 아이템 정보가 수정되었습니다 ✓");
+        throttleSignal(`유저가 아이템 '${newTitle}'의 상세 정보를 수정했습니다.`);
+      });
+    }
 
     modalFavBtn.addEventListener("click", () => {
       if (state.selectedId) {
