@@ -490,15 +490,157 @@
       transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
+  
+    /* Login Lock Screen Overlay */
+    #loginScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(13, 13, 18, 0.98);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999999;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    #loginScreen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 360px;
+      background: var(--pickle-surface-card, #ffffff);
+      border: 1px solid var(--pickle-border-hairline, rgba(255, 255, 255, 0.15));
+      border-radius: var(--pickle-radius-card, 20px);
+      padding: 32px 24px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .login-logo {
+      font-size: 38px;
+      margin-bottom: 2px;
+    }
+    .login-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--pickle-text-primary, #111827);
+    }
+    .login-desc {
+      font-size: 13px;
+      color: var(--pickle-text-secondary, #6b7280);
+      line-height: 1.4;
+      margin-bottom: 2px;
+    }
+    .login-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+    .login-input-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pickle-text-secondary, #4b5563);
+    }
+    .login-input {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid var(--pickle-border-hairline, #d1d5db);
+      border-radius: 10px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s ease;
+      background: var(--pickle-surface-fill-faint, #f9fafb);
+      color: var(--pickle-text-primary, #111827);
+    }
+    .login-input:focus {
+      border-color: #3b82f6;
+      background: #ffffff;
+    }
+    .login-error-msg {
+      color: #ef4444;
+      font-size: 12px;
+      font-weight: 600;
+      display: none;
+      text-align: center;
+    }
+    .login-submit-btn {
+      width: 100%;
+      padding: 13px;
+      background: #111827;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 4px;
+    }
+    .login-submit-btn:hover {
+      background: #1f2937;
+    }
+    .login-note {
+      font-size: 11px;
+      color: var(--pickle-text-secondary, #9ca3af);
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+    .shake-anim {
+      animation: shake 0.35s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Private Login Screen Gate -->
+  <div id="loginScreen">
+    <div class="login-box" id="loginBox">
+      <div class="login-logo">🔒</div>
+      <div class="login-title">프라이빗 쇼룸</div>
+      <div class="login-desc">승인된 단일 관리자 전용 공간입니다.<br>아이디와 비밀번호를 입력해 주세요.</div>
+      
+      <div class="login-input-group">
+        <label class="login-input-label" for="loginIdInput">아이디</label>
+        <input class="login-input" type="text" id="loginIdInput" placeholder="아이디 입력" autocomplete="username">
+      </div>
+
+      <div class="login-input-group">
+        <label class="login-input-label" for="loginPwInput">비밀번호</label>
+        <input class="login-input" type="password" id="loginPwInput" placeholder="비밀번호 입력" autocomplete="current-password">
+      </div>
+
+      <div class="login-error-msg" id="loginErrorMsg">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+
+      <button class="login-submit-btn" id="loginSubmitBtn">로그인</button>
+
+      <div class="login-note">※ 본 사이트는 신규 회원가입을 지원하지 않는 1인 전용 비공개 쇼룸입니다.</div>
+    </div>
+  </div>
 
   <header>
     <div class="header-top">
       <div class="header-title">👗 쇼룸 & 룩북</div>
       <div class="header-actions">
         <button class="upload-btn" id="openUploadBtn">📸 사진 등록</button>
+        <button class="upload-btn" id="logoutBtn" style="background:rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.25);">🔒 로그아웃</button>
         <button class="upload-btn" id="openBackupBtn" style="background:rgba(255,255,255,0.08); border:1px solid var(--pickle-border-hairline);">💾 백업/복원</button>
         <div class="stats-badge" id="favCountBadge">❤️ 찜 0개</div>
       </div>
@@ -787,6 +929,86 @@
     };
 
     // Robust Multi-Layer Storage Keys
+    // Single User Authentication Gate (SHA-256 Salted)
+    const AUTH_HASH = "ab0b41fa0848771e495370ea0b99682cda67168406df09f2889e2891e1b97015";
+    const AUTH_SALT = "pickle_showroom_2026_salt_";
+    const AUTH_STORAGE_KEY = "showroom_auth_session";
+
+    async function computeAuthHash(id, pw) {
+      const data = new TextEncoder().encode(id.trim().toLowerCase() + ":" + pw.trim() + ":" + AUTH_SALT);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    const loginScreen = document.getElementById("loginScreen");
+    const loginBox = document.getElementById("loginBox");
+    const loginIdInput = document.getElementById("loginIdInput");
+    const loginPwInput = document.getElementById("loginPwInput");
+    const loginSubmitBtn = document.getElementById("loginSubmitBtn");
+    const loginErrorMsg = document.getElementById("loginErrorMsg");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    function checkAuth() {
+      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (saved === AUTH_HASH) {
+        if (loginScreen) loginScreen.classList.add("hidden");
+        return true;
+      } else {
+        if (loginScreen) loginScreen.classList.remove("hidden");
+        return false;
+      }
+    }
+
+    async function handleLogin() {
+      const id = loginIdInput.value.trim();
+      const pw = loginPwInput.value.trim();
+      if (!id || !pw) {
+        showLoginError("아이디와 비밀번호를 모두 입력해 주세요.");
+        return;
+      }
+
+      const hash = await computeAuthHash(id, pw);
+      if (hash === AUTH_HASH) {
+        localStorage.setItem(AUTH_STORAGE_KEY, hash);
+        loginErrorMsg.style.display = "none";
+        loginScreen.classList.add("hidden");
+        showToast("환영합니다! 쇼룸 잠금이 해제되었습니다 ✓");
+      } else {
+        showLoginError("아이디 또는 비밀번호가 올바르지 않습니다.");
+      }
+    }
+
+    function showLoginError(msg) {
+      loginErrorMsg.textContent = msg;
+      loginErrorMsg.style.display = "block";
+      loginBox.classList.remove("shake-anim");
+      void loginBox.offsetWidth;
+      loginBox.classList.add("shake-anim");
+    }
+
+    if (loginSubmitBtn) loginSubmitBtn.addEventListener("click", handleLogin);
+    if (loginPwInput) {
+      loginPwInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleLogin();
+      });
+    }
+    if (loginIdInput) {
+      loginIdInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") loginPwInput.focus();
+      });
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        if (confirm("쇼룸을 잠그고 로그아웃할까요?")) {
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+          location.reload();
+        }
+      });
+    }
+
+    checkAuth();
+
     const DB_NAME = "LookbookShowroomDB";
     const STORE_NAME = "showroomStore";
     const STATE_KEY = "userSavedState";
