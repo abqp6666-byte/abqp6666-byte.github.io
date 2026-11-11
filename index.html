@@ -668,7 +668,7 @@
   </header>
 
   <!-- Filter Bar -->
-  <div class="filter-bar">
+  <div class="filter-bar" id="filterBar">
       <button class="filter-chip active" data-cat="all">전체 보기 (40)</button>
       <button class="filter-chip" data-cat="skirts">치마·교복 (10)</button>
       <button class="filter-chip" data-cat="swimwear">수영복·비키니 (10)</button>
@@ -742,22 +742,54 @@
         <img id="modalImg" src="" alt="Lookbook Detail">
       </div>
       <div class="modal-body">
-        <div class="modal-header-row">
+        <!-- View Mode -->
+        <div id="modalInfoView">
+          <div class="modal-header-row">
+            <div style="flex:1;">
+              <div id="modalCat" style="font-size:11px; color:#6b7280; font-weight:600; margin-bottom:2px;">치마·교복</div>
+              <div class="modal-title" id="modalTitle">아이템 제목</div>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button class="delete-item-btn" id="modalDeleteBtn">🗑️ 삭제</button>
+              <button class="modal-fav-btn" id="modalFavBtn" style="padding:6px 12px; font-size:12px;">🤍 찜하기</button>
+              <button class="modal-fav-btn" id="modalEditBtn" style="padding:6px 12px; font-size:12px; background:var(--pickle-surface-fill-soft); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">✏️ 수정</button>
+            </div>
+          </div>
+          <div class="modal-tags" id="modalTags" style="margin-top:8px;"></div>
+          <div class="modal-desc-box" id="modalDesc" style="margin-top:10px;">아이템 상세 설명</div>
+          <div class="designer-note" style="margin-top:10px;">✨ 민서1호의 피팅 코멘트: 완벽한 실루엣과 디테일 고증</div>
+        </div>
+
+        <!-- Edit Mode -->
+        <div id="modalEditContainer" style="display:none; flex-direction:column; gap:10px; margin-top:8px; text-align:left;">
+          <div style="font-size:14px; font-weight:700; color:var(--pickle-text-primary); margin-bottom:2px;">✏️ 아이템 정보 수정</div>
           <div>
-            <div id="modalCat" style="font-size:11px; color:#6b7280; font-weight:600; margin-bottom:2px;">치마 컬렉션</div>
-            <div class="modal-title" id="modalTitle">아이템 제목</div>
+            <label style="font-size:11px; font-weight:600; color:var(--pickle-text-secondary); display:block; margin-bottom:4px;">제목</label>
+            <input type="text" id="editTitleInput" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--pickle-border-hairline); background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); font-size:13px; box-sizing:border-box;">
           </div>
-          <div style="display:flex; gap:6px; align-items:center;">
-            <button class="delete-item-btn" id="modalDeleteBtn">🗑️ 삭제</button>
-            <div style="display:flex; gap:8px; width:100%;">
-          <button class="modal-fav-btn" id="modalFavBtn" style="flex:1;">🤍 찜하기</button>
-          <button class="modal-fav-btn" id="modalEditBtn" style="flex:1; background:var(--pickle-surface-fill-soft); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">✏️ 수정</button>
-        </div>
+          <div>
+            <label style="font-size:11px; font-weight:600; color:var(--pickle-text-secondary); display:block; margin-bottom:4px;">카테고리</label>
+            <select id="editCatSelect" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--pickle-border-hairline); background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); font-size:13px; box-sizing:border-box;">
+              <option value="skirts">치마·교복</option>
+              <option value="swimwear">수영복·비키니</option>
+              <option value="rashguards">래쉬가드</option>
+              <option value="homewear">홈웨어·팬츠</option>
+              <option value="custom">내 소장품</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:11px; font-weight:600; color:var(--pickle-text-secondary); display:block; margin-bottom:4px;">태그 (쉼표로 구분)</label>
+            <input type="text" id="editTagsInput" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--pickle-border-hairline); background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); font-size:13px; box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-size:11px; font-weight:600; color:var(--pickle-text-secondary); display:block; margin-bottom:4px;">상세 설명</label>
+            <textarea id="editDescInput" rows="3" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--pickle-border-hairline); background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); font-size:13px; resize:none; box-sizing:border-box;"></textarea>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:6px;">
+            <button id="saveEditBtn" class="submit-btn" style="flex:1; padding:9px; font-size:13px;">수정 완료 ✓</button>
+            <button id="cancelEditBtn" class="submit-btn" style="flex:1; padding:9px; font-size:13px; background:var(--pickle-surface-fill-faint); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline);">취소</button>
           </div>
         </div>
-        <div class="modal-tags" id="modalTags"></div>
-        <div class="modal-desc-box" id="modalDesc">아이템 상세 설명</div>
-        <div class="designer-note">✨ 민서1호의 피팅 코멘트: 완벽한 실루엣과 디테일 고증</div>
       </div>
     </div>
   </div>
@@ -1207,12 +1239,15 @@
       modalTitle.textContent = item.title;
       modalCat.textContent = item.catName;
       modalDesc.textContent = item.desc || "상세 설명이 없습니다.";
-      modalTags.innerHTML = item.tags.map(t => `<span class="tag-chip" style="font-size:11px; padding:3px 8px;">${t}</span>`).join('');
+      modalTags.innerHTML = (item.tags || []).map(t => `<span class="tag-chip" style="font-size:11px; padding:3px 8px;">${t}</span>`).join('');
 
       const isCustom = state.customItems.some(i => i.id === id);
       if (modalDeleteBtn) {
         modalDeleteBtn.style.display = isCustom ? "block" : "none";
       }
+
+      if (modalEditContainer) modalEditContainer.style.display = "none";
+      if (modalInfoView) modalInfoView.style.display = "block";
 
       updateModalFavBtn(id);
       modalOverlay.classList.add("active");
@@ -1234,18 +1269,18 @@
       if (e.target === modalOverlay) closeModal();
     });
 
-    
     const catMapLookup = {
-      "skirts": "치마 컬렉션",
-      "swimwear": "비키니·수영복",
+      "skirts": "치마·교복",
+      "swimwear": "수영복·비키니",
       "rashguards": "래쉬가드",
       "homewear": "홈웨어·팬츠",
-      "mannequin": "마네킹 바디",
       "custom": "내 소장품"
     };
 
     if (modalEditBtn) {
-      modalEditBtn.addEventListener("click", () => {
+      modalEditBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (!state.selectedId) return;
         const all = getAllItems();
         const item = all.find(i => i.id === state.selectedId);
@@ -1256,20 +1291,22 @@
         editTagsInput.value = (item.tags || []).join(", ");
         editDescInput.value = item.desc || "";
 
-        modalInfoView.style.display = "none";
-        modalEditContainer.style.display = "flex";
+        if (modalInfoView) modalInfoView.style.display = "none";
+        if (modalEditContainer) modalEditContainer.style.display = "flex";
       });
     }
 
     if (cancelEditBtn) {
-      cancelEditBtn.addEventListener("click", () => {
-        modalEditContainer.style.display = "none";
-        modalInfoView.style.display = "block";
+      cancelEditBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (modalEditContainer) modalEditContainer.style.display = "none";
+        if (modalInfoView) modalInfoView.style.display = "block";
       });
     }
 
     if (saveEditBtn) {
-      saveEditBtn.addEventListener("click", async () => {
+      saveEditBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
         if (!state.selectedId) return;
         const targetId = state.selectedId;
         const newTitle = editTitleInput.value.trim() || "이름 없음";
@@ -1305,8 +1342,8 @@
         modalTags.innerHTML = newTags.map(t => `<span class="tag-chip" style="font-size:11px; padding:3px 8px;">${t}</span>`).join("");
         modalDesc.textContent = newDesc || "상세 설명이 없습니다.";
 
-        modalEditContainer.style.display = "none";
-        modalInfoView.style.display = "block";
+        if (modalEditContainer) modalEditContainer.style.display = "none";
+        if (modalInfoView) modalInfoView.style.display = "block";
 
         renderGrid();
         await commitState(true, "✏️ 아이템 정보가 수정되었습니다 ✓");
@@ -1314,14 +1351,16 @@
       });
     }
 
-    modalFavBtn.addEventListener("click", () => {
+    modalFavBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       if (state.selectedId) {
         toggleFavorite(state.selectedId);
       }
     });
 
     if (modalDeleteBtn) {
-      modalDeleteBtn.addEventListener("click", () => {
+      modalDeleteBtn.addEventListener("click", (e) => {
+        e.preventDefault();
         if (!state.selectedId) return;
         const targetId = state.selectedId;
         const item = state.customItems.find(i => i.id === targetId);
@@ -1336,16 +1375,37 @@
       });
     }
 
-    // Filter Chips
-    filterChips.forEach(chip => {
-      chip.addEventListener("click", () => {
-        filterChips.forEach(c => c.classList.remove("active"));
-        chip.classList.add("active");
-        state.filter = chip.getAttribute("data-cat");
-        renderGrid();
-        commitState(false);
+    function setFilter(cat) {
+      const valid = ["all", "skirts", "swimwear", "rashguards", "homewear", "custom"];
+      if (!valid.includes(cat)) cat = "all";
+      state.filter = cat;
+      document.querySelectorAll(".filter-chip").forEach(c => {
+        c.classList.toggle("active", c.getAttribute("data-cat") === cat);
+      });
+      renderGrid();
+      commitState(false);
+    }
+
+    // Direct event listener on chips
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+      chip.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setFilter(chip.getAttribute("data-cat"));
       });
     });
+
+    // Delegation on filterBar container
+    const filterBar = document.getElementById("filterBar") || document.querySelector(".filter-bar");
+    if (filterBar) {
+      filterBar.addEventListener("click", (e) => {
+        const chip = e.target.closest(".filter-chip");
+        if (chip) {
+          e.preventDefault();
+          setFilter(chip.getAttribute("data-cat"));
+        }
+      });
+    }
 
     // Upload Modal Handling
     openUploadBtn.addEventListener("click", () => {
