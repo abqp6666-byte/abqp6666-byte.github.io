@@ -1877,6 +1877,40 @@
       updateModalFavBtn(id);
       modalOverlay.classList.add("active");
 
+      // Setup 6-angle photo gallery for skirts & uniforms
+      const angleContainer = document.getElementById("angleGalleryContainer");
+      const thumbStrip = document.getElementById("angleThumbnails");
+      const isSkirtOrUniform = item.cat === "skirts" || item.cat === "uniforms";
+
+      if (isSkirtOrUniform && typeof ANGLE_PHOTOS !== "undefined") {
+        if (angleContainer) angleContainer.style.display = "block";
+        const catAngles = ANGLE_PHOTOS[item.cat] || ANGLE_PHOTOS["skirts"];
+        currentModalAngles = Object.assign({}, catAngles, { front: item.img });
+        currentModalDefaultImg = item.img;
+
+        if (thumbStrip) {
+          const angles = [
+            { key: "front", label: "앞", src: currentModalAngles.front },
+            { key: "back", label: "뒤", src: currentModalAngles.back },
+            { key: "left", label: "좌(지퍼)", src: currentModalAngles.left },
+            { key: "right", label: "우", src: currentModalAngles.right },
+            { key: "top", label: "위", src: currentModalAngles.top },
+            { key: "bottom", label: "아래", src: currentModalAngles.bottom }
+          ];
+          thumbStrip.innerHTML = angles.map(a => `
+            <div class="angle-thumb" data-angle="${a.key}" onclick="switchAnglePhoto('${a.key}')" style="flex: 0 0 54px; height: 72px; border-radius: 6px; overflow: hidden; border: 2px solid ${a.key === 'front' ? '#818cf8' : 'transparent'}; cursor: pointer; position: relative; background: #000;">
+              <img src="${a.src}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); font-size: 9px; text-align: center; color: #fff; padding: 1px 0;">${a.label}</div>
+            </div>
+          `).join("");
+        }
+        switchAnglePhoto("front");
+      } else {
+        if (angleContainer) angleContainer.style.display = "none";
+        currentModalAngles = null;
+      }
+
+
       throttleSignal(`유저가 '${item.title}' 룩북 상세 뷰를 확인하고 있습니다.`);
       commitState(false);
     }
