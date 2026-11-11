@@ -821,6 +821,9 @@
           📤 백업 파일 불러오기 (.json)
         </button>
         <input type="file" id="backupFileInput" accept=".json,application/json" style="display:none;">
+        <button class="submit-btn" id="restoreDeletedBtn" onclick="restoreDeletedItems()" style="background:var(--pickle-surface-fill-soft); color:var(--pickle-text-primary); border:1px solid var(--pickle-border-hairline); font-size:12px; margin-top:4px;">
+          🔄 삭제한 기본 사진 전체 복구
+        </button>
         <button class="submit-btn" id="resetCustomBtn" style="background:transparent; color:var(--pickle-accent-danger, #ff453a); border:1px solid rgba(255,69,58,0.3); font-size:12px; margin-top:4px;">
           🗑️ 내가 올린 사진만 전체 비우기
         </button>
