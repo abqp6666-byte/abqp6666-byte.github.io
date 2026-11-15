@@ -1247,7 +1247,14 @@
       const item = allItems.find(i => i.id === targetId);
       const title = item ? item.title : '이 사진';
 
-      if (confirm(`'${title}' 사진을 쇼룸에서 완전히 삭제할까요?\n\n확인을 누르면 즉시 쇼룸에서 제거되고 새로운 예비 디자인으로 교체됩니다.`)) {
+      const cat = item ? item.cat : null;
+      const hasReserve = (typeof RESERVE_ITEMS !== "undefined") && cat &&
+        RESERVE_ITEMS.some(r => r.cat === cat && !state.deletedIds.includes(r.id));
+      const confirmMsg = hasReserve
+        ? `'${title}' 사진을 쇼룸에서 완전히 삭제할까요?\n\n확인을 누르면 즉시 쇼룸에서 제거되고 새로운 예비 디자인으로 교체됩니다.`
+        : `'${title}' 사진을 쇼룸에서 완전히 삭제할까요?\n\n확인을 누르면 쇼룸에서 사라집니다. (설정의 '삭제한 기본 사진 전체 복구'로 언제든 되살릴 수 있습니다)`;
+
+      if (confirm(confirmMsg)) {
         if (!state.deletedIds) state.deletedIds = [];
         if (!state.deletedIds.includes(targetId)) {
           state.deletedIds.push(targetId);
@@ -1261,7 +1268,9 @@
 
         closeModal();
         renderGrid();
-        commitState(true, `'${title}' 삭제 완료! 새 디자인으로 즉시 교체되었습니다 ✓`);
+        commitState(true, hasReserve
+          ? `'${title}' 삭제 완료! 새 디자인으로 즉시 교체되었습니다 ✓`
+          : `'${title}' 삭제 완료! 쇼룸에서 제거되었습니다 ✓`);
       }
     };
 
