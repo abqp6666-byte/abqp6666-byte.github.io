@@ -1098,15 +1098,10 @@
         // Active un-deleted items in this category
         let active = allCatItems.filter(i => !state.deletedIds.includes(i.id));
 
-        // If active has fewer than 10 because user deleted more than 10 items,
-        // FIFO un-delete the OLDEST deletion for this category so count stays exactly 10!
-        if (active.length < 10) {
-          const needed = 10 - active.length;
-          const deletedInCat = state.deletedIds.filter(did => allCatItems.some(item => item.id === did));
-          const toRestore = deletedInCat.slice(0, needed);
-          state.deletedIds = state.deletedIds.filter(did => !toRestore.includes(did));
-          active = allCatItems.filter(i => !state.deletedIds.includes(i.id));
-        }
+        // A user deletion is permanent: deleted ids are never auto-restored.
+        // Categories that have a reserve pool (RESERVE_ITEMS) already fill the gap
+        // above on their own; categories without one simply keep 9, 8, ... items
+        // until the user presses '삭제한 기본 사진 전체 복구' in the settings.
 
         // Take exactly the first 10 active items
         finalItems.push(...active.slice(0, 10));
@@ -1921,7 +1916,6 @@
           currentModalAngles = Object.assign({}, angleSet, { front: item.img });
           currentModalDefaultImg = item.img;
 
-          const isSwimCat = (item.cat === "bikini" || item.cat === "indoor_swim" || item.cat === "rashguards");
           const order = ["front"];
           if (currentModalAngles.wetfront) order.push("wetfront");
           order.push("back", "left", "right", "top", "bottom");
@@ -1962,7 +1956,7 @@
 
           const galleryTitle = document.getElementById("angleGalleryTitle");
           if (galleryTitle) {
-            galleryTitle.textContent = isSwimCat
+            galleryTitle.textContent = Boolean(currentModalAngles.wetfront)
               ? `📸 ${currentModalAngleOrder.length}방향 실사 (젖은앞 포함)`
               : `📸 ${currentModalAngleOrder.length}방향 실사`;
           }
@@ -2326,7 +2320,7 @@
     // Async Boot: Load from IndexedDB/LocalStorage/Widget and render
     (async function init() {
       // Force clean upgrade: clear corrupt overrides and stale deletions so all categories show EXACTLY 10 items!
-      const CURRENT_APP_VERSION = "2026.11.15.0915_BRA_PANTY_V2";
+      const CURRENT_APP_VERSION = "2026.11.15.1030_DELETE_FIX_V3";
       const oldVersion = localStorage.getItem("showroom_app_version");
       if (oldVersion !== CURRENT_APP_VERSION) {
         localStorage.setItem("showroom_app_version", CURRENT_APP_VERSION);
