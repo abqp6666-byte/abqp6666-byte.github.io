@@ -134,7 +134,7 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
   font-size:15px;line-height:1.85;white-space:pre-wrap;word-break:keep-all;
 }
 .ptext .pt{font-size:18px;font-weight:800;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(0,0,0,.12)}
-.ptext.with-photo{max-height:44%;padding:18px 20px;font-size:14px}
+.ptext.with-photo{max-height:52%;padding:18px 20px;font-size:14px}
 .ptext.with-photo .pt{font-size:15px;margin-bottom:8px}
 .page .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:13px;letter-spacing:.1em}
 .edge-btn{
@@ -612,10 +612,14 @@ async function fillThumb(el, p){
   }
 }
 /* 페이지 본문 DOM 구성 (사진 위 + 글 아래 / 글 전용 / 사진 전용) */
+let buildSeq = 0;
 async function buildPageContent(container, p, webtoon){
-  container.querySelector(".loading")?.remove();
   const frame = container.querySelector(".pframe") || container;
+  const token = ++buildSeq;
+  frame.dataset.token = String(token);
+  frame.innerHTML = ""; // 재빌드 시 이전 내용 제거 (멱등)
   const url = await pagePhotoURL(book, p);
+  if (frame.dataset.token !== String(token)) return null; // 도중에 다시 빌드됨 → 폐기
   const hasPhoto = !!url, hasText = !!(p.title || p.text);
   if (hasPhoto) {
     const zw = document.createElement("div");
