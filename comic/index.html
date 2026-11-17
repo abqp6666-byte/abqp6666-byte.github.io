@@ -912,6 +912,7 @@ async function saveUserBook(target){
 }
 function renderEditor(){
   const body = $("#editBody");
+  if (!editBook) return;
   body.innerHTML = "";
   const b = editBook;
   if (!b.pages.length) {
@@ -1024,7 +1025,7 @@ function openPageModal(b, page){
     }
     await saveUserBook(b);
     closeModal();
-    renderEditor();
+    if (editBook && editBook.id === b.id) renderEditor();
     // 리더가 열려 있던 책이면 리더도 새로고침
     if (book && book.id === b.id && $("#readerScreen").classList.contains("on")) setupReader();
     showToast("저장했어요");
