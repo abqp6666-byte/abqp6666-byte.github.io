@@ -804,6 +804,7 @@ $("#btnEditDone").onclick = async () => {
   showToast("저장했어요");
   route();
 };
+$("#btnAddPage").onclick = () => { if (editBook) openPageModal(editBook, null); };
 let editBook = null;
 async function openEditor(id){
   editBook = getBook(id);
