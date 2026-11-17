@@ -409,11 +409,19 @@ const BUILTIN_BOOKS = [
     pages: [
       {src:"images/p01.jpg?v=4", label:"1페이지", thumb:"images/thumbs/p01.jpg?v=4"},
       {src:"images/p02.jpg?v=4", label:"2페이지", thumb:"images/thumbs/p02.jpg?v=4"},
+      {src:"images/p03.jpg?v=5", label:"3페이지", thumb:"images/thumbs/p03.jpg?v=5"},
+      {src:"images/p04.jpg?v=5", label:"4페이지", thumb:"images/thumbs/p04.jpg?v=5"},
+      {src:"images/p05.jpg?v=5", label:"5페이지", thumb:"images/thumbs/p05.jpg?v=5"},
+      {src:"images/p06.jpg?v=5", label:"6페이지", thumb:"images/thumbs/p06.jpg?v=5"},
+      {src:"images/p07.jpg?v=5", label:"7페이지", thumb:"images/thumbs/p07.jpg?v=5"},
+      {src:"images/p08.jpg?v=5", label:"8페이지", thumb:"images/thumbs/p08.jpg?v=5"},
+      {src:"images/p09.jpg?v=5", label:"9페이지", thumb:"images/thumbs/p09.jpg?v=5"},
+      {src:"images/p10.jpg?v=5", label:"10페이지", thumb:"images/thumbs/p10.jpg?v=5"},
     ]
   },
 ];
 /* 내장책 내용이 바뀌면 rev를 올린다 → 예전 페이지 기준 독서 진행률은 자동으로 새로 시작 */
-const BUILTIN_REV = { "science-lab": 4 };
+const BUILTIN_REV = { "science-lab": 5 };
 function bookRev(b){ return b && b.builtin ? (BUILTIN_REV[b.id] || 0) : 0; }
 function getProg(b){
   if (!b) return 0;
