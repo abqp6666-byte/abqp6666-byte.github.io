@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="theme-color" content="#0d0d12">
-<title>그날, 제1과학실 — 승훈 &amp; 선주</title>
-<meta property="og:title" content="그날, 제1과학실">
-<meta property="og:description" content="승훈 & 선주 — 자작 소설 만화책">
-<meta property="og:image" content="images/p01.png">
+<title>승훈의 만화책 서재</title>
 <style>
 :root{
   --bg:#0d0d12; --panel:#17171f; --ink:#ece9f1; --dim:#9a93a8; --accent:#ff8fb3; --accent2:#8fb3ff;
   --bar:rgba(23,23,31,.92);
+  --shelf-a:#3a2a1c; --shelf-b:#241a11; --wood-line:#57402c;
+  --paper:#f7f1e6; --paper-ink:#2e2820;
 }
 html[data-theme="light"]{
   --bg:#efe9e2; --panel:#faf6f0; --ink:#2b2630; --dim:#7a7286; --bar:rgba(250,246,240,.94);
+  --shelf-a:#e8d4b8; --shelf-b:#d9bf9c; --wood-line:#b08d5f;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -23,63 +23,120 @@ body{
   font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
   overflow:hidden; overscroll-behavior:none; touch-action:manipulation;
 }
-#app{position:fixed;inset:0;display:flex;flex-direction:column}
+.screen{position:fixed;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+button{font-family:inherit}
 
-/* ===== 표지 ===== */
-#cover{
-  position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:radial-gradient(120% 90% at 50% 20%, #23233a 0%, #0d0d12 70%);
-  transition:opacity .7s ease, visibility .7s;
+/* ============================================================ 서재 */
+#shelfScreen{background:
+  radial-gradient(120% 80% at 50% 0%, rgba(255,190,120,.10), transparent 60%), var(--bg);
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
 }
-#cover.hidden{opacity:0;visibility:hidden;pointer-events:none}
-#cover::before{
-  content:"";position:absolute;inset:0;opacity:.35;
-  background:url("images/thumbs/p01.jpg") center/cover no-repeat;filter:blur(3px) saturate(.9);
-  mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.45) 55%, #000);
-  -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.45) 55%, #000);
+.shelf-head{padding:30px 22px 8px;text-align:center}
+.shelf-head .lamp{font-size:26px;letter-spacing:.4em;text-indent:.4em}
+.shelf-head h1{font-size:clamp(24px,6.5vw,36px);font-weight:800;margin-top:6px}
+.shelf-head p{margin-top:8px;font-size:13px;color:var(--dim);letter-spacing:.08em}
+.shelf-body{max-width:1060px;width:100%;margin:0 auto;padding:10px 22px 70px}
+.shelf{position:relative;padding:26px 8px 0}
+.shelf-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;align-items:end}
+.shelf::after{
+  content:"";display:block;height:14px;border-radius:4px 4px 8px 8px;
+  background:linear-gradient(180deg, var(--wood-line), var(--shelf-a) 55%, var(--shelf-b));
+  box-shadow:0 10px 24px rgba(0,0,0,.45), inset 0 2px 3px rgba(255,255,255,.18);
+  margin:0 -4px;
 }
-.cover-inner{position:relative;z-index:2;text-align:center;padding:0 24px;animation:rise 1.1s ease both}
-@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-.cover-badge{display:inline-block;font-size:12px;letter-spacing:.32em;color:var(--accent);border:1px solid rgba(255,143,179,.45);border-radius:999px;padding:6px 16px 5px 19px;margin-bottom:22px}
-.cover-title{
-  font-size:clamp(30px,9vw,52px);font-weight:800;line-height:1.25;letter-spacing:.01em;color:#fff;
-  text-shadow:0 2px 24px rgba(0,0,0,.6);
+.book-card{
+  cursor:pointer;border:none;background:transparent;color:inherit;
+  display:flex;flex-direction:column;align-items:center;
+  transform:translateY(0);transition:transform .22s ease;
+  animation:bookIn .6s cubic-bezier(.2,.9,.3,1.2) both;
 }
-.cover-sub{margin-top:14px;font-size:clamp(14px,4vw,18px);color:#cfc7dd;letter-spacing:.14em}
-.cover-sub b{color:#ffd9e6;font-weight:700}
-.cover-cta{
-  margin-top:38px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;border:none;
-  background:linear-gradient(135deg,#ff8fb3,#b57bff);color:#fff;font-size:17px;font-weight:700;font-family:inherit;
-  padding:15px 42px;border-radius:999px;box-shadow:0 8px 30px rgba(255,120,170,.35);transition:transform .15s, box-shadow .15s;
+@keyframes bookIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.book-card:hover{transform:translateY(-6px)}
+.book-card:active{transform:scale(.97)}
+.book-cover{
+  position:relative;width:100%;aspect-ratio:3/4.1;border-radius:6px 12px 12px 6px;overflow:hidden;
+  box-shadow:inset 6px 0 8px -6px rgba(255,255,255,.5), inset 0 0 0 1px rgba(0,0,0,.25), 0 12px 26px rgba(0,0,0,.5);
+  background:#1b1b26;
 }
-.cover-cta:active{transform:scale(.96)}
-.cover-pages{margin-top:18px;font-size:12px;color:#8d8499;letter-spacing:.2em}
+.book-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.book-cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:9%;z-index:2;
+  background:linear-gradient(90deg, rgba(0,0,0,.42), rgba(0,0,0,.12) 60%, rgba(255,255,255,.08));}
+.book-cover::after{content:"";position:absolute;inset:0;z-index:3;
+  background:linear-gradient(115deg, rgba(255,255,255,.16) 0%, transparent 28%, transparent 75%, rgba(255,255,255,.07));}
+.cover-canvas{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;text-align:center}
+.cover-canvas .ct{font-size:16px;font-weight:800;color:#fff;line-height:1.35;text-shadow:0 1px 6px rgba(0,0,0,.4);word-break:keep-all}
+.cover-canvas .cs{font-size:11px;color:rgba(255,255,255,.85);letter-spacing:.1em}
+.book-title{margin-top:12px;font-size:14px;font-weight:700;text-align:center;line-height:1.35}
+.book-sub{margin-top:3px;font-size:12px;color:var(--dim);text-align:center}
+.book-badge{position:absolute;top:8px;right:8px;z-index:4;font-size:11px;font-weight:700;color:#fff;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);padding:3px 9px;border-radius:999px;}
+.card-edit{
+  position:absolute;top:8px;left:8px;z-index:5;width:30px;height:30px;border-radius:9px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);transition:background .15s;
+}
+.card-edit:hover{background:var(--accent)}
+.book-progress{margin-top:6px;font-size:11px;color:var(--accent);font-weight:600;min-height:14px;text-align:center}
+.slot-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:10px;
+  border:2px dashed rgba(150,130,110,.4);border-radius:10px;aspect-ratio:3/4.1;color:var(--dim);font-size:12px;}
+.slot-card .plus{font-size:26px;opacity:.6}
+.slot-card em{font-style:normal;font-weight:600;opacity:.85}
+.new-book-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:10px;
+  width:100%;aspect-ratio:3/4.1;border-radius:10px;cursor:pointer;color:var(--ink);
+  border:2px dashed var(--accent);background:rgba(255,143,179,.07);font-size:13px;font-weight:700;
+  transition:background .2s, transform .2s;
+}
+.new-book-btn:hover{background:rgba(255,143,179,.16);transform:translateY(-4px)}
+.new-book-btn .plus{font-size:30px;color:var(--accent)}
+.shelf-actions{display:flex;justify-content:center;gap:10px;margin-top:34px;flex-wrap:wrap}
+.ghost-btn{border:1px solid rgba(150,140,160,.35);background:transparent;color:var(--dim);cursor:pointer;
+  font-size:12px;padding:9px 16px;border-radius:999px;transition:all .2s;}
+.ghost-btn:hover{color:var(--ink);border-color:var(--ink)}
 
-/* ===== 뷰어 (페이지 모드) ===== */
+/* ============================================================ 리더 */
+#readerScreen{background:var(--bg)}
+.reader-top{
+  position:absolute;top:0;left:0;right:0;z-index:45;height:52px;display:flex;align-items:center;gap:4px;
+  padding:0 8px;background:var(--bar);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
+.back-btn{border:none;background:transparent;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:600;padding:8px 12px;border-radius:10px;max-width:60%;}
+.back-btn:active{background:rgba(128,128,150,.18)}
+.back-btn svg{width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.back-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-spacer{flex:1}
 #stage{position:relative;flex:1;overflow:hidden}
 #pageView{position:absolute;inset:0;touch-action:pan-y}
 .page{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .38s ease, transform .38s ease, visibility .38s;
-  will-change:opacity,transform;padding:10px;padding-bottom:74px;
+  will-change:opacity,transform;padding:62px 10px 74px;
 }
-html[data-theme="light"] .page{background:var(--bg)}
 .page.active{opacity:1;visibility:visible;transform:none}
-.page.prev-left{transform:translateX(-26px) scale(.985)}
-.page.prev-right{transform:translateX(26px) scale(.985)}
 .flip-in-r{animation:flipInR .42s cubic-bezier(.22,.9,.3,1) both}
 .flip-in-l{animation:flipInL .42s cubic-bezier(.22,.9,.3,1) both}
 @keyframes flipInR{from{opacity:0;transform:perspective(1400px) rotateY(-7deg) translateX(7%)}to{opacity:1;transform:none}}
 @keyframes flipInL{from{opacity:0;transform:perspective(1400px) rotateY(7deg) translateX(-7%)}to{opacity:1;transform:none}}
-.page-inner{position:absolute;top:10px;bottom:74px;left:10px;right:10px;display:flex;align-items:center;justify-content:center}
-.page-inner img{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
-/* 핀치줌/더블탭 확대용 래퍼 */
-.zoom-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.page-inner{position:absolute;top:62px;bottom:74px;left:10px;right:10px;display:flex;align-items:center;justify-content:center}
+.pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;max-width:100%;max-height:100%}
+.pframe img{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
+.zoom-wrap{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
 .zoom-wrap.zoomed{position:absolute;inset:0;z-index:5;overflow:auto;touch-action:pan-x pan-y;align-items:flex-start;justify-content:flex-start}
 .zoom-wrap.zoomed img{max-width:none;border-radius:0}
-.page .loading{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:13px;letter-spacing:.1em;
+/* 글 페이지 */
+.ptext{
+  background:var(--paper);color:var(--paper-ink);border-radius:10px;padding:26px 24px;
+  max-width:min(560px,92%);max-height:100%;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.45);
+  font-size:15px;line-height:1.85;white-space:pre-wrap;word-break:keep-all;
 }
+.ptext .pt{font-size:18px;font-weight:800;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(0,0,0,.12)}
+.ptext.with-photo{max-height:44%;padding:18px 20px;font-size:14px}
+.ptext.with-photo .pt{font-size:15px;margin-bottom:8px}
+.page .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:13px;letter-spacing:.1em}
 .edge-btn{
   position:absolute;top:50%;transform:translateY(-50%);z-index:10;border:none;cursor:pointer;
   width:46px;height:76px;border-radius:12px;background:rgba(20,20,28,.55);color:#fff;font-size:22px;
@@ -88,33 +145,47 @@ html[data-theme="light"] .page{background:var(--bg)}
 }
 .edge-btn:hover{background:rgba(40,40,55,.8);opacity:1}
 #btnPrevL{left:10px}#btnNextR{right:10px}
-
-/* ===== 웹툰 모드 ===== */
+#bookCover{
+  position:absolute;inset:0;z-index:42;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(120% 90% at 50% 20%, #23233a 0%, #0d0d12 70%);
+  transition:opacity .7s ease, visibility .7s;
+}
+#bookCover.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#bookCover::before{content:"";position:absolute;inset:0;opacity:.35;background:var(--coverimg) center/cover no-repeat;
+  filter:blur(3px) saturate(.9);
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.45) 55%, #000);
+  -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.45) 55%, #000);}
+.cover-inner{position:relative;z-index:2;text-align:center;padding:0 24px;animation:rise 1.1s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.cover-badge{display:inline-block;font-size:12px;letter-spacing:.32em;color:var(--accent);border:1px solid rgba(255,143,179,.45);border-radius:999px;padding:6px 16px 5px 19px;margin-bottom:22px}
+.cover-title{font-size:clamp(28px,8vw,50px);font-weight:800;line-height:1.25;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.6)}
+.cover-sub{margin-top:14px;font-size:clamp(14px,4vw,18px);color:#cfc7dd;letter-spacing:.14em}
+.cover-desc{margin-top:16px;font-size:13px;color:#9d94ac;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6}
+.cover-cta{
+  margin-top:34px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;border:none;
+  background:linear-gradient(135deg,#ff8fb3,#b57bff);color:#fff;font-size:17px;font-weight:700;
+  padding:15px 42px;border-radius:999px;box-shadow:0 8px 30px rgba(255,120,170,.35);transition:transform .15s;
+}
+.cover-cta:active{transform:scale(.96)}
+.cover-pages{margin-top:18px;font-size:12px;color:#8d8499;letter-spacing:.2em}
 #webView{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;background:var(--bg)}
 #webView.on{display:block}
-#webView .wimgs{display:flex;flex-direction:column;align-items:center;gap:0;padding-bottom:90px}
-#webView img{width:min(100%, 760px);display:block}
-#webView .loadbox{min-height:60vh;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:13px}
-
-/* ===== 하단 바 ===== */
+#webView .wimgs{display:flex;flex-direction:column;align-items:center;gap:26px;padding:66px 0 90px}
+#webView .witem{width:min(100%,760px);display:flex;flex-direction:column;align-items:center;gap:10px}
+#webView .witem img{width:100%;display:block;border-radius:6px}
 #bottomBar{
   position:absolute;left:0;right:0;bottom:0;z-index:40;height:64px;display:flex;align-items:center;gap:6px;
   padding:0 10px;padding-bottom:env(safe-area-inset-bottom);
   background:var(--bar);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid rgba(255,255,255,.07);
 }
-.icon-btn{
-  border:none;background:transparent;color:var(--ink);cursor:pointer;flex:0 0 auto;
-  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;
-  transition:background .15s;
-}
+.icon-btn{border:none;background:transparent;color:var(--ink);cursor:pointer;flex:0 0 auto;
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;transition:background .15s;}
 .icon-btn:active{background:rgba(128,128,150,.18)}
 .icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 #pagerBox{flex:1;display:flex;align-items:center;gap:12px;min-width:0;padding:0 6px}
-.arrow-btn{
-  border:none;background:rgba(128,128,150,.14);color:var(--ink);cursor:pointer;flex:0 0 auto;
-  width:36px;height:36px;border-radius:10px;font-size:16px;display:flex;align-items:center;justify-content:center;
-}
+.arrow-btn{border:none;background:rgba(128,128,150,.14);color:var(--ink);cursor:pointer;flex:0 0 auto;
+  width:36px;height:36px;border-radius:10px;font-size:16px;display:flex;align-items:center;justify-content:center;}
 .arrow-btn:disabled{opacity:.25;cursor:default}
 #slider{flex:1;-webkit-appearance:none;appearance:none;height:30px;background:transparent;cursor:pointer;min-width:40px}
 #slider::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--accent) var(--fill,0%),rgba(128,128,150,.3) var(--fill,0%))}
@@ -122,10 +193,8 @@ html[data-theme="light"] .page{background:var(--bg)}
 #slider::-moz-range-track{height:5px;border-radius:3px;background:rgba(128,128,150,.3)}
 #slider::-moz-range-progress{height:5px;border-radius:3px;background:var(--accent)}
 #slider::-moz-range-thumb{width:19px;height:19px;border:none;border-radius:50%;background:var(--accent)}
-#pageNum{flex:0 0 auto;font-size:13px;font-weight:600;color:var(--ink);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+#pageNum{flex:0 0 auto;font-size:13px;font-weight:600;min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
 #pageNum small{color:var(--dim);font-weight:500}
-
-/* ===== 목차 드로어 ===== */
 #drawer{
   position:absolute;left:0;right:0;bottom:0;z-index:50;background:var(--panel);
   border-radius:20px 20px 0 0;transform:translateY(100%);
@@ -141,51 +210,126 @@ html[data-theme="light"] .page{background:var(--bg)}
 .thumb-item{cursor:pointer;border-radius:10px;overflow:hidden;position:relative;border:2px solid transparent;transition:border-color .15s;background:#000}
 .thumb-item.current{border-color:var(--accent)}
 .thumb-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;opacity:.92}
-.thumb-item .lbl{
-  position:absolute;left:6px;bottom:5px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9);
-  background:rgba(0,0,0,.35);padding:1px 7px;border-radius:6px;
-}
-
-/* 토스트 */
+.thumb-item .ttext{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:8px;
+  background:var(--paper);color:var(--paper-ink);font-size:11px;line-height:1.4;overflow:hidden;white-space:pre-wrap}
+.thumb-item .lbl{position:absolute;left:6px;bottom:5px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9);
+  background:rgba(0,0,0,.35);padding:1px 7px;border-radius:6px;}
 #toast{
-  position:absolute;left:50%;top:14px;transform:translateX(-50%) translateY(-70px);z-index:55;
+  position:absolute;left:50%;top:64px;transform:translateX(-50%) translateY(-70px);z-index:55;
   background:rgba(20,20,30,.88);color:#fff;font-size:13px;padding:9px 18px;border-radius:999px;
   transition:transform .3s ease;backdrop-filter:blur(8px);pointer-events:none;white-space:nowrap;
 }
 #toast.show{transform:translateX(-50%) translateY(0)}
-/* 모드 전환 플로팅 버튼 */
-#modeFab{
-  position:absolute;right:14px;bottom:80px;z-index:35;border:none;cursor:pointer;
-  background:rgba(25,25,36,.85);color:var(--ink);font-size:12px;font-weight:600;font-family:inherit;
+#modeFab{position:absolute;right:14px;bottom:80px;z-index:35;border:none;cursor:pointer;
+  background:rgba(25,25,36,.85);color:var(--ink);font-size:12px;font-weight:600;
   padding:10px 15px;border-radius:999px;backdrop-filter:blur(8px);
-  box-shadow:0 4px 18px rgba(0,0,0,.4);transition:opacity .3s;
-}
+  box-shadow:0 4px 18px rgba(0,0,0,.4);transition:opacity .3s;}
 #modeFab.hide{opacity:0;pointer-events:none}
+#editFab{position:absolute;right:14px;bottom:80px;z-index:34;border:none;cursor:pointer;
+  background:rgba(25,25,36,.85);color:var(--ink);font-size:12px;font-weight:600;
+  padding:10px 15px;border-radius:999px;backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.4);}
+
+/* ============================================================ 편집기 */
+#editScreen{background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.edit-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:12px 14px;
+  background:var(--bar);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)}
+.edit-head h2{flex:1;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit-body{max-width:760px;margin:0 auto;padding:18px 16px 90px}
+.pagerow{
+  display:flex;gap:12px;align-items:stretch;background:var(--panel);border-radius:14px;padding:12px;margin-bottom:12px;
+  border:1px solid rgba(255,255,255,.06);
+}
+html[data-theme="light"] .pagerow{border-color:rgba(0,0,0,.06)}
+.pagerow .pthumb{width:76px;height:76px;flex:0 0 auto;border-radius:10px;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+.pagerow .pthumb img{width:100%;height:100%;object-fit:cover}
+.pagerow .pthumb .ttext{background:var(--paper);color:var(--paper-ink);font-size:10px;padding:6px;overflow:hidden;white-space:pre-wrap;line-height:1.3}
+.pagerow .pinfo{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.pagerow .pinfo b{font-size:13px}
+.pagerow .pinfo span{font-size:12px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pagerow .pops{display:flex;flex-direction:column;gap:5px;justify-content:center}
+.mini-btn{border:none;background:rgba(128,128,150,.14);color:var(--ink);cursor:pointer;border-radius:8px;
+  min-width:34px;height:30px;font-size:13px;padding:0 8px;}
+.mini-btn:active{background:rgba(128,128,150,.3)}
+.mini-btn.danger{color:#ff7a7a}
+.edit-empty{text-align:center;color:var(--dim);font-size:13px;padding:40px 0}
+.fab-add{
+  position:fixed;right:16px;bottom:24px;z-index:10;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#ff8fb3,#b57bff);color:#fff;font-size:14px;font-weight:700;
+  padding:14px 22px;border-radius:999px;box-shadow:0 8px 26px rgba(255,120,170,.4);
+}
+
+/* ============================================================ 모달 */
+#modalWrap{position:fixed;inset:0;z-index:80;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+#modalWrap.on{display:flex}
+.modal{
+  background:var(--panel);width:100%;max-width:560px;border-radius:22px 22px 0 0;
+  padding:22px 20px calc(24px + env(safe-area-inset-bottom));max-height:88%;overflow-y:auto;
+  animation:up .3s cubic-bezier(.3,.9,.3,1) both;
+}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:17px;margin-bottom:16px}
+.modal label{display:block;font-size:12px;color:var(--dim);margin:14px 0 6px;font-weight:600}
+.modal input[type=text], .modal textarea{
+  width:100%;background:rgba(128,128,150,.12);border:1px solid rgba(128,128,150,.2);border-radius:10px;
+  color:var(--ink);font-family:inherit;font-size:14px;padding:11px 13px;outline:none;
+}
+.modal textarea{min-height:110px;resize:vertical;line-height:1.6}
+.modal input:focus, .modal textarea:focus{border-color:var(--accent)}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:38px;height:38px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .15s}
+.sw.sel{border-color:var(--ink);transform:scale(1.12)}
+.filebtn{display:block;width:100%;text-align:center;border:2px dashed rgba(150,140,160,.4);border-radius:10px;
+  padding:14px;cursor:pointer;color:var(--dim);font-size:13px}
+.filebtn.has{border-style:solid;border-color:var(--accent);color:var(--ink)}
+.cover-preview{width:96px;aspect-ratio:3/4.1;border-radius:8px;overflow:hidden;position:relative;margin-top:8px}
+.cover-preview img{width:100%;height:100%;object-fit:cover}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.btn{flex:1;border:none;cursor:pointer;padding:14px;border-radius:12px;font-size:15px;font-weight:700}
+.btn.primary{background:linear-gradient(135deg,#ff8fb3,#b57bff);color:#fff}
+.btn.plain{background:rgba(128,128,150,.16);color:var(--ink)}
 </style>
 </head>
 <body>
-<div id="app">
 
-  <!-- 표지 -->
-  <div id="cover">
-    <div class="cover-inner">
-      <span class="cover-badge">COMIC</span>
-      <h1 class="cover-title">그날, 제1과학실</h1>
-      <p class="cover-sub">승훈 &amp; 선주</p>
-      <button class="cover-cta" id="btnStart">📖&nbsp; 읽기 시작</button>
-      <p class="cover-pages">전체 5페이지</p>
-    </div>
+<!-- ==================== 서재 ==================== -->
+<div class="screen on" id="shelfScreen">
+  <header class="shelf-head">
+    <div class="lamp">📚</div>
+    <h1>승훈의 만화책 서재</h1>
+    <p>자작 소설을 만화로 담은 책장이에요</p>
+  </header>
+  <div class="shelf-body" id="shelfBody"></div>
+</div>
+
+<!-- ==================== 리더 ==================== -->
+<div class="screen" id="readerScreen">
+  <div class="reader-top">
+    <button class="back-btn" id="btnBack" aria-label="책장으로">
+      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span>책장으로</span>
+    </button>
+    <div class="top-spacer"></div>
+    <button class="icon-btn" id="btnEditBook" aria-label="페이지 편집" style="width:40px;height:40px" title="페이지 편집">
+      <svg viewBox="0 0 24 24"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
+    </button>
   </div>
-
-  <!-- 뷰어 -->
   <div id="stage">
     <div id="pageView"></div>
     <button class="edge-btn" id="btnPrevL" aria-label="이전 페이지">‹</button>
     <button class="edge-btn" id="btnNextR" aria-label="다음 페이지">›</button>
-
-    <div id="webView"><div class="wimgs" id="webImgs"><div class="loadbox">로딩 중…</div></div></div>
-
+    <div id="webView"><div class="wimgs" id="webImgs"></div></div>
     <button id="modeFab">🌐 웹툰 모드</button>
+
+    <div id="bookCover">
+      <div class="cover-inner">
+        <span class="cover-badge">COMIC</span>
+        <h1 class="cover-title" id="cvTitle"></h1>
+        <p class="cover-sub" id="cvSub"></p>
+        <p class="cover-desc" id="cvDesc"></p>
+        <button class="cover-cta" id="btnStart">📖&nbsp; 읽기 시작</button>
+        <p class="cover-pages" id="cvPages"></p>
+      </div>
+    </div>
 
     <div id="bottomBar">
       <button class="icon-btn" id="btnToc" aria-label="목차">
@@ -195,8 +339,8 @@ html[data-theme="light"] .page{background:var(--bg)}
         <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
       </button>
       <div id="pagerBox">
-        <input type="range" id="slider" min="1" max="5" value="1" step="1" aria-label="페이지 이동">
-        <span id="pageNum">1 <small>/ 5</small></span>
+        <input type="range" id="slider" min="1" max="1" value="1" step="1" aria-label="페이지 이동">
+        <span id="pageNum">1 <small>/ 1</small></span>
       </div>
       <button class="icon-btn" id="btnNext" aria-label="다음 페이지">
         <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
@@ -206,134 +350,371 @@ html[data-theme="light"] .page{background:var(--bg)}
       </button>
     </div>
 
-    <!-- 목차 드로어 -->
     <div id="drawer">
       <h3>목차 <button id="drawerClose">✕</button></h3>
       <div class="thumb-grid" id="thumbGrid"></div>
     </div>
-
     <div id="toast"></div>
   </div>
 </div>
 
+<!-- ==================== 편집기 ==================== -->
+<div class="screen" id="editScreen">
+  <div class="edit-head">
+    <button class="back-btn" id="btnEditBack">
+      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span>뒤로</span>
+    </button>
+    <h2 id="editTitle"></h2>
+    <button class="ghost-btn" id="btnEditDone">완료</button>
+  </div>
+  <div class="edit-body" id="editBody"></div>
+  <button class="fab-add" id="btnAddPage">＋ 페이지 추가</button>
+</div>
+
+<!-- ==================== 모달 ==================== -->
+<div id="modalWrap"><div class="modal" id="modalBox"></div></div>
+
 <script>
 /* ============================================================
-   페이지 목록 — 여기에 파일만 추가하면 전체 5 등이 자동 갱신됨
+   책 데이터
+   - BUILTIN_BOOKS: 사이트에 심어져 있는 책 (읽기 전용)
+   - 유저가 만든 책: IndexedDB에 저장 (사진 Blob 포함)
    ============================================================ */
-const PAGES = [
-  {src:"images/p01.png", label:"1페이지", thumb:"images/thumbs/p01.jpg"},
-  {src:"images/p02.png", label:"2페이지", thumb:"images/thumbs/p02.jpg"},
-  {src:"images/p03.png", label:"3페이지", thumb:"images/thumbs/p03.jpg"},
-  {src:"images/p04.png", label:"4페이지", thumb:"images/thumbs/p04.jpg"},
-  {src:"images/p05.png", label:"5페이지", thumb:"images/thumbs/p05.jpg"},
+const BUILTIN_BOOKS = [
+  {
+    id: "science-lab", builtin: true,
+    title: "그날, 제1과학실",
+    subtitle: "승훈 & 선주",
+    description: "방과 후, 제1과학실에서 시작되는 이야기. 지하 실험실에서 두 사람이 마주한 것은…",
+    cover: "images/thumbs/p01.jpg",
+    pages: [
+      {src:"images/p01.png", label:"1페이지", thumb:"images/thumbs/p01.jpg"},
+      {src:"images/p02.png", label:"2페이지", thumb:"images/thumbs/p02.jpg"},
+      {src:"images/p03.png", label:"3페이지", thumb:"images/thumbs/p03.jpg"},
+      {src:"images/p04.png", label:"4페이지", thumb:"images/thumbs/p04.jpg"},
+      {src:"images/p05.png", label:"5페이지", thumb:"images/thumbs/p05.jpg"},
+    ]
+  },
 ];
-/* 예시 (추후 추가):
-PAGES.push({src:"images/p06.png", label:"6페이지", thumb:"images/thumbs/p06.jpg"});
-*/
+const EMPTY_SLOTS = 2;
+const COVER_COLORS = ["#3d4a6b","#6b3d55","#3d6b5a","#6b5a3d","#4a3d6b","#6b3d3d","#2f4858","#806248"];
 
-const N = PAGES.length;
 const $ = s => document.querySelector(s);
-const slider = $("#slider"), pageNum = $("#pageNum"), toast = $("#toast");
-let cur = 1, mode = "page", toastTimer = null;
+const store = {
+  get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
 
-/* --- 초기 세팅 --- */
-slider.max = N;
-pageNum.innerHTML = `1 <small>/ ${N}</small>`;
+/* ---------- IndexedDB ---------- */
+let dbp = null;
+function db(){
+  if (dbp) return dbp;
+  dbp = new Promise((res, rej) => {
+    const rq = indexedDB.open("comicLibrary", 1);
+    rq.onupgradeneeded = () => {
+      rq.result.createObjectStore("books", {keyPath:"id"});
+      rq.result.createObjectStore("images");
+    };
+    rq.onsuccess = () => res(rq.result);
+    rq.onerror = () => rej(rq.error);
+  });
+  return dbp;
+}
+async function idbTx(store, mode, fn){
+  const d = await db();
+  return new Promise((res, rej) => {
+    const tx = d.transaction(store, mode);
+    const out = fn(tx.objectStore(store));
+    tx.oncomplete = () => res(out && out.result !== undefined ? out.result : undefined);
+    tx.onerror = () => rej(tx.error);
+  });
+}
+const idbPutBook = b => idbTx("books","readwrite", s => s.put(b));
+const idbDelBook = id => idbTx("books","readwrite", s => s.delete(id));
+const idbAllBooks = () => idbTx("books","readonly", s => s.getAll());
+const idbPutImage = (k, blob) => idbTx("images","readwrite", s => s.put(blob, k));
+const idbGetImage = k => idbTx("images","readonly", s => s.get(k));
+const idbAllImages = () => idbTx("images","readonly", s => s.getAll());
+async function idbAllImageKeys(){ return idbTx("images","readonly", s => s.getAllKeys()); }
+const idbDelImage = k => idbTx("images","readwrite", s => s.delete(k));
 
-const pageView = $("#pageView");
-PAGES.forEach((p, i) => {
-  const d = document.createElement("div");
-  d.className = "page";
-  d.innerHTML = `<div class="page-inner zoom-wrap"><span class="loading">LOADING…</span></div>`;
-  pageView.appendChild(d);
-});
-const pageEls = [...pageView.querySelectorAll(".page")];
+/* ---------- 책 목록 (내장 + 유저) ---------- */
+let userBooks = [];
+let allBooks = [];
+async function loadLibrary(){
+  userBooks = (await idbAllBooks()) || [];
+  const overridden = new Set(userBooks.map(b => b.id));
+  const builtins = BUILTIN_BOOKS.filter(b => !overridden.has(b.id));
+  allBooks = [...builtins, ...userBooks];
+}
+const getBook = id => allBooks.find(b => b.id === id);
+/* 내장책도 수정 가능: 첫 수정 시 IDB에 사본(오버라이드)을 만든다 */
+async function makeEditable(b){
+  if (!b.builtin) return b;
+  const copy = JSON.parse(JSON.stringify(b));
+  copy.builtin = false;
+  copy.wasBuiltin = true;
+  await idbPutBook(copy);
+  await loadLibrary();
+  return getBook(b.id);
+}
+async function resetBuiltin(b){
+  await idbDelBook(b.id);
+  await loadLibrary();
+  showToast("원본으로 되돌렸어요");
+  route();
+}
 
-/* --- 목차 썸네일 --- */
-const grid = $("#thumbGrid");
-PAGES.forEach((p, i) => {
-  const t = document.createElement("div");
-  t.className = "thumb-item";
-  t.innerHTML = `<img src="${p.thumb}" alt="${p.label}" loading="lazy"><span class="lbl">${i+1}</span>`;
-  t.onclick = () => { go(i+1); toggleDrawer(false); };
-  grid.appendChild(t);
-});
+/* 페이지 photo 해석: 내장은 경로, 유저책은 IDB blob */
+const objUrls = new Map();
+async function pagePhotoURL(book, page){
+  if (page.src) return page.src;
+  if (page.photoKey) {
+    if (objUrls.has(page.photoKey)) return objUrls.get(page.photoKey);
+    const blob = await idbGetImage(page.photoKey);
+    if (!blob) return null;
+    const u = URL.createObjectURL(blob);
+    objUrls.set(page.photoKey, u);
+    return u;
+  }
+  return null;
+}
 
-/* --- 로딩 --- */
+/* ---------- 서재 렌더 ---------- */
+function renderShelf(){
+  const body = $("#shelfBody");
+  body.innerHTML = "";
+  const shelf = document.createElement("div");
+  shelf.className = "shelf";
+  const row = document.createElement("div");
+  row.className = "shelf-row";
+  allBooks.forEach((b, i) => {
+    const prog = store.get("comic_prog_" + b.id, 0);
+    const N = b.pages.length;
+    const card = document.createElement("div");
+    card.className = "book-card";
+    card.style.animationDelay = (i * 0.09) + "s";
+    const coverInner = b.coverImg
+      ? `<img src="${b.coverImg}" alt="${esc(b.title)} 표지">`
+      : (b.cover ? `<img src="${b.cover}" alt="${esc(b.title)} 표지">`
+                 : `<div class="cover-canvas" style="background:linear-gradient(150deg,${b.coverColor||"#3d4a6b"},rgba(0,0,0,.55))">
+                      <div class="ct">${esc(b.title)}</div><div class="cs">${esc(b.subtitle||"")}</div></div>`);
+    card.innerHTML = `
+      <div class="book-cover">${coverInner}<span class="book-badge">${N}p</span><span class="card-edit" title="책 수정">✎</span></div>
+      <div class="book-title">${esc(b.title)}</div>
+      <div class="book-sub">${esc(b.subtitle||"")}${b.builtin ? "" : " · 내가 만든 책"}</div>
+      <div class="book-progress">${prog > 0 && prog < N ? `${prog}페이지까지 읽음 · 이어 읽기` : (prog >= N && N > 0 ? "완독 ✓" : "")}</div>`;
+    card.onclick = () => openBook(b.id);
+    card.querySelector(".card-edit").onclick = async e => { e.stopPropagation(); openBookModal(await makeEditable(b)); };
+    row.appendChild(card);
+  });
+  // 새 책 만들기 + 빈 슬롯
+  const mk = document.createElement("button");
+  mk.className = "new-book-btn";
+  mk.innerHTML = `<span class="plus">＋</span>새 책 만들기<br><small style="font-weight:400;color:var(--dim)">글 · 사진으로 내 책을 만들어요</small>`;
+  mk.onclick = openNewBookModal;
+  row.appendChild(mk);
+  for (let i = 0; i < EMPTY_SLOTS; i++) {
+    const slot = document.createElement("div");
+    slot.className = "slot-card";
+    slot.innerHTML = `<span class="plus">＋</span><em>다음 작품<br>준비 중</em>`;
+    row.appendChild(slot);
+  }
+  shelf.appendChild(row);
+  body.appendChild(shelf);
+  // 백업/복원
+  const acts = document.createElement("div");
+  acts.className = "shelf-actions";
+  acts.innerHTML = `<button class="ghost-btn" id="btnExport">⬇ 백업 내보내기</button><button class="ghost-btn" id="btnImport">⬆ 백업 가져오기</button>`;
+  body.appendChild(acts);
+  $("#btnExport").onclick = exportBackup;
+  $("#btnImport").onclick = importBackup;
+}
+function esc(s){ return String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ---------- 라우팅 ---------- */
+let book = null, cur = 1, mode = "page", toastTimer = null;
+let pageEls = [];
 const loaded = new Set();
+let webLoaded = false;
+
+function showScreen(id){ document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id)); }
+function openBook(id){
+  book = getBook(id);
+  if (!book) return;
+  location.hash = "#/" + id;
+  setupReader();
+  showScreen("readerScreen");
+}
+function goShelf(){
+  location.hash = "#/";
+  showScreen("shelfScreen");
+}
+$("#btnBack").onclick = goShelf;
+function route(){
+  const id = location.hash.replace(/^#\//, "");
+  if (id && getBook(id)) openBook(id);
+  else { book = null; renderShelf(); showScreen("shelfScreen"); }
+}
+window.addEventListener("hashchange", route);
+
+/* ---------- 리더 ---------- */
+function setupReader(){
+  const N = book.pages.length;
+  // 이전 objectURL 정리
+  objUrls.forEach(u => URL.revokeObjectURL(u)); objUrls.clear();
+  pageView.innerHTML = "";
+  pageEls = book.pages.map(() => {
+    const d = document.createElement("div");
+    d.className = "page";
+    d.innerHTML = `<div class="page-inner"><div class="pframe"><span class="loading">LOADING…</span></div></div>`;
+    pageView.appendChild(d);
+    return d;
+  });
+  slider.min = 1; slider.max = Math.max(1,N); slider.value = 1;
+  const grid = $("#thumbGrid"); grid.innerHTML = "";
+  book.pages.forEach((p, i) => {
+    const t = document.createElement("div");
+    t.className = "thumb-item";
+    t.innerHTML = `<span class="lbl">${i+1}</span>`;
+    t.onclick = () => { go(i+1); toggleDrawer(false); };
+    grid.appendChild(t);
+    fillThumb(t, p); // 비동기 썸네일
+  });
+  $("#cvTitle").textContent = book.title;
+  $("#cvSub").textContent = book.subtitle || "";
+  $("#cvDesc").textContent = book.description || "";
+  $("#cvPages").textContent = `전체 ${N}페이지`;
+  const bc = $("#bookCover");
+  if (book.coverImg || book.cover) bc.style.setProperty("--coverimg", `url("${book.coverImg || book.cover}")`);
+  else bc.style.removeProperty("--coverimg");
+  const prog = store.get("comic_prog_" + book.id, 0);
+  $("#btnStart").innerHTML = (prog > 0 && prog < N) ? `📖&nbsp; ${prog}페이지부터 이어 읽기` : `📖&nbsp; ${N? "읽기 시작":"글 남기기"}`;
+  bc.classList.toggle("hidden", false);
+  // 편집 버튼은 항상 노출 (내장책은 수정 시 IDB 사본 저장)
+  mode = "page";
+  setModeUI("page", true);
+  cur = 1;
+  loaded.clear(); webLoaded = false;
+  updateUI(0);
+}
+async function fillThumb(el, p){
+  if (p.thumb || p.src) {
+    el.insertAdjacentHTML("afterbegin", `<img src="${p.thumb || p.src}" alt="" loading="lazy">`);
+    return;
+  }
+  if (p.photoKey) {
+    const u = await pagePhotoURL(book, p);
+    if (u) el.insertAdjacentHTML("afterbegin", `<img src="${u}" alt="">`);
+    else el.insertAdjacentHTML("afterbegin", `<div class="ttext">${esc(p.title||p.text||"")}</div>`);
+  } else {
+    el.insertAdjacentHTML("afterbegin", `<div class="ttext">${esc(p.title||p.text||"")}</div>`);
+  }
+}
+/* 페이지 본문 DOM 구성 (사진 위 + 글 아래 / 글 전용 / 사진 전용) */
+async function buildPageContent(container, p, webtoon){
+  container.querySelector(".loading")?.remove();
+  const frame = container.querySelector(".pframe") || container;
+  const url = await pagePhotoURL(book, p);
+  const hasPhoto = !!url, hasText = !!(p.title || p.text);
+  if (hasPhoto) {
+    const zw = document.createElement("div");
+    zw.className = "zoom-wrap";
+    const img = new Image();
+    img.src = url; img.alt = "";
+    zw.appendChild(img);
+    frame.appendChild(zw);
+  }
+  if (hasText) {
+    const tx = document.createElement("div");
+    tx.className = "ptext" + (hasPhoto ? " with-photo" : "");
+    tx.innerHTML = (p.title ? `<div class="pt">${esc(p.title)}</div>` : "") + esc(p.text || "");
+    frame.appendChild(tx);
+  }
+  if (!hasPhoto && !hasText) {
+    frame.insertAdjacentHTML("beforeend", `<div style="color:var(--dim);font-size:13px">빈 페이지</div>`);
+  }
+  return hasPhoto ? frame.querySelector(".zoom-wrap") : null;
+}
 function loadImage(i, cb){
   if (loaded.has(i)) { cb && cb(); return; }
-  const el = pageEls[i].querySelector(".zoom-wrap");
-  const img = new Image();
-  img.src = PAGES[i].src;
-  img.alt = PAGES[i].label;
-  img.onload = () => {
-    el.querySelector(".loading")?.remove();
-    el.appendChild(img);
-    loaded.add(i);
+  loaded.add(i);
+  const frame = pageEls[i].querySelector(".pframe");
+  buildPageContent(frame.parentElement, book.pages[i], false).then(zw => {
+    if (zw) attachZoom(zw, i);
     cb && cb();
-  };
-  img.onerror = () => { el.querySelector(".loading").textContent = "불러오기 실패"; };
+  });
+}
+function attachZoom(zw, idx){
+  zw.addEventListener("dblclick", () => toggleZoom(zw));
+  zw.addEventListener("touchend", () => {}, {passive:true}); // touch는 pageView 핸들러에서 처리
+}
+function toggleZoom(zw){
+  if (zw.classList.contains("zoomed")) { zw.classList.remove("zoomed"); const img = zw.querySelector("img"); if (img) img.style.width=""; }
+  else { const img = zw.querySelector("img"); if (img) img.style.width = (img.naturalWidth*0.9)+"px"; zw.classList.add("zoomed"); }
 }
 function loadWebView(){
+  if (webLoaded) return;
   const box = $("#webImgs");
-  if (box.dataset.done) return;
   box.innerHTML = "";
-  PAGES.forEach(p => {
-    const img = new Image();
-    img.src = p.src; img.alt = p.label; img.loading = "lazy";
-    box.appendChild(img);
+  book.pages.forEach((p, i) => {
+    const item = document.createElement("div");
+    item.className = "witem";
+    box.appendChild(item);
+    buildPageContent(item, p, true);
   });
-  box.dataset.done = "1";
+  webLoaded = true;
 }
-
-/* --- 페이지 이동 --- */
 function go(n, dir){
+  const N = book.pages.length;
+  if (!N) return;
   n = Math.max(1, Math.min(N, n));
-  if (mode !== "page") { $("#webView").scrollTo({top:(n-1)*$("#webView").clientWidth, behavior:"smooth"}); return; }
+  if (mode === "web") {
+    const items = $("#webImgs").children[n-1];
+    items && items.scrollIntoView({behavior:"smooth"});
+    return;
+  }
   const d = dir || (n > cur ? 1 : -1);
   cur = n;
+  store.set("comic_prog_" + book.id, cur);
   updateUI(d);
 }
 function updateUI(dir){
+  const N = book.pages.length;
+  if (!N) { pageNum.innerHTML = `0 <small>/ 0</small>`; return; }
   slider.value = cur;
   slider.style.setProperty("--fill", ((cur-1)/(N-1)*100) + "%");
   pageNum.innerHTML = `${cur} <small>/ ${N}</small>`;
   $("#btnPrev").disabled = cur <= 1;
   $("#btnNext").disabled = cur >= N;
-  $("#btnPrevL").style.display = cur <= 1 ? "none" : "";
-  $("#btnNextR").style.display = cur >= N ? "none" : "";
+  $("#btnPrevL").style.display = (cur <= 1 || mode==="web") ? "none" : "";
+  $("#btnNextR").style.display = (cur >= N || mode==="web") ? "none" : "";
   pageEls.forEach((el, i) => {
     el.classList.toggle("active", i+1 === cur);
     el.classList.remove("flip-in-r","flip-in-l");
   });
-  const el = pageEls[cur-1];
-  loadImage(cur, () => {
-    el.classList.add(dir > 0 ? "flip-in-r" : "flip-in-l");
-  });
-  loadImage(cur, null);
-  // 인접 페이지 미리 로드
-  if (cur+1 <= N) loadImage(cur, null), loadImage(cur+1, null);
+  loadImage(cur, () => pageEls[cur-1].classList.add(dir > 0 ? "flip-in-r" : "flip-in-l"));
+  if (cur+1 <= N) loadImage(cur+1, null);
   if (cur-1 >= 1) loadImage(cur-1, null);
+  const grid = $("#thumbGrid");
   grid.querySelectorAll(".thumb-item").forEach((t,i)=>t.classList.toggle("current", i+1===cur));
   const ct = grid.children[cur-1];
   ct && ct.scrollIntoView({block:"nearest", inline:"nearest"});
 }
-$("#slider").addEventListener("input", e => go(+e.target.value, 0));
+slider.addEventListener("input", e => go(+e.target.value, 0));
 $("#btnPrev").onclick = () => go(cur-1,-1);
 $("#btnNext").onclick = () => go(cur+1, 1);
 $("#btnPrevL").onclick = () => go(cur-1,-1);
 $("#btnNextR").onclick = () => go(cur+1, 1);
 
-/* --- 표지 --- */
 $("#btnStart").onclick = () => {
-  $("#cover").classList.add("hidden");
-  go(1, 1);
-  try { localStorage.setItem("comic_started","1"); } catch(e){}
+  $("#bookCover").classList.add("hidden");
+  if (!book.pages.length) { openPageModal(book, null); return; }
+  const prog = store.get("comic_prog_" + book.id, 0);
+  go(prog > 0 && prog < book.pages.length ? prog : 1, 1);
 };
-(function(){ try { if (localStorage.getItem("comic_started")==="1") $("#cover").classList.add("hidden"); } catch(e){} })();
 
-/* --- 좌우 스와이프 --- */
+/* 스와이프 */
 let sx=0, sy=0, swiping=false;
 pageView.addEventListener("touchstart", e => {
   if (document.querySelector(".zoom-wrap.zoomed")) return;
@@ -344,93 +725,70 @@ pageView.addEventListener("touchend", e => {
   const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
   if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)*1.4) { dx < 0 ? go(cur+1,1) : go(cur-1,-1); }
 });
-
-/* --- 키보드 --- */
+/* 더블클릭 줌 (PC) */
+pageView.addEventListener("dblclick", e => {
+  const zw = e.target.closest(".zoom-wrap");
+  if (zw) toggleZoom(zw);
+});
 document.addEventListener("keydown", e => {
+  if (!book || !$("#readerScreen").classList.contains("on")) return;
   if (e.key === "ArrowRight") go(cur+1,1);
   if (e.key === "ArrowLeft")  go(cur-1,-1);
   if (e.key === "Escape") toggleDrawer(false);
 });
 
-/* --- 더블탭/핀치 줌 (페이지 모드) --- */
-let lastTap = 0;
-pageView.addEventListener("touchend", e => {
-  const now = Date.now();
-  if (now - lastTap < 300) {
-    const zw = pageEls[cur-1].querySelector(".zoom-wrap");
-    if (zw.classList.contains("zoomed")) {
-      zw.classList.remove("zoomed");
-    } else {
-      const img = zw.querySelector("img");
-      if (img){ img.style.width = (img.naturalWidth * 0.9) + "px"; }
-      zw.classList.add("zoomed");
-    }
-  }
-  lastTap = now;
-});
-
-/* --- 다크/라이트 --- */
+/* 테마 */
 $("#btnTheme").onclick = () => {
   const r = document.documentElement;
   const next = r.dataset.theme === "light" ? "dark" : "light";
   r.dataset.theme = next;
-  try { localStorage.setItem("comic_theme", next); } catch(e){}
+  store.set("comic_theme", next);
   showToast(next === "light" ? "라이트 배경" : "다크 배경");
 };
-try { const t = localStorage.getItem("comic_theme"); if (t) document.documentElement.dataset.theme = t; } catch(e){}
+(function(){ const t = store.get("comic_theme", null); if (t) document.documentElement.dataset.theme = t; })();
 
-/* --- 목차 드로어 --- */
+/* 목차 */
 function toggleDrawer(open){
   $("#drawer").classList.toggle("open", open ?? !$("#drawer").classList.contains("open"));
 }
 $("#btnToc").onclick = () => toggleDrawer();
 $("#drawerClose").onclick = () => toggleDrawer(false);
 
-/* --- 모드 전환 --- */
+/* 모드 전환 */
 const fab = $("#modeFab");
 fab.onclick = () => setMode(mode === "page" ? "web" : "page");
-function setMode(m){
+function setModeUI(m, silent){
   mode = m;
   const isWeb = m === "web";
   pageView.style.display = isWeb ? "none" : "";
-  $("#btnPrevL").style.display = isWeb ? "none" : "";
-  $("#btnNextR").style.display = isWeb ? "none" : "";
+  $("#btnPrevL").style.display = "none";
+  $("#btnNextR").style.display = "none";
   $("#btnPrev").style.display = isWeb ? "none" : "";
   $("#btnNext").style.display = isWeb ? "none" : "";
   slider.disabled = isWeb;
   $("#webView").classList.toggle("on", isWeb);
   fab.textContent = isWeb ? "📖 책 모드" : "🌐 웹툰 모드";
-  if (isWeb) {
-    loadWebView();
-    requestAnimationFrame(() => {
-      const w = $("#webView");
-      const imgs = [...w.querySelectorAll("img")];
-      const t = imgs[Math.min(cur,N)-1];
-      t && t.scrollIntoView({behavior:"instant"});
-    });
-  } else {
-    updateUI(0);
-  }
-  showToast(isWeb ? "웹툰 모드 (세로 스크롤)" : "책 모드 (페이지 넘김)");
-  try { localStorage.setItem("comic_mode", m); } catch(e){}
+  if (isWeb) { loadWebView(); requestAnimationFrame(() => { const t = $("#webImgs").children[Math.min(cur, book.pages.length)-1]; t && t.scrollIntoView(); }); }
+  else updateUI(0);
+  if (!silent) showToast(isWeb ? "웹툰 모드 (세로 스크롤)" : "책 모드 (페이지 넘김)");
 }
-try { const m = localStorage.getItem("comic_mode"); if (m === "web") setMode("web"); } catch(e){}
-
-/* 웹툰 모드 스크롤 → 페이지 번호 추적 */
+function setMode(m){ setModeUI(m, false); store.set("comic_mode", m); }
 $("#webView").addEventListener("scroll", () => {
-  if (mode !== "web") return;
+  if (mode !== "web" || !book) return;
   const w = $("#webView");
-  const imgs = [...w.querySelectorAll("img")];
+  const items = [...$("#webImgs").children];
   const mid = w.scrollTop + w.clientHeight/2;
   let n = 1;
-  imgs.forEach((im,i) => { if (im.offsetTop <= mid) n = i+1; });
-  cur = n;
+  items.forEach((it,i) => { if (it.offsetTop <= mid) n = i+1; });
+  if (n !== cur) { cur = n; store.set("comic_prog_" + book.id, cur); }
+  const N = book.pages.length;
   pageNum.innerHTML = `${cur} <small>/ ${N}</small>`;
   slider.value = cur; slider.style.setProperty("--fill", ((cur-1)/(N-1)*100)+"%");
-  grid.querySelectorAll(".thumb-item").forEach((t,i)=>t.classList.toggle("current", i+1===cur));
+}, {passive:true});
+$("#webView").addEventListener("scroll", () => {
+  fab.classList.toggle("hide", mode === "web" && $("#webView").scrollTop > 40);
 }, {passive:true});
 
-/* --- 토스트 --- */
 function showToast(msg){
   toast.textContent = msg;
   toast.classList.add("show");
@@ -438,14 +796,304 @@ function showToast(msg){
   toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
 }
 
-/* 스크롤 시 FAB 숨김 (웹툰 모드) */
-$("#webView").addEventListener("scroll", () => {
-  fab.classList.toggle("hide", mode === "web" && $("#webView").scrollTop > 40);
-}, {passive:true});
+/* ============================================================ 편집기 */
+$("#btnEditBook").onclick = async () => { const b = await makeEditable(book); openEditor(b.id); };
+$("#btnEditBack").onclick = () => { if (book) openBook(book.id); else route(); };
+$("#btnEditDone").onclick = async () => {
+  await saveUserBook();
+  showToast("저장했어요");
+  route();
+};
+let editBook = null;
+async function openEditor(id){
+  editBook = getBook(id);
+  if (!editBook) return;
+  $("#editTitle").textContent = `페이지 편집 — ${editBook.title}`;
+  renderEditor();
+  // 책 정보(제목·표지·삭제) 수정 버튼
+  const info = document.getElementById("btnBookInfo");
+  if (!info) {
+    const b = document.createElement("button");
+    b.id = "btnBookInfo"; b.className = "ghost-btn"; b.textContent = "책 정보·삭제";
+    b.onclick = () => openBookModal(editBook);
+    document.querySelector(".edit-head").appendChild(b);
+  }
+  showScreen("editScreen");
+}
+/* 책 정보 수정 + 삭제 모달 (새 책 만들기도 같은 모달 사용) */
+function openBookModal(b){
+  const isNew = !b;
+  const target = b || {};
+  let color = target.coverColor || COVER_COLORS[0], coverData = target.coverImg || null;
+  openModal(`
+    <h3>${isNew ? "새 책 만들기" : "책 정보 수정"}</h3>
+    <label>제목</label>
+    <input type="text" id="nbTitle" maxlength="60" value="${esc(target.title||"")}" placeholder="예: 두 번째 이야기">
+    <label>부제</label>
+    <input type="text" id="nbSub" maxlength="60" value="${esc(target.subtitle||"")}" placeholder="예: 승훈 & 선주 외전">
+    <label>설명 (표지 뒷면 소개)</label>
+    <input type="text" id="nbDesc" maxlength="120" value="${esc(target.description||"")}" placeholder="어떤 이야기인지 한 줄로">
+    <label>표지 색상</label>
+    <div class="swatches">${COVER_COLORS.map(c=>`<div class="sw${c===color?" sel":""}" data-c="${c}" style="background:${c}"></div>`).join("")}</div>
+    <label>표지 사진 (선택)</label>
+    <label class="filebtn${coverData?" has":""}" id="nbCoverBtn">${coverData? "✓ 사진 있음 — 눌러서 바꾸기" : "📷 표지로 쓰일 사진 고르기"}</label>
+    <input type="file" id="nbCover" accept="image/*" style="display:none">
+    <div class="cover-preview" id="nbCoverPrev" style="${coverData?"":"display:none"}"><img alt="" ${coverData?`src="${coverData}"`:""}></div>
+    <div class="modal-actions">
+      ${isNew ? "" : `<button class="btn plain" id="nbDelete" style="color:#ff7a7a">책 삭제</button>`}
+      ${(!isNew && target.wasBuiltin) ? `<button class="btn plain" id="nbReset">원본으로 되돌리기</button>` : ""}
+    </div>
+    <div class="modal-actions">
+      <button class="btn plain" id="nbCancel">취소</button>
+      <button class="btn primary" id="nbCreate">${isNew ? "책 만들기" : "저장"}</button>
+    </div>`);
+  $("#modalBox").querySelectorAll(".sw").forEach(sw => sw.onclick = () => {
+    color = sw.dataset.c;
+    $("#modalBox").querySelectorAll(".sw").forEach(x=>x.classList.remove("sel"));
+    sw.classList.add("sel");
+  });
+  $("#nbCoverBtn").onclick = () => $("#nbCover").click();
+  $("#nbCover").onchange = async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    coverData = await fileToThumbData(f, 600);
+    $("#nbCoverBtn").classList.add("has");
+    $("#nbCoverBtn").textContent = "✓ 사진 선택됨 — 눌러서 바꾸기";
+    const pv = $("#nbCoverPrev");
+    pv.style.display = ""; pv.querySelector("img").src = coverData;
+  };
+  $("#nbCancel").onclick = closeModal;
+  $("#nbCreate").onclick = async () => {
+    const title = $("#nbTitle").value.trim();
+    if (!title) { $("#nbTitle").focus(); $("#nbTitle").placeholder = "제목을 입력해 주세요"; return; }
+    const rec = {
+      id: target.id || ("book_" + Date.now().toString(36)),
+      title, subtitle: $("#nbSub").value.trim(), description: $("#nbDesc").value.trim(),
+      builtin: false, wasBuiltin: !!target.wasBuiltin,
+      coverColor: coverData ? null : color, coverImg: coverData || null,
+      cover: target.cover || null, pages: target.pages || []
+    };
+    await idbPutBook(JSON.parse(JSON.stringify(rec)));
+    await loadLibrary();
+    closeModal();
+    if (isNew) { showToast("책을 만들었어요 — 페이지를 추가해 보세요"); openEditor(rec.id); }
+    else { showToast("책 정보를 저장했어요"); await loadLibrary(); editBook = getBook(rec.id); renderEditor(); if (editBook) { $("#editTitle").textContent = `페이지 편집 — ${editBook.title}`; renderShelf(); } }
+  };
+  const delBtn = document.getElementById("nbDelete");
+  if (delBtn) delBtn.onclick = async () => {
+    if (!confirm(`『${target.title}」를(을) 삭제할까요?\n저장된 사진·글도 함께 지워지고 되돌릴 수 없어요.`)) return;
+    for (const p of (target.pages||[])) if (p.photoKey) await idbDelImage(p.photoKey);
+    await idbDelBook(target.id);
+    await loadLibrary();
+    closeModal();
+    editBook = null; book = null;
+    showToast("책을 삭제했어요");
+    location.hash = "#/"; renderShelf(); showScreen("shelfScreen");
+  };
+  const resetBtn = document.getElementById("nbReset");
+  if (resetBtn) resetBtn.onclick = async () => {
+    if (!confirm("수정 내용을 버리고 제공된 원본으로 되돌릴까요?")) return;
+    await idbDelBook(target.id);
+    await loadLibrary();
+    closeModal();
+    editBook = null;
+    location.hash = "#/"; renderShelf(); showScreen("shelfScreen");
+    showToast("원본으로 되돌렸어요");
+  };
+}
+async function saveUserBook(){
+  if (!editBook || editBook.builtin) return;
+  await idbPutBook(JSON.parse(JSON.stringify(editBook)));
+  await loadLibrary();
+  book = getBook(editBook.id);
+}
+function renderEditor(){
+  const body = $("#editBody");
+  body.innerHTML = "";
+  const b = editBook;
+  if (!b.pages.length) {
+    body.innerHTML = `<div class="edit-empty">아직 페이지가 없어요.<br>아래 <b>＋ 페이지 추가</b> 버튼으로 사진이나 글을 담은 첫 페이지를 만들어 보세요.</div>`;
+  }
+  b.pages.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "pagerow";
+    const prev = p.thumbData || (p.src ? p.src : "");
+    const preview = prev
+      ? `<img src="${prev}" alt="">`
+      : (p.title || p.text ? `<div class="ttext">${esc((p.title? p.title+"\n":"")+(p.text||""))}</div>` : `<div class="ttext" style="color:var(--dim)">빈 페이지</div>`);
+    const desc = p.photoKey ? "사진" : (p.src ? "사진(내장)" : "");
+    if (desc && (p.title || p.text)) desc += " + 글";
+    row.innerHTML = `
+      <div class="pthumb">${preview}</div>
+      <div class="pinfo"><b>${i+1}페이지</b><span>${desc || "글"}${p.title? " · "+esc(p.title):""}</span></div>
+      <div class="pops">
+        <button class="mini-btn" data-act="up" ${i===0?"disabled":""}>↑</button>
+        <button class="mini-btn" data-act="down" ${i===b.pages.length-1?"disabled":""}>↓</button>
+        <button class="mini-btn" data-act="edit">✎</button>
+        <button class="mini-btn danger" data-act="del">🗑</button>
+      </div>`;
+    row.querySelector('[data-act=up]').onclick = () => movePage(i, -1);
+    row.querySelector('[data-act=down]').onclick = () => movePage(i, 1);
+    row.querySelector('[data-act=edit]').onclick = () => openPageModal(b, p);
+    row.querySelector('[data-act=del]').onclick = () => {
+      if (confirm(`${i+1}페이지를 삭제할까요?`)) { b.pages.splice(i,1); renderEditor(); }
+    };
+    body.appendChild(row);
+  });
+}
+async function movePage(i, d){
+  const j = i + d;
+  if (j < 0 || j >= editBook.pages.length) return;
+  const arr = editBook.pages;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  renderEditor();
+}
 
-/* 첫 페이지 미리 로드 */
-loadImage(0, null); loadImage(1, null);
-updateUI(0);
+/* ---------- 모달 (새 책 / 페이지) ---------- */
+function openModal(html){
+  $("#modalBox").innerHTML = html;
+  $("#modalWrap").classList.add("on");
+}
+function closeModal(){ $("#modalWrap").classList.remove("on"); }
+$("#modalWrap").addEventListener("click", e => { if (e.target.id === "modalWrap") closeModal(); });
+
+const openNewBookModal = () => openBookModal(null);
+
+/* 페이지 추가/수정 모달: 사진 + 글 모두 지원 */
+function openPageModal(b, page){
+  const isNew = !page;
+  let photoBlob = null, photoKey = page?.photoKey || null, photoData = page?.thumbData || null;
+  let removePhoto = false;
+  openModal(`
+    <h3>${isNew ? "페이지 추가" : `${b.pages.indexOf(page)+1}페이지 수정`}</h3>
+    <label>사진 (만화 원고·삽화 — 선택)</label>
+    <label class="filebtn${photoData?" has":""}" id="pgPhotoBtn">${photoData? "✓ 사진 있음 — 눌러서 바꾸기" : "📷 폰 갤러리/파일에서 사진 고르기"}</label>
+    <input type="file" id="pgPhoto" accept="image/*" style="display:none">
+    <div class="cover-preview" id="pgPhotoPrev" style="display:none"><img alt=""></div>
+    ${page?.photoKey || page?.thumbData ? `<button class="ghost-btn" id="pgPhotoDel" style="margin-top:8px">사진 제거</button>` : ""}
+    <label>제목 (선택)</label>
+    <input type="text" id="pgTitle" maxlength="80" value="${esc(page?.title||"")}" placeholder="장 제목이나 한 줄">
+    <label>본문 글 (선택 — 사진만, 글만, 둘 다 가능)</label>
+    <textarea id="pgText" placeholder="이야기를 적어보세요…">${esc(page?.text||"")}</textarea>
+    <div class="modal-actions">
+      <button class="btn plain" id="pgCancel">취소</button>
+      <button class="btn primary" id="pgSave">저장</button>
+    </div>`);
+  if (photoData) { const pv = $("#pgPhotoPrev"); pv.style.display=""; pv.querySelector("img").src = photoData; }
+  const pdel = document.getElementById("pgPhotoDel");
+  if (pdel) pdel.onclick = () => { removePhoto = true; photoBlob = null; photoData = null;
+    $("#pgPhotoBtn").classList.remove("has"); $("#pgPhotoBtn").textContent = "📷 폰 갤러리/파일에서 사진 고르기";
+    $("#pgPhotoPrev").style.display = "none"; pdel.style.display = "none"; };
+  $("#pgPhotoBtn").onclick = () => $("#pgPhoto").click();
+  $("#pgPhoto").onchange = async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    photoBlob = f;
+    photoData = await fileToThumbData(f, 600);
+    photoKey = null; removePhoto = false;
+    $("#pgPhotoBtn").classList.add("has");
+    $("#pgPhotoBtn").textContent = "✓ 사진 선택됨 — 눌러서 바꾸기";
+    const pv = $("#pgPhotoPrev");
+    pv.style.display = ""; pv.querySelector("img").src = photoData;
+  };
+  $("#pgCancel").onclick = closeModal;
+  $("#pgSave").onclick = async () => {
+    const title = $("#pgTitle").value.trim(), text = $("#pgText").value;
+    if (isNew) {
+      const p = {photoKey:null, thumbData:null, title, text};
+      if (photoBlob) {
+        const key = "img_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7);
+        await idbPutImage(key, photoBlob);
+        p.photoKey = key; p.thumbData = photoData;
+      }
+      b.pages.push(p);
+    } else {
+      page.title = title; page.text = text;
+      if (photoBlob) {
+        if (page.photoKey) await idbDelImage(page.photoKey);
+        const key = "img_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,7);
+        await idbPutImage(key, photoBlob);
+        page.photoKey = key; page.thumbData = photoData;
+      } else if (removePhoto && page.photoKey) {
+        await idbDelImage(page.photoKey);
+        page.photoKey = null; page.thumbData = null;
+      }
+    }
+    await saveUserBook();
+    closeModal();
+    renderEditor();
+    showToast("저장했어요");
+  };
+}
+/* 업로드 파일 → 썸네일 dataURL (표지/미리보기용, 원본은 Blob 그대로 저장) */
+function fileToThumbData(file, max){
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const sc = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      res(c.toDataURL("image/jpeg", 0.82));
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/* ---------- 백업 ---------- */
+async function exportBackup(){
+  const imgs = {};
+  const keys = (await idbAllImageKeys()) || [];
+  const blobs = (await idbAllImages()) || [];
+  for (let i = 0; i < keys.length; i++) {
+    imgs[keys[i]] = await blobToDataURL(blobs[i]);
+  }
+  const payload = {version: 1, exported: new Date().toISOString(), books: userBooks, images: imgs};
+  const blob = new Blob([JSON.stringify(payload)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "만화서재-백업-" + new Date().toISOString().slice(0,10) + ".json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function blobToDataURL(blob){
+  return new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(blob); });
+}
+function dataURLtoBlob(u){
+  const [head, b64] = u.split(",");
+  const mime = head.match(/:(.*?);/)[1];
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], {type: mime});
+}
+async function importBackup(){
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "application/json";
+  inp.onchange = async () => {
+    const f = inp.files[0];
+    if (!f) return;
+    try {
+      const data = JSON.parse(await f.text());
+      if (!data.books) throw 0;
+      for (const k of Object.keys(data.images || {})) await idbPutImage(k, dataURLtoBlob(data.images[k]));
+      for (const b of data.books) await idbPutBook(b);
+      await loadLibrary();
+      renderShelf();
+      showToast(`백업을 불러왔어요 (${data.books.length}권)`);
+    } catch(e) { showToast("백업 파일을 읽지 못했어요"); }
+  };
+  inp.click();
+}
+
+/* ---------- 시작 ---------- */
+(async () => {
+  await loadLibrary();
+  renderShelf();
+  route();
+})();
 </script>
 </body>
 </html>
