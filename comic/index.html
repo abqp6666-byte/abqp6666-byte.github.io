@@ -122,8 +122,10 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 @keyframes flipInR{from{opacity:0;transform:perspective(1400px) rotateY(-7deg) translateX(7%)}to{opacity:1;transform:none}}
 @keyframes flipInL{from{opacity:0;transform:perspective(1400px) rotateY(7deg) translateX(-7%)}to{opacity:1;transform:none}}
 .page-inner{position:absolute;top:62px;bottom:74px;left:10px;right:10px;display:flex;align-items:center;justify-content:center}
-.pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;max-width:100%;max-height:100%}
-.pframe img{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
+.pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;height:100%;min-height:0}
+.pframe img{max-width:100%;max-height:100%;width:auto;height:auto;flex:0 1 auto;min-height:0;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
+.pframe:has(.ptext) img{max-height:62%}
+.pframe:has(.ptext) .ptext{max-height:34%}
 .zoom-wrap{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
 .zoom-wrap.zoomed{position:absolute;inset:0;z-index:5;overflow:auto;touch-action:pan-x pan-y;align-items:flex-start;justify-content:flex-start}
 .zoom-wrap.zoomed img{max-width:none;border-radius:0}
