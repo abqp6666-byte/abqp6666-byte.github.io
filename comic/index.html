@@ -114,21 +114,23 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 .page{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .38s ease, transform .38s ease, visibility .38s;
-  will-change:opacity,transform;padding:62px 10px 74px;
+  will-change:opacity,transform;padding:0;
 }
 .page.active{opacity:1;visibility:visible;transform:none}
 .flip-in-r{animation:flipInR .42s cubic-bezier(.22,.9,.3,1) both}
 .flip-in-l{animation:flipInL .42s cubic-bezier(.22,.9,.3,1) both}
 @keyframes flipInR{from{opacity:0;transform:perspective(1400px) rotateY(-7deg) translateX(7%)}to{opacity:1;transform:none}}
 @keyframes flipInL{from{opacity:0;transform:perspective(1400px) rotateY(7deg) translateX(-7%)}to{opacity:1;transform:none}}
-.page-inner{position:absolute;top:62px;bottom:74px;left:10px;right:10px;display:flex;align-items:center;justify-content:center}
-.pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;height:100%;min-height:0}
-.pframe .zoom-wrap{height:auto;min-height:0;flex:0 1 auto}
-.pframe img{max-width:100%;max-height:calc(100vh - 230px);width:auto;height:auto;flex:0 1 auto;min-height:0;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
-.pframe:has(.ptext) img{max-height:52vh}
+/* 좌우 여백 없이 화면 폭을 꽉 채우고, 세로로 길면 그대로 스크롤 */
+.page-inner{position:absolute;top:52px;bottom:64px;left:0;right:0;display:flex;align-items:flex-start;justify-content:center;
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;height:auto;min-height:100%;margin:auto 0}
+.pframe .zoom-wrap{height:auto;min-height:0;flex:0 0 auto}
+.pframe img{max-width:100%;max-height:none;width:100%;height:auto;flex:0 0 auto;min-height:0;border-radius:0;box-shadow:none;display:block}
+.pframe:has(.ptext) img{width:auto;max-height:52vh;border-radius:8px}
 .pframe:has(.ptext) .ptext{max-height:28vh}
 .zoom-wrap{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
-.zoom-wrap.zoomed{position:absolute;inset:0;z-index:5;overflow:auto;touch-action:pan-x pan-y;align-items:flex-start;justify-content:flex-start}
+.zoom-wrap.zoomed{position:fixed;inset:0;z-index:46;overflow:auto;touch-action:pan-x pan-y;align-items:flex-start;justify-content:flex-start;background:var(--bg)}
 .zoom-wrap.zoomed img{max-width:none;border-radius:0}
 /* 글 페이지 */
 .ptext{
@@ -173,16 +175,22 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 .cover-pages{margin-top:18px;font-size:12px;color:#8d8499;letter-spacing:.2em}
 #webView{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;background:var(--bg)}
 #webView.on{display:block}
-#webView .wimgs{display:flex;flex-direction:column;align-items:center;gap:26px;padding:66px 0 90px}
-#webView .witem{width:min(100%,760px);display:flex;flex-direction:column;align-items:center;gap:10px}
-#webView .witem img{width:100%;display:block;border-radius:6px}
+#webView .wimgs{display:flex;flex-direction:column;align-items:center;gap:26px;padding:52px 0 64px}
+#webView .witem{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
+#webView .witem img{width:100%;display:block;border-radius:0}
 #webView .ptext{max-height:none;width:min(92%,560px)}
 #bottomBar{
   position:absolute;left:0;right:0;bottom:0;z-index:40;height:64px;display:flex;align-items:center;gap:6px;
   padding:0 10px;padding-bottom:env(safe-area-inset-bottom);
   background:var(--bar);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid rgba(255,255,255,.07);
+  transition:transform .3s cubic-bezier(.3,.9,.3,1), opacity .24s ease, visibility .3s;
 }
+/* 하단바 감춤(전체화면 읽기) */
+#readerScreen.barless #bottomBar{transform:translateY(110%);opacity:0;visibility:hidden;pointer-events:none}
+#readerScreen.barless .page-inner{bottom:0}
+#readerScreen.barless #webView .wimgs{padding-bottom:24px}
+#btnBarToggle.on{background:rgba(255,143,179,.18);color:var(--accent)}
 .icon-btn{border:none;background:transparent;color:var(--ink);cursor:pointer;flex:0 0 auto;
   width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;transition:background .15s;}
 .icon-btn:active{background:rgba(128,128,150,.18)}
@@ -227,11 +235,13 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 #modeFab{position:absolute;right:14px;bottom:80px;z-index:35;border:none;cursor:pointer;
   background:rgba(25,25,36,.85);color:var(--ink);font-size:12px;font-weight:600;
   padding:10px 15px;border-radius:999px;backdrop-filter:blur(8px);
-  box-shadow:0 4px 18px rgba(0,0,0,.4);transition:opacity .3s;}
+  box-shadow:0 4px 18px rgba(0,0,0,.4);transition:opacity .3s, bottom .3s cubic-bezier(.3,.9,.3,1);}
 #modeFab.hide{opacity:0;pointer-events:none}
 #editFab{position:absolute;right:14px;bottom:80px;z-index:34;border:none;cursor:pointer;
   background:rgba(25,25,36,.85);color:var(--ink);font-size:12px;font-weight:600;
-  padding:10px 15px;border-radius:999px;backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.4);}
+  padding:10px 15px;border-radius:999px;backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.4);
+  transition:bottom .3s cubic-bezier(.3,.9,.3,1);}
+#readerScreen.barless #modeFab,#readerScreen.barless #editFab{bottom:16px}
 
 /* ============================================================ 편집기 */
 #editScreen{background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -313,6 +323,9 @@ html[data-theme="light"] .pagerow{border-color:rgba(0,0,0,.06)}
       <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg><span>책장으로</span>
     </button>
     <div class="top-spacer"></div>
+    <button class="icon-btn" id="btnBarToggle" aria-label="하단바 숨기기" aria-pressed="false" style="width:40px;height:40px" title="하단바 숨기기">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15h18"/></svg>
+    </button>
     <button class="icon-btn" id="btnEditBook" aria-label="페이지 편집" style="width:40px;height:40px" title="페이지 편집">
       <svg viewBox="0 0 24 24"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg>
     </button>
@@ -576,6 +589,7 @@ window.addEventListener("hashchange", route);
 function setupReader(){
   const N = book.pages.length;
   $("#stage").scrollTop = 0;   /* 목차 서랍 때문에 생긴 스크롤 잔여값 제거 */
+  setBarless(store.get("comic_barless", false), true);  /* 지난번에 고른 하단바 상태 복원 */
   // 이전 objectURL 정리
   objUrls.forEach(u => URL.revokeObjectURL(u)); objUrls.clear();
   pageView.innerHTML = "";
@@ -697,7 +711,12 @@ function go(n, dir){
   cur = n;
   setProg(book, cur);
   $("#stage").scrollTop = 0;
+  resetPageScroll();   /* 새 페이지는 항상 맨 위부터 */
   updateUI(d);
+}
+/* 페이지 안쪽 스크롤을 맨 위로 */
+function resetPageScroll(){
+  pageEls.forEach(el => { const pi = el.querySelector(".page-inner"); if (pi) pi.scrollTop = 0; });
 }
 function updateUI(dir){
   const N = book.pages.length;
@@ -766,6 +785,23 @@ $("#btnTheme").onclick = () => {
   showToast(next === "light" ? "라이트 배경" : "다크 배경");
 };
 (function(){ const t = store.get("comic_theme", null); if (t) document.documentElement.dataset.theme = t; })();
+
+/* 하단바 토글 — 상단 오른쪽 버튼으로 하단바를 잠시 감추고 다시 꺼낸다 */
+const BTN_BAR_SHOWN = '<rect x="3" y="4" width="18" height="16" rx="3"/><rect x="3" y="15" width="18" height="5" rx="1" fill="currentColor" stroke="none" opacity=".45"/><path d="M3 15h18"/>';
+const BTN_BAR_HIDDEN = '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15h18"/><path d="M12 6.5v4.6M9.8 8.9L12 11.1l2.2-2.2"/>';
+function setBarless(on, silent){
+  on = !!on;
+  const rs = $("#readerScreen"), btn = $("#btnBarToggle");
+  rs.classList.toggle("barless", on);
+  btn.classList.toggle("on", on);
+  btn.setAttribute("aria-pressed", on ? "true" : "false");
+  btn.title = on ? "하단바 보이기" : "하단바 숨기기";
+  btn.setAttribute("aria-label", btn.title);
+  btn.querySelector("svg").innerHTML = on ? BTN_BAR_HIDDEN : BTN_BAR_SHOWN;
+  store.set("comic_barless", on);
+  if (!silent) showToast(on ? "하단바 숨김 · 전체화면" : "하단바 표시");
+}
+$("#btnBarToggle").onclick = () => setBarless(!$("#readerScreen").classList.contains("barless"));
 
 /* 목차 */
 function toggleDrawer(open){
