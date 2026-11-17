@@ -922,7 +922,7 @@ function renderEditor(){
     const preview = prev
       ? `<img src="${prev}" alt="">`
       : (p.title || p.text ? `<div class="ttext">${esc((p.title? p.title+"\n":"")+(p.text||""))}</div>` : `<div class="ttext" style="color:var(--dim)">빈 페이지</div>`);
-    const desc = p.photoKey ? "사진" : (p.src ? "사진(내장)" : "");
+    let desc = p.photoKey ? "사진" : (p.src ? "사진(내장)" : "");
     if (desc && (p.title || p.text)) desc += " + 글";
     row.innerHTML = `
       <div class="pthumb">${preview}</div>
@@ -1023,6 +1023,8 @@ function openPageModal(b, page){
     await saveUserBook();
     closeModal();
     renderEditor();
+    // 리더가 열려 있던 책이면 리더도 새로고침
+    if (book && book.id === b.id && $("#readerScreen").classList.contains("on")) setupReader();
     showToast("저장했어요");
   };
 }
