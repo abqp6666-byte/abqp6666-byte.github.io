@@ -397,6 +397,19 @@ const BUILTIN_BOOKS = [
     ]
   },
 ];
+/* 내장책 내용이 바뀌면 rev를 올린다 → 예전 페이지 기준 독서 진행률은 자동으로 새로 시작 */
+const BUILTIN_REV = { "science-lab": 2 };
+function bookRev(b){ return b && b.builtin ? (BUILTIN_REV[b.id] || 0) : 0; }
+function getProg(b){
+  if (!b) return 0;
+  if (store.get("comic_rev_" + b.id, 0) !== bookRev(b)) return 0;
+  return store.get("comic_prog_" + b.id, 0);
+}
+function setProg(b, n){
+  if (!b) return;
+  store.set("comic_rev_" + b.id, bookRev(b));
+  store.set("comic_prog_" + b.id, n);
+}
 const EMPTY_SLOTS = 2;
 const COVER_COLORS = ["#3d4a6b","#6b3d55","#3d6b5a","#6b5a3d","#4a3d6b","#6b3d3d","#2f4858","#806248"];
 
@@ -490,7 +503,7 @@ function renderShelf(){
   const row = document.createElement("div");
   row.className = "shelf-row";
   allBooks.forEach((b, i) => {
-    const prog = store.get("comic_prog_" + b.id, 0);
+    const prog = getProg(b);
     const N = b.pages.length;
     const card = document.createElement("div");
     card.className = "book-card";
@@ -589,7 +602,7 @@ function setupReader(){
   const bc = $("#bookCover");
   if (book.coverImg || book.cover) bc.style.setProperty("--coverimg", `url("${book.coverImg || book.cover}")`);
   else bc.style.removeProperty("--coverimg");
-  const prog = store.get("comic_prog_" + book.id, 0);
+  const prog = getProg(book);
   $("#btnStart").innerHTML = (prog > 0 && prog < N) ? `📖&nbsp; ${prog}페이지부터 이어 읽기` : `📖&nbsp; ${N? "읽기 시작":"글 남기기"}`;
   bc.classList.toggle("hidden", false);
   // 편집 버튼은 항상 노출 (내장책은 수정 시 IDB 사본 저장)
@@ -681,7 +694,7 @@ function go(n, dir){
   }
   const d = dir || (n > cur ? 1 : -1);
   cur = n;
-  store.set("comic_prog_" + book.id, cur);
+  setProg(book, cur);
   updateUI(d);
 }
 function updateUI(dir){
@@ -715,7 +728,7 @@ $("#btnNextR").onclick = () => go(cur+1, 1);
 $("#btnStart").onclick = () => {
   $("#bookCover").classList.add("hidden");
   if (!book.pages.length) { openPageModal(book, null); return; }
-  const prog = store.get("comic_prog_" + book.id, 0);
+  const prog = getProg(book);
   go(prog > 0 && prog < book.pages.length ? prog : 1, 1);
 };
 
@@ -785,7 +798,7 @@ $("#webView").addEventListener("scroll", () => {
   const mid = w.scrollTop + w.clientHeight/2;
   let n = 1;
   items.forEach((it,i) => { if (it.offsetTop <= mid) n = i+1; });
-  if (n !== cur) { cur = n; store.set("comic_prog_" + book.id, cur); }
+  if (n !== cur) { cur = n; setProg(book, cur); }
   const N = book.pages.length;
   pageNum.innerHTML = `${cur} <small>/ ${N}</small>`;
   slider.value = cur; slider.style.setProperty("--fill", ((cur-1)/(N-1)*100)+"%");
