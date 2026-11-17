@@ -387,16 +387,13 @@ html[data-theme="light"] .pagerow{border-color:rgba(0,0,0,.06)}
 const BUILTIN_BOOKS = [
   {
     id: "science-lab", builtin: true,
-    title: "그날, 제1과학실",
-    subtitle: "승훈 & 선주",
-    description: "방과 후, 제1과학실에서 시작되는 이야기. 지하 실험실에서 두 사람이 마주한 것은…",
-    cover: "images/thumbs/p01.jpg",
+    title: "균열의 끝에서",
+    subtitle: "",
+    description: "아침 8시 4분, 지각 위기의 등굣길. 어릴 적부터 함께 걷던 두 사람의 하루가 시작된다.",
+    cover: "images/cover.jpg",
     pages: [
-      {src:"images/p01.png", label:"1페이지", thumb:"images/thumbs/p01.jpg"},
-      {src:"images/p02.png", label:"2페이지", thumb:"images/thumbs/p02.jpg"},
-      {src:"images/p03.png", label:"3페이지", thumb:"images/thumbs/p03.jpg"},
-      {src:"images/p04.png", label:"4페이지", thumb:"images/thumbs/p04.jpg"},
-      {src:"images/p05.png", label:"5페이지", thumb:"images/thumbs/p05.jpg"},
+      {src:"images/p01.jpg", label:"1페이지", thumb:"images/thumbs/p01.jpg"},
+      {src:"images/p02.jpg", label:"2페이지", thumb:"images/thumbs/p02.jpg"},
     ]
   },
 ];
@@ -839,7 +836,7 @@ function openBookModal(b){
     <label>제목</label>
     <input type="text" id="nbTitle" maxlength="60" value="${esc(target.title||"")}" placeholder="예: 두 번째 이야기">
     <label>부제</label>
-    <input type="text" id="nbSub" maxlength="60" value="${esc(target.subtitle||"")}" placeholder="예: 승훈 & 선주 외전">
+    <input type="text" id="nbSub" maxlength="60" value="${esc(target.subtitle||"")}" placeholder="예: 여름 이야기">
     <label>설명 (표지 뒷면 소개)</label>
     <input type="text" id="nbDesc" maxlength="120" value="${esc(target.description||"")}" placeholder="어떤 이야기인지 한 줄로">
     <label>표지 색상</label>
