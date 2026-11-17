@@ -109,7 +109,7 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 .back-btn svg{width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .back-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .top-spacer{flex:1}
-#stage{position:relative;flex:1;overflow:hidden}
+#stage{position:relative;flex:1;overflow:hidden;overflow:clip}
 #pageView{position:absolute;inset:0;touch-action:pan-y}
 .page{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
@@ -575,6 +575,7 @@ window.addEventListener("hashchange", route);
 /* ---------- 리더 ---------- */
 function setupReader(){
   const N = book.pages.length;
+  $("#stage").scrollTop = 0;   /* 목차 서랍 때문에 생긴 스크롤 잔여값 제거 */
   // 이전 objectURL 정리
   objUrls.forEach(u => URL.revokeObjectURL(u)); objUrls.clear();
   pageView.innerHTML = "";
@@ -695,6 +696,7 @@ function go(n, dir){
   const d = dir || (n > cur ? 1 : -1);
   cur = n;
   setProg(book, cur);
+  $("#stage").scrollTop = 0;
   updateUI(d);
 }
 function updateUI(dir){
