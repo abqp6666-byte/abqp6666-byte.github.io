@@ -693,9 +693,9 @@ function updateUI(dir){
     el.classList.toggle("active", i+1 === cur);
     el.classList.remove("flip-in-r","flip-in-l");
   });
-  loadImage(cur, () => pageEls[cur-1].classList.add(dir > 0 ? "flip-in-r" : "flip-in-l"));
-  if (cur+1 <= N) loadImage(cur+1, null);
-  if (cur-1 >= 1) loadImage(cur-1, null);
+  loadImage(cur-1, () => pageEls[cur-1].classList.add(dir > 0 ? "flip-in-r" : "flip-in-l"));
+  if (cur+1 <= N) loadImage(cur, null);
+  if (cur-1 >= 2) loadImage(cur-2, null);
   const grid = $("#thumbGrid");
   grid.querySelectorAll(".thumb-item").forEach((t,i)=>t.classList.toggle("current", i+1===cur));
   const ct = grid.children[cur-1];
