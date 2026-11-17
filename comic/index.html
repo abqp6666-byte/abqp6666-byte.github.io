@@ -902,11 +902,13 @@ function openBookModal(b){
     showToast("원본으로 되돌렸어요");
   };
 }
-async function saveUserBook(){
-  if (!editBook || editBook.builtin) return;
-  await idbPutBook(JSON.parse(JSON.stringify(editBook)));
+async function saveUserBook(target){
+  target = target || editBook;
+  if (!target || target.builtin) return;
+  await idbPutBook(JSON.parse(JSON.stringify(target)));
   await loadLibrary();
-  book = getBook(editBook.id);
+  book = getBook(target.id);
+  if (editBook && editBook.id === target.id) editBook = getBook(target.id);
 }
 function renderEditor(){
   const body = $("#editBody");
@@ -1020,7 +1022,7 @@ function openPageModal(b, page){
         page.photoKey = null; page.thumbData = null;
       }
     }
-    await saveUserBook();
+    await saveUserBook(b);
     closeModal();
     renderEditor();
     // 리더가 열려 있던 책이면 리더도 새로고침
