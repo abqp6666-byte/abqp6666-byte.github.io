@@ -123,7 +123,9 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 @keyframes flipInL{from{opacity:0;transform:perspective(1400px) rotateY(7deg) translateX(-7%)}to{opacity:1;transform:none}}
 /* 좌우 여백 없이 화면 폭을 꽉 채우고, 세로로 길면 그대로 스크롤 */
 .page-inner{position:absolute;top:52px;bottom:64px;left:0;right:0;display:flex;align-items:flex-start;justify-content:center;
-  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  scrollbar-width:none;-ms-overflow-style:none}
+.page-inner::-webkit-scrollbar,#webView::-webkit-scrollbar{width:0;height:0;display:none}
 .pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;height:auto;min-height:100%;margin:auto 0}
 .pframe .zoom-wrap{height:auto;min-height:0;flex:0 0 auto}
 .pframe img{max-width:100%;max-height:none;width:100%;height:auto;flex:0 0 auto;min-height:0;border-radius:0;box-shadow:none;display:block}
@@ -173,7 +175,7 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 }
 .cover-cta:active{transform:scale(.96)}
 .cover-pages{margin-top:18px;font-size:12px;color:#8d8499;letter-spacing:.2em}
-#webView{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;background:var(--bg)}
+#webView{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;background:var(--bg);scrollbar-width:none;-ms-overflow-style:none}
 #webView.on{display:block}
 #webView .wimgs{display:flex;flex-direction:column;align-items:center;gap:26px;padding:52px 0 64px}
 #webView .witem{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
