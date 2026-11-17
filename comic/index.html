@@ -123,9 +123,10 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 @keyframes flipInL{from{opacity:0;transform:perspective(1400px) rotateY(7deg) translateX(-7%)}to{opacity:1;transform:none}}
 .page-inner{position:absolute;top:62px;bottom:74px;left:10px;right:10px;display:flex;align-items:center;justify-content:center}
 .pframe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;height:100%;min-height:0}
-.pframe img{max-width:100%;max-height:100%;width:auto;height:auto;flex:0 1 auto;min-height:0;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
-.pframe:has(.ptext) img{max-height:62%}
-.pframe:has(.ptext) .ptext{max-height:34%}
+.pframe .zoom-wrap{height:auto;min-height:0;flex:0 1 auto}
+.pframe img{max-width:100%;max-height:calc(100vh - 230px);width:auto;height:auto;flex:0 1 auto;min-height:0;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.55);display:block}
+.pframe:has(.ptext) img{max-height:52vh}
+.pframe:has(.ptext) .ptext{max-height:28vh}
 .zoom-wrap{position:relative;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
 .zoom-wrap.zoomed{position:absolute;inset:0;z-index:5;overflow:auto;touch-action:pan-x pan-y;align-items:flex-start;justify-content:flex-start}
 .zoom-wrap.zoomed img{max-width:none;border-radius:0}
@@ -175,6 +176,7 @@ html[data-theme="light"] .reader-top{border-bottom:1px solid rgba(0,0,0,.06)}
 #webView .wimgs{display:flex;flex-direction:column;align-items:center;gap:26px;padding:66px 0 90px}
 #webView .witem{width:min(100%,760px);display:flex;flex-direction:column;align-items:center;gap:10px}
 #webView .witem img{width:100%;display:block;border-radius:6px}
+#webView .ptext{max-height:none;width:min(92%,560px)}
 #bottomBar{
   position:absolute;left:0;right:0;bottom:0;z-index:40;height:64px;display:flex;align-items:center;gap:6px;
   padding:0 10px;padding-bottom:env(safe-area-inset-bottom);
