@@ -417,11 +417,31 @@ const BUILTIN_BOOKS = [
       {src:"images/p08.jpg?v=7", label:"8페이지", thumb:"images/thumbs/p08.jpg?v=7"},
       {src:"images/p09.jpg?v=7", label:"9페이지", thumb:"images/thumbs/p09.jpg?v=7"},
       {src:"images/p10.jpg?v=7", label:"10페이지", thumb:"images/thumbs/p10.jpg?v=7"},
+      {src:"images/p11.jpg?v=8", label:"11페이지", thumb:"images/thumbs/p11.jpg?v=8"},
+      {src:"images/p12.jpg?v=8", label:"12페이지", thumb:"images/thumbs/p12.jpg?v=8"},
+      {src:"images/p13.jpg?v=8", label:"13페이지", thumb:"images/thumbs/p13.jpg?v=8"},
+      {src:"images/p14.jpg?v=8", label:"14페이지", thumb:"images/thumbs/p14.jpg?v=8"},
+      {src:"images/p15.jpg?v=8", label:"15페이지", thumb:"images/thumbs/p15.jpg?v=8"},
+      {src:"images/p16.jpg?v=8", label:"16페이지", thumb:"images/thumbs/p16.jpg?v=8"},
+      {src:"images/p17.jpg?v=8", label:"17페이지", thumb:"images/thumbs/p17.jpg?v=8"},
+      {src:"images/p18.jpg?v=8", label:"18페이지", thumb:"images/thumbs/p18.jpg?v=8"},
+      {src:"images/p19.jpg?v=8", label:"19페이지", thumb:"images/thumbs/p19.jpg?v=8"},
+      {src:"images/p20.jpg?v=8", label:"20페이지", thumb:"images/thumbs/p20.jpg?v=8"},
+      {src:"images/p21.jpg?v=8", label:"21페이지", thumb:"images/thumbs/p21.jpg?v=8"},
+      {src:"images/p22.jpg?v=8", label:"22페이지", thumb:"images/thumbs/p22.jpg?v=8"},
+      {src:"images/p23.jpg?v=8", label:"23페이지", thumb:"images/thumbs/p23.jpg?v=8"},
+      {src:"images/p24.jpg?v=8", label:"24페이지", thumb:"images/thumbs/p24.jpg?v=8"},
+      {src:"images/p25.jpg?v=8", label:"25페이지", thumb:"images/thumbs/p25.jpg?v=8"},
+      {src:"images/p26.jpg?v=8", label:"26페이지", thumb:"images/thumbs/p26.jpg?v=8"},
+      {src:"images/p27.jpg?v=8", label:"27페이지", thumb:"images/thumbs/p27.jpg?v=8"},
+      {src:"images/p28.jpg?v=8", label:"28페이지", thumb:"images/thumbs/p28.jpg?v=8"},
+      {src:"images/p29.jpg?v=8", label:"29페이지", thumb:"images/thumbs/p29.jpg?v=8"},
+      {src:"images/p30.jpg?v=8", label:"30페이지", thumb:"images/thumbs/p30.jpg?v=8"},
     ]
   },
 ];
 /* 내장책 내용이 바뀌면 rev를 올린다 → 예전 페이지 기준 독서 진행률은 자동으로 새로 시작 */
-const BUILTIN_REV = { "science-lab": 5 };
+const BUILTIN_REV = { "science-lab": 6 };
 function bookRev(b){ return b && b.builtin ? (BUILTIN_REV[b.id] || 0) : 0; }
 function getProg(b){
   if (!b) return 0;
