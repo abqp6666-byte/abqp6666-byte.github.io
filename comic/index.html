@@ -407,7 +407,7 @@ const BUILTIN_BOOKS = [
     description: "아침 8시 4분, 지각 위기의 등굣길. 어릴 적부터 함께 걷던 두 사람의 하루가 시작된다.",
     cover: "images/cover.jpg",
     pages: [
-      {src:"images/p01.jpg?v=4", label:"1페이지", thumb:"images/thumbs/p01.jpg?v=4"},
+      {src:"images/p01.jpg?v=9", label:"1페이지", thumb:"images/thumbs/p01.jpg?v=9"},
       {src:"images/p02.jpg?v=4", label:"2페이지", thumb:"images/thumbs/p02.jpg?v=4"},
       {src:"images/p03.jpg?v=7", label:"3페이지", thumb:"images/thumbs/p03.jpg?v=7"},
       {src:"images/p04.jpg?v=7", label:"4페이지", thumb:"images/thumbs/p04.jpg?v=7"},
@@ -421,7 +421,7 @@ const BUILTIN_BOOKS = [
       {src:"images/p12.jpg?v=8", label:"12페이지", thumb:"images/thumbs/p12.jpg?v=8"},
       {src:"images/p13.jpg?v=8", label:"13페이지", thumb:"images/thumbs/p13.jpg?v=8"},
       {src:"images/p14.jpg?v=8", label:"14페이지", thumb:"images/thumbs/p14.jpg?v=8"},
-      {src:"images/p15.jpg?v=8", label:"15페이지", thumb:"images/thumbs/p15.jpg?v=8"},
+      {src:"images/p15.jpg?v=9", label:"15페이지", thumb:"images/thumbs/p15.jpg?v=9"},
       {src:"images/p16.jpg?v=8", label:"16페이지", thumb:"images/thumbs/p16.jpg?v=8"},
       {src:"images/p17.jpg?v=8", label:"17페이지", thumb:"images/thumbs/p17.jpg?v=8"},
       {src:"images/p18.jpg?v=8", label:"18페이지", thumb:"images/thumbs/p18.jpg?v=8"},
@@ -441,7 +441,7 @@ const BUILTIN_BOOKS = [
   },
 ];
 /* 내장책 내용이 바뀌면 rev를 올린다 → 예전 페이지 기준 독서 진행률은 자동으로 새로 시작 */
-const BUILTIN_REV = { "science-lab": 6 };
+const BUILTIN_REV = { "science-lab": 7 };
 function bookRev(b){ return b && b.builtin ? (BUILTIN_REV[b.id] || 0) : 0; }
 function getProg(b){
   if (!b) return 0;
