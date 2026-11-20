@@ -1781,8 +1781,8 @@ function drawTopArea(c, fi){
   R(c, "#24304a", px, py, 32, 26);
   R(c, "#1a2438", px + 1, py + 1, 30, 24);
   R(c, "#ffd479", px + 3, py + 3, 26, 1);
-  fitTxt(c, F.name, px + 16, py + 10, 8.5, 26, "#ffe9c4", 800);
-  fitTxt(c, F.sub, px + 16, py + 19, 4.2, 27, "#9fb6d8", 800);
+  fitTxt(c, F.name, px + 16, py + 10, 9.4, 30, "#ffe9c4", 800);
+  fitTxt(c, F.sub, px + 16, py + 19.5, 4.6, 30, "#9fb6d8", 800);
 
   /* 엘리베이터 */
   R(c, "#24304a", 94, 4, 26, 40);
@@ -1810,7 +1810,7 @@ function drawRoom(c, fi){
     R(c, "#2f3d5c", x + 2, y + 2, w - 4, h - 4);
     R(c, "#3b4c70", x + 2, y + 2, w - 4, 2);
     R(c, "#0f1728", x + 8, y + 4, w - 20, 8);
-    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.2, w - 24, "#ffe9c4", 800);
+    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.6, w - 24, "#ffe9c4", 800);
     /* 책상 */
     R(c, "#3a3f4d", x + 6, y + 36, w - 12, 3);
     R(c, "#a9b7c1", x + 8, y + 30, w - 16, 7);
@@ -1835,7 +1835,7 @@ function drawRoom(c, fi){
     /* 서버실 */
     R(c, "#1b2437", x + 2, y + 2, w - 4, h - 4);
     R(c, "#0f1728", x + 8, y + 4, w - 20, 8);
-    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.2, w - 24, "#7be08e", 800);
+    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.6, w - 24, "#7be08e", 800);
     for(var s = 0; s < 3; s++){
       var rx = x + 8 + s * 22;
       R(c, "#2b3444", rx, y + 16, 18, 24);
@@ -1848,7 +1848,7 @@ function drawRoom(c, fi){
     /* 자료실 */
     R(c, "#2a3245", x + 2, y + 2, w - 4, h - 4);
     R(c, "#0f1728", x + 8, y + 4, w - 20, 8);
-    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.2, w - 24, "#ffe9c4", 800);
+    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.6, w - 24, "#ffe9c4", 800);
     lib(c, x + 6, y + 16, ["#ff6b6b", "#ffd479", "#7be08e", "#5cc6e8", "#a98bff"]);
     lib(c, x + 52, y + 16, ["#9dd4ff", "#ff8fa8", "#c9b4ff", "#ffe9a8", "#7be08e"]);
   } else {
@@ -1902,7 +1902,7 @@ function drawDeptRow(c, di){
   R(c, "#1d263c", 2, y0, 196, 10);
   R(c, "#2b3652", 3, y0 + 1, 194, 8);
   R(c, d.body, 5, y0 + 2.5, 4, 5);
-  fitTxtL(c, d.name, 12, y0 + 5.2, 5.6, 74, "#ffe9c4", 800);
+  fitTxtL(c, d.name, 12, y0 + 5.2, 6.1, 78, "#ffe9c4", 800);
   /* 직급 구성 핍 */
   for(var s = 0; s < SEATS; s++){
     var gi = di * SEATS + s;
@@ -1951,7 +1951,7 @@ function drawMeeting(c){
   R(c, "#d98b4a", 4, 208, mw, 2);
   R(c, "#6b3a15", 4, 231, mw, 1);
   R(c, "#1d263c", 8, 219, mw - 8, 9);
-  fitTxt(c, "회의실", 8 + (mw - 8) / 2, 223.6, 5.2, mw - 14, "#ffe9c4", 800);
+  fitTxt(c, "회의실", 8 + (mw - 8) / 2, 223.6, 5.6, mw - 14, "#ffe9c4", 800);
   for(var ch = 0; ch < (2 + (state.up.meeting || 0)); ch++){
     var cxp = 10 + ch * 16;
     R(c, "#24304a", cxp, 234, 9, 8);
@@ -2406,7 +2406,7 @@ function drawScene(){
   /* 대표실 CEO · 명패 (1층) */
   if(state.fi === 0){
     drawCEO(ctx, ceo.x, ceo.y, ceoBob);
-    fitTxt(ctx, "대표실", 161, 8.4, 5.2, 44, "#ffe9c4", 800);
+    fitTxt(ctx, "대표실", 161, 8.4, 5.6, 44, "#ffe9c4", 800);
   }
 
   /* 회의 중 표시 */
@@ -2452,10 +2452,10 @@ function drawScene(){
       var g3 = dd * SEATS + s3, p3 = deskPos(g3);
       if(state.staff[g3].hired){
         var rk3 = state.staff[g3].rank;
-        fitTxt(ctx, rankName(rk3) + " " + empName(g3), p3.x + 22, p3.y + 11.2, 4.4, DESK_W - 8,
+        fitTxt(ctx, rankName(rk3) + " " + empName(g3), p3.x + 22, p3.y + 11.2, 4.8, DESK_W - 6,
                rk3 > 0 ? rankColor(rk3) : "#c9d6ee", 800);
       } else {
-        fitTxt(ctx, "채용", p3.x + 22, p3.y + 11.2, 4.8, DESK_W - 10, "#f0c060", 800);
+        fitTxt(ctx, "채용", p3.x + 22, p3.y + 11.2, 5.2, DESK_W - 10, "#f0c060", 800);
       }
     }
   }
@@ -2477,9 +2477,9 @@ function drawScene(){
     gi = +k;
     var l5 = live[gi];
     if(!l5 || l5.mode === "walk") continue;
-    if(l5.bubble && now < l5.bubUntil) bubbleBox(ctx, l5.bubble, l5.x, l5.y - 21, 5.2);
+    if(l5.bubble && now < l5.bubUntil) bubbleBox(ctx, l5.bubble, l5.x, l5.y - 21, 5.6);
   }
-  if(state.fi === 0 && ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 5.2);
+  if(state.fi === 0 && ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 5.6);
 
   /* 부스트/회의/위기 오라 */
   if(now < state.boostUntil){
