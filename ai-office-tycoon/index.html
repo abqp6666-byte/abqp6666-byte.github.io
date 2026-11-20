@@ -1007,6 +1007,15 @@ function spawnLive(i){
     bubble:"", bubUntil:0, bubNext:2 + Math.random() * 5, hold:false
   };
 }
+function alertStaff(roleId){
+  for(var i = 0; i < 12; i++){
+    if(ROLES[i].id === roleId && state.staff[i].hired && live[i]){
+      live[i].bubble = "!";
+      live[i].bubUntil = Date.now() + 2200;
+      return;
+    }
+  }
+}
 function bubbleCount(){
   var n = 0, now = Date.now();
   for(var i = 0; i < 12; i++) if(live[i] && live[i].bubble && now < live[i].bubUntil) n++;
@@ -1152,6 +1161,13 @@ function drawScene(){
   ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
   ctx.fillStyle = "#080c16";
   ctx.fillRect(0, 0, view.w, view.h);
+  /* 위아래 여백을 벽/바닥 색으로 이어 붙인다 */
+  if(view.oy > 0){
+    ctx.fillStyle = "#efe2c2";
+    ctx.fillRect(0, 0, view.w, view.oy + 1);
+    ctx.fillStyle = "#d98b3f";
+    ctx.fillRect(0, view.oy + H * s - 1, view.w, view.h);
+  }
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(bgc, view.ox, view.oy, W * s, H * s);
 
