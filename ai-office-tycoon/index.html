@@ -1887,7 +1887,7 @@ function drawScene(){
     var ln = live[n];
     if(ln.mode !== "work" && ln.mode !== "meet") continue;
     var rn = state.staff[n].rank;
-    var label = (rn > 0 ? rankName(rn) + " " : "") + ROLES[n].name;
+    var label = rankName(rn) + " " + ROLES[n].name;
     outTxt(ctx, label, ln.x, ln.y - 17, 4.6, rn > 0 ? rankColor(rn) : "#ffffff", 800);
   }
   outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
