@@ -14,7 +14,8 @@
 <body>
 <div class="wrap"><iframe id="f" title="preview"></iframe></div>
 <script>
-  document.getElementById('f').src = './_seed.html?t=' + Date.now();
+  var m = location.search.indexOf('reset') >= 0 ? 'reset' : 'seed';
+  document.getElementById('f').src = './_seed.html?mode=' + m + '&t=' + Date.now();
 </script>
 </body>
 </html>
