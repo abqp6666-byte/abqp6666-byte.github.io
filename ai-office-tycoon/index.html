@@ -101,8 +101,7 @@ button.badge:active{transform:translateY(2px);box-shadow:none;}
 
 /* ---------- stage ---------- */
 #stage{position:relative;flex:1 1 auto;margin:0 6px;min-height:0;overflow:hidden;}
-#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated;
-  image-rendering:crisp-edges;}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:auto;}
 #toastLayer{position:absolute;left:0;right:0;top:6px;display:flex;flex-direction:column;align-items:center;
   gap:4px;pointer-events:none;z-index:6;}
 .toast{font-size:11px;font-weight:800;padding:5px 10px;background:rgba(16,22,40,.94);color:#fff;
@@ -343,6 +342,7 @@ button.badge:active{transform:translateY(2px);box-shadow:none;}
       <h1>오늘도 바쁜 AI 사무실</h1>
     </div>
     <div class="hdr-r">
+      <button id="resetBtn" class="iconbtn" aria-label="처음부터 다시 시작" title="처음부터 다시 시작">🔄</button>
       <button id="muteBtn" class="iconbtn" aria-label="소리">🔊</button>
       <button class="badge rival" id="rivalBadge">⚔️ <span id="rivalPct">0</span>%</button>
       <div class="badge">직원 <span id="staffN">0</span>명</div>
@@ -415,6 +415,7 @@ button.badge:active{transform:translateY(2px);box-shadow:none;}
 
 /* =========================================================
    오늘도 바쁜 AI 사무실 · 도트 오피스 타이쿤
+   v2.0.1 — 고해상도(도트 픽셀 비율) 렌더링 · 글자 선명화 · 처음부터 다시 시작
    v2.0.0 — 부서 다인원 · 혼합 직급 · 사옥 확장 · 돌발 위기/라이벌전
    완전 오프라인 단일 파일 픽셀 게임
    ========================================================= */
@@ -422,13 +423,23 @@ button.badge:active{transform:translateY(2px);box-shadow:none;}
 var W = 200, H = 266;                       // 게임 논리 해상도(픽셀)
 var SAVE_KEY = "aiOfficeTycoon.save.v1";    // 기존 세이브를 그대로 읽는다
 var MAXH = 8 * 3600;                        // 오프라인 정산 최대 8시간
-var VER = "2.0.0";
+var VER = "2.0.1";
 var SEATS = 4;                              // 부서당 자리 수
 
 function $(id){ return document.getElementById(id); }
+/* RK = 지금 그리는 캔버스의 기기 픽셀 배율(도트 가장자리를 픽셀 격자에 맞춘다) */
+var RK = 1;
 function R(c, col, x, y, w, h){
   c.fillStyle = col;
-  c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+  if(RK > 1.001){
+    var x0 = Math.round(x * RK), y0 = Math.round(y * RK);
+    var x1 = Math.round((x + w) * RK), y1 = Math.round((y + h) * RK);
+    if(x1 <= x0) x1 = x0 + 1;
+    if(y1 <= y0) y1 = y0 + 1;
+    c.fillRect(x0 / RK, y0 / RK, (x1 - x0) / RK, (y1 - y0) / RK);
+  } else {
+    c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+  }
 }
 function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
 function lerp(a, b, t){ return a + (b - a) * t; }
@@ -1648,7 +1659,7 @@ function rivalPoke(){
 var cv = $("cv"), ctx = cv.getContext("2d");
 var bgc = document.createElement("canvas"); bgc.width = W; bgc.height = H;
 var bg = bgc.getContext("2d");
-var view = {s:1, ox:0, oy:0, w:0, h:0, dpr:1};
+var view = {s:1, ox:0, oy:0, w:0, h:0, dpr:1, dprY:1, bgk:1};
 
 /* 층 레이아웃 */
 var ROW_Y = [44, 98, 152];
@@ -1660,15 +1671,19 @@ var MEET_Y = 246;
 function resize(){
   var stage = $("stage");
   var w = stage.clientWidth || 360, h = stage.clientHeight || 520;
-  var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-  cv.width = Math.round(w * dpr);
-  cv.height = Math.round(h * dpr);
+  /* 기기 픽셀 비율만큼 백킹 스토어를 키운다(최소 2배 · 최대 3.5배)
+     — 폴드·고밀도 화면에서 캔버스를 늘려 그리면서 글자가 뭉개지는 것을 막는다 */
+  var dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3.5);
+  cv.width = Math.max(1, Math.round(w * dpr));
+  cv.height = Math.max(1, Math.round(h * dpr));
+  var kx = cv.width / w, ky = cv.height / h;
   var s = Math.min(w / W, h / H);
-  view.dpr = dpr; view.w = w; view.h = h; view.s = s;
+  view.dpr = kx; view.dprY = ky; view.w = w; view.h = h; view.s = s;
   view.ox = (w - W * s) / 2;
   view.oy = (h - H * s) / 2;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.setTransform(kx, 0, 0, ky, 0, 0);
   ctx.imageSmoothingEnabled = false;
+  resizeBG(s * kx);                 /* 배경도 같은 해상도로 다시 그린다 */
   var tb = $("tabs");
   if(tb) document.documentElement.style.setProperty("--tabh", tb.offsetHeight + "px");
   document.documentElement.style.setProperty("--sheettop", Math.max(0, stage.getBoundingClientRect().top) + "px");
@@ -1767,7 +1782,7 @@ function drawTopArea(c, fi){
   R(c, "#1a2438", px + 1, py + 1, 30, 24);
   R(c, "#ffd479", px + 3, py + 3, 26, 1);
   fitTxt(c, F.name, px + 16, py + 10, 8.5, 26, "#ffe9c4", 800);
-  fitTxt(c, F.sub, px + 16, py + 19, 3.4, 27, "#9fb6d8", 800);
+  fitTxt(c, F.sub, px + 16, py + 19, 4.2, 27, "#9fb6d8", 800);
 
   /* 엘리베이터 */
   R(c, "#24304a", 94, 4, 26, 40);
@@ -1795,7 +1810,7 @@ function drawRoom(c, fi){
     R(c, "#2f3d5c", x + 2, y + 2, w - 4, h - 4);
     R(c, "#3b4c70", x + 2, y + 2, w - 4, 2);
     R(c, "#0f1728", x + 8, y + 4, w - 20, 8);
-    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 4.6, w - 24, "#ffe9c4", 800);
+    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.2, w - 24, "#ffe9c4", 800);
     /* 책상 */
     R(c, "#3a3f4d", x + 6, y + 36, w - 12, 3);
     R(c, "#a9b7c1", x + 8, y + 30, w - 16, 7);
@@ -1820,7 +1835,7 @@ function drawRoom(c, fi){
     /* 서버실 */
     R(c, "#1b2437", x + 2, y + 2, w - 4, h - 4);
     R(c, "#0f1728", x + 8, y + 4, w - 20, 8);
-    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 4.6, w - 24, "#7be08e", 800);
+    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.2, w - 24, "#7be08e", 800);
     for(var s = 0; s < 3; s++){
       var rx = x + 8 + s * 22;
       R(c, "#2b3444", rx, y + 16, 18, 24);
@@ -1833,7 +1848,7 @@ function drawRoom(c, fi){
     /* 자료실 */
     R(c, "#2a3245", x + 2, y + 2, w - 4, h - 4);
     R(c, "#0f1728", x + 8, y + 4, w - 20, 8);
-    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 4.6, w - 24, "#ffe9c4", 800);
+    fitTxt(c, room, x + w / 2 - 2, y + 8.4, 5.2, w - 24, "#ffe9c4", 800);
     lib(c, x + 6, y + 16, ["#ff6b6b", "#ffd479", "#7be08e", "#5cc6e8", "#a98bff"]);
     lib(c, x + 52, y + 16, ["#9dd4ff", "#ff8fa8", "#c9b4ff", "#ffe9a8", "#7be08e"]);
   } else {
@@ -1887,13 +1902,13 @@ function drawDeptRow(c, di){
   R(c, "#1d263c", 2, y0, 196, 10);
   R(c, "#2b3652", 3, y0 + 1, 194, 8);
   R(c, d.body, 5, y0 + 2.5, 4, 5);
-  fitTxtL(c, d.name, 12, y0 + 5.2, 4.8, 74, "#ffe9c4", 800);
+  fitTxtL(c, d.name, 12, y0 + 5.2, 5.6, 74, "#ffe9c4", 800);
   /* 직급 구성 핍 */
   for(var s = 0; s < SEATS; s++){
     var gi = di * SEATS + s;
     R(c, state.staff[gi].hired ? rankColor(state.staff[gi].rank) : "#39435f", 152 + s * 5, y0 + 3.5, 4, 3);
   }
-  fitTxt(c, hired + "/" + SEATS + "명", 183, y0 + 5.2, 4.2, 26, hired ? "#9fb0c7" : "#6b7699", 800);
+  fitTxt(c, hired + "/" + SEATS + "명", 183, y0 + 5.2, 4.9, 26, hired ? "#9fb0c7" : "#6b7699", 800);
 
   /* 책상 뒤 오브제 */
   for(var k = 0; k < SEATS; k++){
@@ -1936,7 +1951,7 @@ function drawMeeting(c){
   R(c, "#d98b4a", 4, 208, mw, 2);
   R(c, "#6b3a15", 4, 231, mw, 1);
   R(c, "#1d263c", 8, 219, mw - 8, 9);
-  fitTxt(c, "회의실", 8 + (mw - 8) / 2, 223.6, 4.6, mw - 14, "#ffe9c4", 800);
+  fitTxt(c, "회의실", 8 + (mw - 8) / 2, 223.6, 5.2, mw - 14, "#ffe9c4", 800);
   for(var ch = 0; ch < (2 + (state.up.meeting || 0)); ch++){
     var cxp = 10 + ch * 16;
     R(c, "#24304a", cxp, 234, 9, 8);
@@ -2014,6 +2029,10 @@ function drawFacilities(c, fi){
 
 function drawBG(){
   var c = bg, fi = state.fi;
+  /* 정적 배경도 화면과 같은 기기 픽셀 해상도로 그린다(확대해 그리지 않으므로 글자가 선명하다) */
+  var kx = bgc.width / W, ky = bgc.height / H;
+  bg.setTransform(kx, 0, 0, ky, 0, 0);
+  RK = kx;
   c.clearRect(0, 0, W, H);
   drawFloorTiles(c, fi);
   drawTopArea(c, fi);
@@ -2028,6 +2047,19 @@ function drawBG(){
   R(c, "#8a4b1e", 188, 240, 10, 10);
   R(c, "#3f9e57", 189, 232, 8, 9);
   R(c, "#56bd6c", 190, 228, 5, 6);
+  RK = 1;
+}
+
+/* 배경 캔버스를 화면 해상도(k = 화면 배율)에 맞춰 다시 만든다 */
+function resizeBG(k){
+  if(!(k > 0)) k = 1;
+  var bw = Math.max(1, Math.round(W * k)), bh = Math.max(1, Math.round(H * k));
+  view.bgk = k;
+  if(bgc.width !== bw || bgc.height !== bh){
+    bgc.width = bw;
+    bgc.height = bh;
+  }
+  drawBG();
 }
 
 /* =========================================================
@@ -2339,7 +2371,7 @@ function bubbleBox(c, t, cx, cyBottom, size){
 
 function drawScene(){
   var s = view.s;
-  ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+  ctx.setTransform(view.dpr, 0, 0, view.dprY, 0, 0);
   ctx.fillStyle = "#080c16";
   ctx.fillRect(0, 0, view.w, view.h);
   ctx.imageSmoothingEnabled = false;
@@ -2348,6 +2380,7 @@ function drawScene(){
   ctx.save();
   ctx.translate(view.ox, view.oy);
   ctx.scale(s, s);
+  RK = s * view.dpr;
   var now = Date.now();
 
   /* 남는 여백에 벽/바닥 무늬를 이어 붙인다 */
@@ -2373,7 +2406,7 @@ function drawScene(){
   /* 대표실 CEO · 명패 (1층) */
   if(state.fi === 0){
     drawCEO(ctx, ceo.x, ceo.y, ceoBob);
-    fitTxt(ctx, "대표실", 161, 8.4, 4.6, 44, "#ffe9c4", 800);
+    fitTxt(ctx, "대표실", 161, 8.4, 5.2, 44, "#ffe9c4", 800);
   }
 
   /* 회의 중 표시 */
@@ -2385,7 +2418,7 @@ function drawScene(){
     ctx.fillRect(bx - 13, 203, 26, 7);
     ctx.strokeStyle = "#0a0e1a"; ctx.lineWidth = 0.8;
     ctx.strokeRect(bx - 12.6, 203.4, 25.2, 6.2);
-    fitTxt(ctx, "회의 중", bx, 206.7, 4.2, 22, "#2a0a0a", 800);
+    fitTxt(ctx, "회의 중", bx, 206.7, 4.8, 22, "#2a0a0a", 800);
   }
 
   /* 그리기 순서: y 기준 정렬 (액터 ↔ 책상 앞판) */
@@ -2419,10 +2452,10 @@ function drawScene(){
       var g3 = dd * SEATS + s3, p3 = deskPos(g3);
       if(state.staff[g3].hired){
         var rk3 = state.staff[g3].rank;
-        fitTxt(ctx, rankName(rk3) + " " + empName(g3), p3.x + 22, p3.y + 11.2, 3.8, DESK_W - 10,
+        fitTxt(ctx, rankName(rk3) + " " + empName(g3), p3.x + 22, p3.y + 11.2, 4.4, DESK_W - 8,
                rk3 > 0 ? rankColor(rk3) : "#c9d6ee", 800);
       } else {
-        fitTxt(ctx, "채용", p3.x + 22, p3.y + 11.2, 4.0, DESK_W - 10, "#f0c060", 800);
+        fitTxt(ctx, "채용", p3.x + 22, p3.y + 11.2, 4.8, DESK_W - 10, "#f0c060", 800);
       }
     }
   }
@@ -2434,19 +2467,19 @@ function drawScene(){
     if(!l4 || !state.staff[gi] || !state.staff[gi].hired) continue;
     if(l4.mode === "work" || l4.mode === "walk") continue;   /* 이동 중에는 이름표를 띄우지 않는다 */
     var rn4 = state.staff[gi].rank;
-    outTxt(ctx, rankName(rn4) + " " + empName(gi), l4.x, l4.y - 17, 4.4,
+    outTxt(ctx, rankName(rn4) + " " + empName(gi), l4.x, l4.y - 17, 5.0,
            rn4 > 0 ? rankColor(rn4) : "#ffffff", 800);
   }
-  if(state.fi === 0 && ceo.bubble) outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 4.4, "#ffd479", 800);
+  if(state.fi === 0 && ceo.bubble) outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
 
   /* 말풍선 */
   for(k in live){
     gi = +k;
     var l5 = live[gi];
     if(!l5 || l5.mode === "walk") continue;
-    if(l5.bubble && now < l5.bubUntil) bubbleBox(ctx, l5.bubble, l5.x, l5.y - 21, 4.7);
+    if(l5.bubble && now < l5.bubUntil) bubbleBox(ctx, l5.bubble, l5.x, l5.y - 21, 5.2);
   }
-  if(state.fi === 0 && ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 4.7);
+  if(state.fi === 0 && ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 5.2);
 
   /* 부스트/회의/위기 오라 */
   if(now < state.boostUntil){
@@ -2462,6 +2495,7 @@ function drawScene(){
     ctx.fillStyle = "rgba(255,120,120,.07)";
     ctx.fillRect(0, 0, W, H);
   }
+  RK = 1;
   ctx.restore();
 }
 
@@ -2655,6 +2689,36 @@ function showModal(html){
 }
 function hideModal(){ $("modal").classList.add("hidden"); }
 function esc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+/* 처음부터 다시 — 저장을 지우고 초기 상태로 되돌린다 */
+function resetGame(){
+  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+  mt = null;
+  state = newState();
+  state.intro = true;                       /* 인트로 안내를 다시 띄우지 않는다 */
+  state.nextCardAt = Date.now() + 5000;
+  state.nextMeetAt = Date.now() + 22000;
+  state.nextCrisisAt = Date.now() + 45000;
+  uidC = 0; meetUid = 0; live = [];
+  soundOn = !state.muted;
+  $("muteBtn").textContent = state.muted ? "🔇" : "🔊";
+  sheetKind = null;
+  $("sheetWrap").classList.add("hidden");
+  hideModal();
+  $("crisis").classList.add("hidden");
+  rebuildLive();
+  buildFloorBar();
+  barSig = "";
+  updateTabs();
+  meetBadge();
+  drawBG();
+  resize();
+  updateBadges();
+  updateHUD(Date.now());
+  save();
+  toast("처음부터 다시 시작해요 · ₩400", "good");
+  SFX.coin();
+}
 
 var sheetKind = null;
 function openSheet(kind){
@@ -3173,6 +3237,7 @@ function wireUI(){
     if(e.target === $("sheetWrap")) closeSheet();
   });
   $("modal").addEventListener("click", function(e){
+    if(e.target.closest("#resetGo")){ resetGame(); return; }
     var g = e.target.closest("[data-f]");
     if(g && g.id === "floorGo"){
       var fi = parseInt(g.getAttribute("data-f"), 10);
@@ -3299,6 +3364,24 @@ function wireUI(){
     save();
   });
 
+  $("resetBtn").addEventListener("click", function(){
+    SFX.tap();
+    showModal(
+      '<div class="kick">새 게임 · 버전 ' + VER + '</div>' +
+      '<h2>처음부터 다시 시작할까요?</h2>' +
+      '<p>지금 사옥 · 직원 · 자금이 모두 초기화되고, 처음 상태로 돌아갑니다.</p>' +
+      '<ul>' +
+      '<li>직원 <b>0명</b> · 자금 <b>₩400</b> · 레벨 <b>1</b></li>' +
+      '<li>사옥은 <b>1층</b>만 열려 있어요</li>' +
+      '</ul>' +
+      '<p style="font-size:10px;opacity:.7">되돌릴 수 없어요. 저장된 진행도 함께 지워집니다.</p>' +
+      '<div style="display:flex;gap:7px">' +
+        '<button class="go" data-close style="margin-top:14px;width:auto;flex:1;background:#3a4566;color:#dfe7f5;box-shadow:0 4px 0 #1a2136">취소</button>' +
+        '<button class="go" id="resetGo" style="margin-top:14px;width:auto;flex:1;background:linear-gradient(#ffa6a6,#ff6b6b);color:#2a0a0a">초기화</button>' +
+      '</div>'
+    );
+  });
+
   cv.addEventListener("click", function(ev){
     var rect = cv.getBoundingClientRect();
     var lx = (ev.clientX - rect.left - view.ox) / view.s;
@@ -3417,7 +3500,7 @@ function loop(ts){
   lastT = ts;
   tick(dt);
   var nb = (Math.floor(Date.now() / 560) % 2) === 0;
-  if(nb !== ceoBob){ ceoBob = nb; drawBG(); }
+  if(nb !== ceoBob){ ceoBob = nb; }   /* 대표님 깜박임은 drawScene에서 직접 그린다 */
   drawScene();
   hudAcc += dt;
   if(hudAcc > 0.12){ hudAcc = 0; updateHUD(Date.now()); }

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>v2.0.1 check</title>
+<style>
+  body{margin:0;background:#1b1b1b;color:#bbb;font:12px/1.3 -apple-system,"Malgun Gothic",sans-serif;}
+  .row{display:flex;gap:12px;padding:12px;align-items:flex-start;}
+  .cell{background:#000;}
+  .cap{padding:3px 2px;font-weight:700;color:#9ad;}
+  iframe{border:0;display:block;background:#000;}
+</style></head>
+<body>
+<div class="row">
+  <div class="cell"><div class="cap">360 x 640</div><iframe id="f1" src="index.html" width="360" height="640"></iframe></div>
+  <div class="cell"><div class="cap">480 x 700 (fold)</div><iframe id="f2" src="index.html" width="480" height="700"></iframe></div>
+  <div class="cell"><div class="cap">720 x 720</div><iframe id="f3" src="index.html" width="720" height="720"></iframe></div>
+</div>
+<script>
+// 테스트용 세이브를 심어 인트로 창 없이 사무실이 바로 보이게 한다
+(function(){
+  var staff = [];
+  var plan = {0:[{lv:4,rank:2},{lv:2,rank:1},{lv:1,rank:0},{lv:6,rank:3}],
+              4:[{lv:3,rank:1},{lv:5,rank:2}],
+              8:[{lv:2,rank:1},{lv:7,rank:4}]};
+  for(var i=0;i<48;i++) staff.push({hired:false,lv:1,rank:0});
+  for(var k in plan){ plan[k].forEach(function(s, j){ staff[+k+j] = {hired:true,lv:s.lv,rank:s.rank}; }); }
+  var st = {
+    v:3, money:482000, totalEarned:1240000, xp:40, level:4, approved:22, quick:9,
+    staff:staff, up:{espresso:1,air:2}, inbox:[], log:[], meetings:[],
+    ctr:{approved:22,hired:8,upgrade:3,earned:1240000,levelups:9,quick:9,promo:4,crisis:2,floors:1},
+    mRound:1, missions:[], nextCardAt:0, nextMeetAt:0, buffUntil:0,
+    muted:true, boostUntil:0, boostReadyAt:0, savedAt:Date.now(), intro:true, updNote:"",
+    fi:0, floors:[true,true,false,false], crisis:null, nextCrisisAt:0, lastCrisisAt:0,
+    lastCrisisName:"", criLog:[], bankrupt:0, rival:{share:22,wins:1,cdUntil:0},
+    morale:64, buff2Until:0, buff2Amt:0
+  };
+  try{ localStorage.setItem("aiOfficeTycoon.save.v1", JSON.stringify(st)); }catch(e){}
+})();
+</script>
+</body></html>

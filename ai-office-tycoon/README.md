@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | 웹 (바로 플레이) | https://abqp6666-byte.github.io/ai-office-tycoon/ |
-| APK 다운로드 | [ai-office-tycoon.apk](https://github.com/abqp6666-byte/abqp6666-byte.github.io/releases/download/v2.0.0/ai-office-tycoon.apk) |
+| APK 다운로드 | [ai-office-tycoon.apk](https://github.com/abqp6666-byte/abqp6666-byte.github.io/releases/download/v2.0.1/ai-office-tycoon.apk) |
 
 ![플레이 화면](art/screenshot-phone.png)
 
@@ -14,6 +14,12 @@
 
 대표님(CEO) 자리에 앉아 AI 직원들이 올리는 결재만 눌러 주면 되는 사무실 경영 게임입니다.
 직원들은 자기 책상에서 일하다가 결재를 들고 같은 부서 상사 자리와 회의실로 걸어 다니고, 머리 위에 말풍선을 띄웁니다.
+
+### v2.0.1 — 화면 글자 선명화 · 처음부터 다시 시작
+
+- **고해상도 렌더링** — 게임 캔버스를 기기 픽셀 비율만큼(최소 2배 · 최대 3.5배) 그려, 폴드·고밀도 화면에서 부서명·층 명패·회의실·책상 명패·말풍선 같은 한글이 뭉개지지 않고 선명하게 보입니다. 배경 그림도 화면 해상도로 다시 그립니다.
+- **작은 글씨 확대** — 부서명·대표실·회의실·직원 명패·인원수 글자를 한 단계 키웠습니다.
+- **처음부터 다시 시작** — 상단 오른쪽 🔄 버튼 → 확인 창 → `초기화`. 사옥·직원·자금이 모두 지워지고 처음 상태(직원 0명 · ₩400 · 레벨 1)로 돌아갑니다.
 
 ### v2.0.0 — 사옥 확장 · 부서 다인원 · 돌발 위기
 
