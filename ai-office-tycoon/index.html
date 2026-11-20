@@ -2470,7 +2470,8 @@ function drawScene(){
     outTxt(ctx, rankName(rn4) + " " + empName(gi), l4.x, l4.y - 17, 5.0,
            rn4 > 0 ? rankColor(rn4) : "#ffffff", 800);
   }
-  if(state.fi === 0 && ceo.bubble) outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
+  /* 대표님 이름표는 말풍선이 떠 있을 때만, 방 명패를 가리지 않게 아래쪽에 붙인다 */
+  if(state.fi === 0 && ceo.bubble && now < ceo.bubUntil) outTxt(ctx, "대표님", ceo.x, ceo.y - 12, 4.6, "#ffd479", 800);
 
   /* 말풍선 */
   for(k in live){
