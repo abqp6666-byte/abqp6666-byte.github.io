@@ -303,7 +303,7 @@ var DESK_COL = [4, 54, 104, 154];           // 4열 × 3줄 = 12석
 var DESK_ROW = [112, 158, 204];
 var DESK_W = 44, DESK_H = 16;
 function deskOf(i){ return {x: DESK_COL[i % 4], y: DESK_ROW[Math.floor(i / 4)]}; }
-function seatOf(i){ var d = deskOf(i); return {x: d.x + 22, y: d.y}; }
+function seatOf(i){ var d = deskOf(i); return {x: d.x + 22, y: d.y + 6}; }
 
 /* ------------------ 시설 업그레이드 ------------------ */
 var UPGRADES = [
@@ -812,33 +812,34 @@ function drawBG(){
   }
 
   /* CEO 책상 */
-  R(c, "#3a3f4d", 98, 76, 98, 3);
-  R(c, "#a9b7c1", 100, 64, 94, 12);
-  R(c, "#8b98a3", 100, 65, 94, 10);
-  R(c, "#dfe7ec", 100, 56, 94, 8);
-  R(c, "#eef3f7", 100, 56, 94, 2);
-  R(c, "#c3ced7", 100, 63, 94, 1);
+  R(c, "#3a3f4d", 106, 76, 84, 3);
+  R(c, "#a9b7c1", 108, 64, 80, 12);
+  R(c, "#8b98a3", 108, 65, 80, 10);
+  R(c, "#dfe7ec", 108, 58, 80, 7);
+  R(c, "#eef3f7", 108, 58, 80, 2);
+  R(c, "#c3ced7", 108, 64, 80, 1);
   /* 모니터 */
-  R(c, "#151b2b", 104, 44, 17, 12);
-  R(c, "#3f8fb5", 105, 45, 15, 10);
-  R(c, "#7fd9f5", 107, 47, 5, 2);
-  R(c, "#151b2b", 112, 56, 2, 1);
+  R(c, "#151b2b", 112, 46, 17, 12);
+  R(c, "#3f8fb5", 113, 47, 15, 10);
+  R(c, "#7fd9f5", 115, 49, 5, 2);
+  R(c, "#151b2b", 120, 58, 2, 1);
   /* 키보드 · 서류 */
-  R(c, "#8b98a3", 126, 58, 16, 3);
-  R(c, "#e8eef7", 127, 59, 14, 1);
-  R(c, "#fffdf5", 146, 57, 10, 4);
-  R(c, "#d8d1c0", 147, 58, 8, 1);
+  R(c, "#8b98a3", 133, 60, 15, 3);
+  R(c, "#e8eef7", 134, 61, 13, 1);
+  R(c, "#6f7c88", 133, 60, 15, 1);
+  R(c, "#dfe7ec", 135, 61, 2, 1);
+  R(c, "#fffdf5", 152, 59, 10, 4);
+  R(c, "#d8d1c0", 153, 60, 8, 1);
   /* 명패 */
   if(state.up.plaque > 0){
-    R(c, "#7a5a12", 160, 65, 28, 8);
-    R(c, "#ffd479", 161, 66, 26, 6);
-    R(c, "#fff3cd", 163, 67, 8, 1);
+    R(c, "#7a5a12", 164, 65, 22, 8);
+    R(c, "#ffd479", 165, 66, 20, 6);
+    R(c, "#fff3cd", 167, 67, 7, 1);
   } else {
-    R(c, "#0f1728", 161, 66, 26, 7);
+    R(c, "#0f1728", 165, 66, 20, 7);
   }
-  /* 대표님 (책상 앞판에 가려 앉은 모습) */
-  drawCEO(c, 140, 64, ceoBob);
-  /* 명패 글자 자리는 오버레이에서 그린다 */
+  /* 대표님 (책상 앞판이 다리를 가린다) */
+  drawCEO(c, 148, 64, ceoBob);
 
   /* 책상들 */
   for(var i = 0; i < 12; i++){
@@ -896,6 +897,27 @@ function drawBG(){
 }
 
 function drawDeskBG(c, d, hired){
+  var x = d.x, y = d.y;
+  if(hired){
+    /* 모니터 · 서류 (책상 뒷선 위) */
+    R(c, "#151b2b", x + 4, y - 8, 14, 9);
+    R(c, "#3f8fb5", x + 5, y - 7, 12, 7);
+    R(c, "#7fd9f5", x + 6, y - 5, 4, 2);
+    R(c, "#24304a", x + 10, y - 1, 2, 1);
+    R(c, "#fffdf5", x + 23, y - 3, 10, 3);
+    R(c, "#e2dbc9", x + 24, y - 2, 8, 1);
+  } else {
+    /* 채용 안내 팻말 */
+    R(c, "#7a4118", x + 20, y - 8, 2, 8);
+    R(c, "#c8763a", x + 13, y - 15, 16, 8);
+    R(c, "#8f4f1e", x + 13, y - 15, 16, 1);
+    R(c, "#f0c060", x + 20, y - 13, 2, 4);
+    R(c, "#f0c060", x + 19, y - 12, 4, 2);
+  }
+}
+
+/* 책상 본체 — 직원 뒤에 그려 다리를 가린다 */
+function drawDeskFront(c, d, hired){
   var x = d.x, y = d.y, w = DESK_W, h = DESK_H;
   R(c, "#3a2110", x + 1, y + h, w, 2);
   R(c, "#8f4f1e", x, y + 6, w, h - 6);
@@ -904,19 +926,8 @@ function drawDeskBG(c, d, hired){
   R(c, "#d98b4a", x, y, w, 2);
   R(c, "#6b3a15", x, y + h - 1, w, 1);
   if(hired){
-    R(c, "#151b2b", x + 4, y - 8, 14, 9);
-    R(c, "#3f8fb5", x + 5, y - 7, 12, 7);
-    R(c, "#7fd9f5", x + 6, y - 5, 4, 2);
-    R(c, "#24304a", x + 10, y - 1, 2, 1);
-    R(c, "#fffdf5", x + 23, y - 3, 10, 3);
-    R(c, "#e2dbc9", x + 24, y - 2, 8, 1);
     R(c, "#0f1728", x + 10, y + 9, 24, 5);
   } else {
-    R(c, "#7a4118", x + 20, y - 8, 2, 8);
-    R(c, "#c8763a", x + 13, y - 15, 16, 8);
-    R(c, "#8f4f1e", x + 13, y - 15, 16, 1);
-    R(c, "#f0c060", x + 20, y - 13, 2, 4);
-    R(c, "#f0c060", x + 19, y - 12, 4, 2);
     R(c, "#7a4118", x + 10, y + 9, 24, 5);
   }
 }
@@ -981,7 +992,7 @@ function drawCEO(c, x, y, bob){
    ========================================================= */
 var LANE = 100;
 var TARGETS = [{x:147, y:100}, {x:40, y:98}];
-var ceo = {x:140, y:64, bubble:"", bubUntil:0, next:6};
+var ceo = {x:148, y:64, bubble:"", bubUntil:0, next:6};
 var ceoBob = false;
 
 function aisleFor(i){
@@ -995,6 +1006,12 @@ function spawnLive(i){
     path:[], pi:0, spd:24 + Math.random() * 8, tick:Math.random() * 5,
     bubble:"", bubUntil:0, bubNext:2 + Math.random() * 5, hold:false
   };
+}
+function bubbleCount(){
+  var n = 0, now = Date.now();
+  for(var i = 0; i < 12; i++) if(live[i] && live[i].bubble && now < live[i].bubUntil) n++;
+  if(ceo.bubble && now < ceo.bubUntil) n++;
+  return n;
 }
 function bubblesFor(i, text, ms){
   var l = live[i]; if(!l) return;
@@ -1025,10 +1042,14 @@ function updateActors(dt){
         l.bubble = BUB_WALK[Math.floor(Math.random() * BUB_WALK.length)];
         l.bubUntil = now + 4000;
       } else if(now > l.bubNext && now > l.bubUntil){
-        var pool = (BUB[ROLES[i].id] || BUB_GEN).concat(BUB_GEN);
-        l.bubble = pool[Math.floor(Math.random() * pool.length)];
-        l.bubUntil = now + 2600 + Math.random() * 2200;
-        l.bubNext = l.bubUntil + 1800 + Math.random() * 4000;
+        if(bubbleCount() >= 2){
+          l.bubNext = now + 1800 + Math.random() * 3000;
+        } else {
+          var pool = (BUB[ROLES[i].id] || BUB_GEN).concat(BUB_GEN);
+          l.bubble = pool[Math.floor(Math.random() * pool.length)];
+          l.bubUntil = now + 2400 + Math.random() * 1800;
+          l.bubNext = l.bubUntil + 2500 + Math.random() * 5000;
+        }
       }
     } else if(l.mode === "walk"){
       var tgt = l.path[l.pi];
@@ -1067,9 +1088,11 @@ function updateActors(dt){
   /* CEO */
   ceo.next -= dt;
   if(ceo.next <= 0){
-    ceo.next = 7 + Math.random() * 9;
-    ceo.bubble = CEO_BUB[Math.floor(Math.random() * CEO_BUB.length)];
-    ceo.bubUntil = Date.now() + 3200;
+    ceo.next = 8 + Math.random() * 9;
+    if(bubbleCount() < 2){
+      ceo.bubble = CEO_BUB[Math.floor(Math.random() * CEO_BUB.length)];
+      ceo.bubUntil = Date.now() + 3000;
+    }
   }
 }
 
@@ -1135,7 +1158,7 @@ function drawScene(){
 
   /* 회의실 · CEO 라벨 */
   txt(ctx, "MEETING", 6 + (58 + state.up.meeting * 10) / 2, 64, 4.2, "#ffe9c4", 800);
-  txt(ctx, "CEO", 174, 69.6, 4.2, state.up.plaque > 0 ? "#5a3f06" : "#9fb0c8", 800);
+  txt(ctx, "CEO", 175, 69.6, 4.0, state.up.plaque > 0 ? "#5a3f06" : "#93a3b8", 800);
 
   /* 의자/책상 위 모니터 앞 직원 */
   var order = [];
@@ -1162,6 +1185,9 @@ function drawScene(){
     if(l.hold && l.mode === "walk") R(ctx, "#fffdf5", Math.round(l.x) + 5, Math.round(l.y) - 8, 4, 4);
   }
 
+  /* 책상 본체 (직원 다리 가리기) */
+  for(var f = 0; f < 12; f++) drawDeskFront(ctx, deskOf(f), state.staff[f].hired);
+
   /* 이름표 */
   for(var n = 0; n < 12; n++){
     if(!state.staff[n].hired || !live[n]) continue;
@@ -1180,9 +1206,9 @@ function drawScene(){
   for(var m = 0; m < 12; m++){
     if(!state.staff[m].hired || !live[m]) continue;
     var lm = live[m];
-    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 20, 5.0);
+    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 20, 4.7);
   }
-  if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 5.0);
+  if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 4.7);
 
   /* 부스트 오라 */
   if(now < state.boostUntil){
