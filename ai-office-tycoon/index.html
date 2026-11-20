@@ -571,13 +571,23 @@ var CARD_CAP = 8;
 function cardScale(){
   return 1 + state.approved * 0.035 + (state.level - 1) * 0.18;
 }
+function pendingSet(){
+  var set = {};
+  for(var i = 0; i < state.inbox.length; i++) set[state.inbox[i].ci] = 1;
+  return set;
+}
 function pickCardIndex(){
-  var hired = [];
-  for(var i=0;i<12;i++) if(state.staff[i].hired) hired.push(ROLES[i].id);
-  if(hired.length && Math.random() < 0.62){
-    var pool = [];
-    for(var c=0;c<CARDS.length;c++) if(hired.indexOf(CARDS[c][0]) >= 0) pool.push(c);
-    if(pool.length) return pool[Math.floor(Math.random()*pool.length)];
+  var hired = [], pending = pendingSet(), i;
+  for(i = 0; i < 12; i++) if(state.staff[i].hired) hired.push(ROLES[i].id);
+  for(var attempt = 0; attempt < 14; attempt++){
+    var ci = -1;
+    if(hired.length && Math.random() < 0.62){
+      var pool = [];
+      for(var c = 0; c < CARDS.length; c++) if(hired.indexOf(CARDS[c][0]) >= 0) pool.push(c);
+      if(pool.length) ci = pool[Math.floor(Math.random() * pool.length)];
+    }
+    if(ci < 0) ci = Math.floor(Math.random() * CARDS.length);
+    if(!pending[ci]) return ci;
   }
   return Math.floor(Math.random() * CARDS.length);
 }

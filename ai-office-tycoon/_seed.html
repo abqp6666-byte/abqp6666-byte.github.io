@@ -18,7 +18,8 @@
         up:{meeting:2, espresso:2, air:1, server:2, plaque:1},
         inbox: [], ctr:{approved:3,hired:9,upgrade:4,earned:40000,levelups:6,quick:1},
         mRound:1, nextCardAt: 0, muted:true, boostUntil:0, boostReadyAt:0,
-        savedAt: Date.now(), intro:true
+        savedAt: q.indexOf('offline') >= 0 ? Date.now() - 3 * 3600 * 1000 : Date.now(),
+        intro:true
       };
       localStorage.setItem(KEY, JSON.stringify(st));
     }
