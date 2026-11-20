@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store">
 <title>phone preview · 1.6x</title>
 <style>
   html,body{margin:0;background:#15161a;overflow:hidden;}
@@ -11,6 +12,9 @@
 </style>
 </head>
 <body>
-<div class="wrap"><iframe src="./_seed.html" title="preview"></iframe></div>
+<div class="wrap"><iframe id="f" title="preview"></iframe></div>
+<script>
+  document.getElementById('f').src = './_seed.html?t=' + Date.now();
+</script>
 </body>
 </html>
