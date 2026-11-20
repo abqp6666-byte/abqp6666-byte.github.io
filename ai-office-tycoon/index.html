@@ -1522,6 +1522,7 @@ function startCrisis(){
   state.crisis = cr;
   state.lastCrisisName = c.title;
   SFX.alarm();
+  if(sheetKind) closeSheet();
   showCrisis();
   addLog("cri", c.tag + " · " + c.title);
   meetBadge();
@@ -2673,7 +2674,7 @@ function showCrisis(){
   el.className = cr.kind === "rival" ? "rival" : (cr.kind === "calm" ? "calm" : "");
   var h = "";
   cr.opts.forEach(function(o, i){
-    var eff = o.money ? ((o.money > 0 ? "+" : "") + "₩" + won(o.money)) : "무료";
+    var eff = o.money ? ((o.money > 0 ? "+₩" : "-₩") + won(Math.abs(o.money))) : "무료";
     if(o.risk) eff = "확률 " + Math.round(o.risk * 100) + "%";
     h += '<button data-ci="' + i + '">' + esc(o.t) + '<span class="eff">' + esc(eff) + '</span></button>';
   });
@@ -2774,7 +2775,7 @@ function empRowHTML(gi){
        (s.rank >= MAXRANK ? "최고 등급" : rankName(s.rank) + "급") + '</div></div>';
   h += '<div class="ea">';
   if(s.lv >= 10) h += '<button class="mini grey" disabled>최대</button>';
-  else h += '<button class="mini blue" data-act="lvup" data-gi="' + gi + '">₩' + won(lvCost(gi)) + '</button>';
+  else h += '<button class="mini blue" data-act="lvup" data-gi="' + gi + '">Lv ₩' + won(lvCost(gi)) + '</button>';
   if(s.rank >= MAXRANK) h += '<button class="mini grey" disabled>이사</button>';
   else h += '<button class="mini purple" data-act="promo" data-gi="' + gi + '">승진 ₩' + won(promoCost(gi)) +
             (s.lv >= promoNeedLv(gi) ? "" : " ·Lv" + promoNeedLv(gi)) + '</button>';
