@@ -102,7 +102,7 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 #sheetWrap{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end;
   background:rgba(4,7,14,.55);animation:fade .18s ease-out both;}
 @keyframes fade{from{opacity:0;}to{opacity:1;}}
-#sheet{background:#151d34;border-top:3px solid var(--ink);max-height:78%;
+#sheet{background:#151d34;border-top:3px solid var(--ink);max-height:66%;
   display:flex;flex-direction:column;box-shadow:0 -4px 0 rgba(0,0,0,.5);
   padding-bottom:env(safe-area-inset-bottom,0px);animation:up .22s cubic-bezier(.2,.9,.3,1) both;}
 @keyframes up{from{transform:translateY(30px);}to{transform:none;}}
@@ -589,7 +589,11 @@ function spawnCard(){
   };
   state.inbox.push(card);
   alertStaff(card.from);
-  if(sheetKind === "inbox") renderSheet();
+  if(sheetKind === "inbox"){
+    var body = $("sheetBody");
+    if(state.inbox.length === 1) body.innerHTML = "";
+    body.insertAdjacentHTML("beforeend", cardHTML(card));
+  }
   updateBadges();
   return card;
 }
@@ -1286,6 +1290,34 @@ function updateTabs(){
   }
 }
 
+function cardHTML(card){
+  var ro = roleById(card.from);
+  var h = '<div class="card" data-uid="' + card.uid + '">';
+  h += '<div class="top"><span class="chip" style="background:' + ro.body + '">' + esc(card.from) + '</span>';
+  h += '<h3>' + esc(card.title) + '</h3></div><p>' + esc(card.desc) + '</p><div class="opts">';
+  card.opts.forEach(function(o, i){
+    var m = Math.round(o[1] * card.scale);
+    var xp = Math.round(o[2] * (1 + state.level * 0.05));
+    h += '<button class="opt" data-act="approve" data-uid="' + card.uid + '" data-oi="' + i + '">';
+    h += '<span class="lbl">' + esc(o[0]) + '</span>';
+    h += '<span class="rw"><span class="m">' + (m < 0 ? "-" : "+") + "₩" + won(Math.abs(m)) + '</span> ';
+    h += '<span class="x">+' + xp + 'XP</span></span></button>';
+  });
+  return h + '</div></div>';
+}
+function inboxSub(){
+  var sb = $("sheetSub");
+  if(sb && sheetKind === "inbox") sb.textContent = "올라온 서류 " + state.inbox.length + "건 · 확인만 눌러 주세요";
+}
+function removeCardEl(uid){
+  var el = document.querySelector('#sheetBody .card[data-uid="' + uid + '"]');
+  if(el && el.parentNode) el.parentNode.removeChild(el);
+  if(sheetKind === "inbox"){
+    inboxSub();
+    if(!state.inbox.length) renderSheet();
+  }
+}
+
 function renderSheet(){
   if(!sheetKind) return;
   var body = $("sheetBody"), title = $("sheetTitle"), sub = $("sheetSub");
@@ -1297,20 +1329,7 @@ function renderSheet(){
     if(!state.inbox.length){
       html = '<div class="empty">결재할 서류가 없어요.<br>직원들이 곧 올려요!<br><br>· 빠른 결재로 한 번에 처리할 수 있어요</div>';
     } else {
-      state.inbox.forEach(function(card){
-        var ro = roleById(card.from);
-        html += '<div class="card"><div class="top"><span class="chip" style="background:' + ro.body + '">' + esc(card.from) + '</span>';
-        html += '<h3>' + esc(card.title) + '</h3></div><p>' + esc(card.desc) + '</p><div class="opts">';
-        card.opts.forEach(function(o, i){
-          var m = Math.round(o[1] * card.scale);
-          var xp = Math.round(o[2] * (1 + state.level * 0.05));
-          html += '<button class="opt" data-act="approve" data-uid="' + card.uid + '" data-oi="' + i + '">';
-          html += '<span class="lbl">' + esc(o[0]) + '</span>';
-          html += '<span class="rw"><span class="m">' + (m < 0 ? "-" : "+") + "₩" + won(Math.abs(m)) + '</span> ';
-          html += '<span class="x">+' + xp + 'XP</span></span></button>';
-        });
-        html += '</div></div>';
-      });
+      state.inbox.forEach(function(card){ html += cardHTML(card); });
     }
   } else if(sheetKind === "staff"){
     var n = hiredCount();
@@ -1379,7 +1398,9 @@ function renderSheet(){
 function refreshLive(){
   if(!sheetKind) return;
   var i, k, el;
-  if(sheetKind === "staff"){
+  if(sheetKind === "inbox"){
+    inboxSub();
+  } else if(sheetKind === "staff"){
     var btns = document.querySelectorAll('#sheetBody [data-act="hire"], #sheetBody [data-act="lvup"]');
     for(i = 0; i < btns.length; i++){
       var b = btns[i], idx = parseInt(b.getAttribute("data-i"), 10);
@@ -1464,7 +1485,7 @@ function wireUI(){
       if(res){
         stampAt(r.left + r.width / 2, r.top + r.height / 2, "승인");
         toast((res.gain >= 0 ? "+" : "") + "₩" + won(res.gain) + " · +" + res.xp + "XP", res.gain >= 0 ? "good" : "bad");
-        renderSheet();
+        removeCardEl(uid);
         updateBadges();
         save();
       }
@@ -1499,7 +1520,7 @@ function wireUI(){
     var b = $("quickApprove").getBoundingClientRect();
     stampAt(b.left + b.width / 2, b.top - 30, "승인");
     if(res) toast("빠른 결재 · +₩" + won(res.gain) + " · +" + res.xp + "XP", "good");
-    if(sheetKind === "inbox") renderSheet();
+    if(sheetKind === "inbox") removeCardEl(card.uid);
     updateBadges();
     save();
   });
