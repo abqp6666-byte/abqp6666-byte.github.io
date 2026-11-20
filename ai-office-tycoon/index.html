@@ -303,7 +303,7 @@ var DESK_COL = [4, 54, 104, 154];           // 4열 × 3줄 = 12석
 var DESK_ROW = [112, 158, 204];
 var DESK_W = 44, DESK_H = 16;
 function deskOf(i){ return {x: DESK_COL[i % 4], y: DESK_ROW[Math.floor(i / 4)]}; }
-function seatOf(i){ var d = deskOf(i); return {x: d.x + 22, y: d.y + 6}; }
+function seatOf(i){ var d = deskOf(i); return {x: d.x + 22, y: d.y + 2}; }
 
 /* ------------------ 시설 업그레이드 ------------------ */
 var UPGRADES = [
@@ -1039,8 +1039,10 @@ function updateActors(dt){
           {x:tg.x, y:tg.y}
         ];
         l.pi = 0; l.mode = "walk"; l.hold = true;
-        l.bubble = BUB_WALK[Math.floor(Math.random() * BUB_WALK.length)];
-        l.bubUntil = now + 4000;
+        if(bubbleCount() < 2){
+          l.bubble = BUB_WALK[Math.floor(Math.random() * BUB_WALK.length)];
+          l.bubUntil = now + 3600;
+        }
       } else if(now > l.bubNext && now > l.bubUntil){
         if(bubbleCount() >= 2){
           l.bubNext = now + 1800 + Math.random() * 3000;
@@ -1061,8 +1063,10 @@ function updateActors(dt){
         l.x = tgt.x; l.y = tgt.y; l.pi++;
         if(l.pi >= l.path.length){
           l.mode = "deliver"; l.t = 0;
-          l.bubble = "확인 부탁드려요!";
-          l.bubUntil = now + 2400;
+          if(bubbleCount() < 2){
+            l.bubble = "확인 부탁드려요!";
+            l.bubUntil = now + 2400;
+          }
           l.next = 2.2 + Math.random() * 1.6;
         }
       } else {
@@ -1192,7 +1196,7 @@ function drawScene(){
   for(var n = 0; n < 12; n++){
     if(!state.staff[n].hired || !live[n]) continue;
     var ln = live[n];
-    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 18, 5.0, "#ffffff", 800);
+    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 17, 4.9, "#ffffff", 800);
   }
   outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
 
@@ -1206,7 +1210,7 @@ function drawScene(){
   for(var m = 0; m < 12; m++){
     if(!state.staff[m].hired || !live[m]) continue;
     var lm = live[m];
-    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 20, 4.7);
+    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 21, 4.7);
   }
   if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 4.7);
 
