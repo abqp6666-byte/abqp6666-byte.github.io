@@ -13,8 +13,8 @@
 <body>
 <div class="wrap"><iframe id="f" title="preview"></iframe></div>
 <script>
-  var m = location.search.indexOf('reset') >= 0 ? 'reset' : 'seed';
-  document.getElementById('f').src = './_seed.html?mode=' + m + '&t=' + Date.now();
+  var qs = location.search.replace(/^\?/, '');
+  document.getElementById('f').src = './_seed.html?' + qs + '&t=' + Date.now();
 </script>
 </body>
 </html>
