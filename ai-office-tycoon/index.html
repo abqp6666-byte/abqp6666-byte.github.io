@@ -1616,7 +1616,7 @@ function startMeeting(){
 
   mt = {
     id: ++meetUid, topic: topic, parts: parts, seg: 0, phase: "walk",
-    lines: topic.l, resolved: [], nextAt: 0, startedAt: Date.now(), arrived: 0
+    lines: topic.l, resolved: [], nextAt: 0, startedAt: Date.now(), arrived: 0, spots: spots
   };
   parts.forEach(function(idx, k){
     if(!live[idx]) return;
@@ -1626,6 +1626,7 @@ function startMeeting(){
   var mid = mt.id;
   var check = setInterval(function(){
     if(!mt || mt.id !== mid){ clearInterval(check); return; }
+    if(mt.phase !== "walk"){ clearInterval(check); return; }
     var done = 0;
     mt.parts.forEach(function(idx){
       var l = live[idx];
@@ -1634,15 +1635,21 @@ function startMeeting(){
     });
     if(done >= mt.parts.length){
       clearInterval(check);
-      mt.phase = "talk";
-      mt.nextAt = Date.now() + 600;
-      SFX.meet();
-      toast("회의 시작 · " + mt.topic.t, "gold");
-      addLog("meet", "회의 시작 · " + mt.topic.t);
-      meetBadge();
-      if(sheetKind === "minutes") renderSheet();
+      beginTalk();
     }
   }, 220);
+}
+
+function beginTalk(){
+  if(!mt || mt.phase !== "walk") return;
+  mt.phase = "talk";
+  mt.nextAt = Date.now() + 600;
+  SFX.meet();
+  toast("회의 시작 · " + mt.topic.t, "gold");
+  addLog("meet", "회의 시작 · " + mt.topic.t);
+  meetBadge();
+  updateBadges();
+  if(sheetKind === "minutes") renderSheet();
 }
 
 function mtFill(text, parts){
@@ -1667,6 +1674,19 @@ function updateMeeting(){
     if(now >= state.nextMeetAt && hiredCount() >= 2){
       startMeeting();
       if(!mt) return;
+    }
+    return;
+  }
+  if(mt.phase === "walk"){
+    /* 입장이 오래 걸리면(다른 볼일이 끼어들면) 자리를 잡아주고 시작한다 */
+    if(now - mt.startedAt > 9000){
+      mt.parts.forEach(function(idx, k){
+        var l = live[idx];
+        if(!l) return;
+        if(mt.spots && mt.spots[k]){ l.x = mt.spots[k].x; l.y = mt.spots[k].y; }
+        l.path = null; l.mode = "meet"; l.done = null;
+      });
+      beginTalk();
     }
     return;
   }
@@ -2175,6 +2195,8 @@ function updateBadges(){
   $("qCnt").classList.toggle("hidden", !n);
   $("quickApprove").disabled = n === 0;
   meetBadge();
+  var mb = $("meetBadge");
+  if(mb) mb.classList.toggle("hidden", !(mt && mt.phase !== "done"));
 }
 
 function stampAt(x, y, text){
@@ -2383,6 +2405,7 @@ function updateHUD(now){
     $("boostLabel").textContent = "🔥 2배 부스트";
     $("boostBtn").disabled = false;
   }
+  meetBadge();
 }
 
 function loop(ts){
