@@ -147,7 +147,7 @@ button.badge:active{transform:translateY(2px);box-shadow:none;}
 .hidden{display:none !important;}
 
 /* ---------- sheet ---------- */
-#sheetWrap{position:fixed;left:0;right:0;top:0;bottom:var(--tabh,54px);z-index:20;display:flex;
+#sheetWrap{position:fixed;left:0;right:0;top:var(--sheettop,0px);bottom:var(--tabh,54px);z-index:20;display:flex;
   flex-direction:column;justify-content:flex-end;background:rgba(4,7,14,.55);
   animation:fade .18s ease-out both;}
 @keyframes fade{from{opacity:0;}to{opacity:1;}}
@@ -1378,10 +1378,14 @@ function settleAuto(card, oi, bi, factor, label){
 }
 
 /* 대표님(플레이어) 결재함으로 올라옴 */
+var fullLogAt = 0;
 function toCeo(card, oi){
   card.done = true;
   if(state.inbox.length >= CARD_CAP){
-    addLog("ceo", card.title + " → 결재함이 가득 차 보류");
+    if(Date.now() - fullLogAt > 18000){
+      fullLogAt = Date.now();
+      addLog("ceo", "결재함이 가득 차 새 서류가 밀렸어요 · 결재를 처리해 주세요");
+    }
     return;
   }
   state.inbox.push(card);
@@ -1646,6 +1650,7 @@ function resize(){
   ctx.imageSmoothingEnabled = false;
   var tb = $("tabs");
   if(tb) document.documentElement.style.setProperty("--tabh", tb.offsetHeight + "px");
+  document.documentElement.style.setProperty("--sheettop", Math.max(0, stage.getBoundingClientRect().top) + "px");
 }
 
 function rowOf(gi){ return Math.floor(gi / SEATS) % DEPT_PER_FLOOR; }
