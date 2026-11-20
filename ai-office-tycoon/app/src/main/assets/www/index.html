@@ -88,8 +88,9 @@ button.badge:active{transform:translateY(2px);box-shadow:none;}
 #criTime{font-size:10px;font-weight:800;color:#ffd479;font-variant-numeric:tabular-nums;}
 .cri-d{font-size:9.5px;line-height:1.35;color:#e6d2d8;margin-bottom:4px;letter-spacing:-.2px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.cri-bar{height:4px;background:#0f1730;border:1px solid #000;margin-bottom:5px;overflow:hidden;}
-.cri-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff9f9f,#ffd479);}
+.cri-bar{height:6px;background:#0f1730;border:1px solid #000;margin-bottom:5px;overflow:hidden;}
+.cri-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff7a7a,#ffd479);
+  box-shadow:0 0 6px rgba(255,180,120,.6);}
 .cri-o{display:flex;gap:4px;}
 .cri-o button{flex:1;min-width:0;font-family:inherit;font-size:9.5px;font-weight:800;letter-spacing:-.3px;
   color:#20160a;background:linear-gradient(#ffe1a0,#ffbe4d);border:2px solid var(--ink);
@@ -463,9 +464,9 @@ var DEPT_PER_FLOOR = 3;
 
 var FLOORS = [
   {name:"1층",  sub:"기본 운영",  cost:0,       room:"대표실",   desc:"고객지원 · 견적관리 · 보고서"},
-  {name:"2층",  sub:"영업·관리",  cost:48000,   room:"서버실",   desc:"데이터 · 예약관리 · 문서관리"},
-  {name:"3층",  sub:"기술·전문",  cost:190000,  room:"자료실",   desc:"재무회계 · 홍보 · 개발"},
-  {name:"옥상", sub:"루프탑",     cost:900000,  room:"하늘정원", desc:"디자인 · 법무 · 인사"}
+  {name:"2층",  sub:"영업·관리",  cost:20000,   room:"서버실",   desc:"데이터 · 예약관리 · 문서관리"},
+  {name:"3층",  sub:"기술·전문",  cost:90000,   room:"자료실",   desc:"재무회계 · 홍보 · 개발"},
+  {name:"옥상", sub:"루프탑",     cost:360000,  room:"하늘정원", desc:"디자인 · 법무 · 인사"}
 ];
 
 /* ------------------ 직급 ------------------ */
@@ -1150,6 +1151,7 @@ function moraleMul(){ return 1 + (state.morale - 60) * 0.005; }
 function rivalMul(){ return 1 - clamp(state.rival.share, 0, 100) / 100 * 0.35; }
 function mult(){
   var m = 1 + (state.level - 1) * 0.03 + upSum();
+  m *= 1 + 0.25 * (floorsOpen() - 1);                    // 사옥 시너지: 층마다 +25%
   if(Date.now() < state.buffUntil) m += 0.10;            // 회의 효과
   if(Date.now() < state.buff2Until) m += state.buff2Amt; // 위기 대응 효과
   return m * moraleMul() * rivalMul();
@@ -1849,7 +1851,7 @@ function drawFloorTiles(c, fi){
     var d = state.fi * DEPT_PER_FLOOR + r;
     if(d >= DEPTS.length) continue;
     var col = DEPTS[d].body;
-    c.globalAlpha = 0.10;
+    c.globalAlpha = 0.14;
     R(c, col, 2, ROW_Y[r] + 12, 196, 36);
     c.globalAlpha = 1;
     R(c, col, 2, ROW_Y[r] + 11, 196, 1);
@@ -2725,7 +2727,7 @@ function openFloorModal(fi){
     '<div class="kick">사옥 확장 · ' + F.name + '</div>' +
     '<h2>' + F.name + ' · ' + F.sub + '</h2>' +
     '<p>' + F.desc + ' 부서가 입주해요.</p>' +
-    '<ul>' + deps + '</ul>' +
+    '<ul>' + deps + '<li><b>사옥 시너지</b> · 전체 수익 +25%</li></ul>' +
     '<div class="big">₩' + won(F.cost) + '</div>' +
     '<p style="text-align:center;font-size:10px;opacity:.7">보유 자금 ₩' + won(state.money) + '</p>' +
     '<button class="go" id="floorGo" data-f="' + fi + '"' + (afford ? "" : " disabled") + '>' +
@@ -2943,7 +2945,7 @@ function renderSheet(){
 
   } else if(sheetKind === "shop"){
     title.textContent = "사옥 시설";
-    sub.textContent = "사옥 배율 ×" + (1 + upSum()).toFixed(2) + " · 전체 수익 ×" + mult().toFixed(2);
+    sub.textContent = "사옥 시너지 +" + (25 * (floorsOpen() - 1)) + "% · 전체 수익 ×" + mult().toFixed(2);
     for(var fi = 0; fi < FLOORS.length; fi++){
       var F = FLOORS[fi], openF = state.floors[fi];
       html += '<div class="row' + (openF ? "" : " locked") + '"><div class="swatch" style="background:' +
