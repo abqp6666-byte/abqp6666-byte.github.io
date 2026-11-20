@@ -2432,7 +2432,7 @@ function drawScene(){
     gi = +k;
     var l4 = live[gi];
     if(!l4 || !state.staff[gi] || !state.staff[gi].hired) continue;
-    if(l4.mode === "work") continue;
+    if(l4.mode === "work" || l4.mode === "walk") continue;   /* 이동 중에는 이름표를 띄우지 않는다 */
     var rn4 = state.staff[gi].rank;
     outTxt(ctx, rankName(rn4) + " " + empName(gi), l4.x, l4.y - 17, 4.4,
            rn4 > 0 ? rankColor(rn4) : "#ffffff", 800);
