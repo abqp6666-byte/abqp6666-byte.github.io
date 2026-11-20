@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>seed</title></head>
+<body style="background:#0b0f1c;color:#9fb0d8;font:12px sans-serif">
+<script>
+(function(){
+  var staff = [];
+  for (var i = 0; i < 12; i++) staff.push({hired: i < 9, lv: i < 9 ? 1 + (i % 7) : 1});
+  var st = {
+    v:1, money: 420000, totalEarned: 980000, xp: 40, level: 9,
+    approved: 63, quick: 12, staff: staff,
+    up:{meeting:2, espresso:2, air:1, server:2, plaque:1},
+    inbox: [], ctr:{approved:3,hired:9,upgrade:4,earned:40000,levelups:6,quick:1},
+    mRound:1, nextCardAt: 0, muted:true, boostUntil:0, boostReadyAt:0,
+    savedAt: Date.now(), intro:true
+  };
+  try { localStorage.setItem('aiOfficeTycoon.save.v1', JSON.stringify(st)); } catch(e) {}
+  location.replace('./index.html?seeded=1');
+})();
+</script>
+</body>
+</html>
