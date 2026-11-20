@@ -12,6 +12,9 @@ html,body{margin:0;height:100%;background:#05070d;overflow:hidden;font-family:sa
 </style>
 </head>
 <body>
-<div id="wrap"><div id="phone"><iframe id="fr" src="./index.html?v=200"></iframe></div></div>
+<div id="wrap"><div id="phone"><iframe id="fr"></iframe></div></div>
+<script>
+document.getElementById("fr").src = "./index.html?" + (location.search.replace(/^\?/, "") || "v=1");
+</script>
 </body>
 </html>
