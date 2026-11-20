@@ -3348,7 +3348,7 @@ function tick(dt){
   rivalAcc += dt;
   if(rivalAcc > 16){
     rivalAcc = 0;
-    if(state.rival.share < 90) state.rival.share = clamp(state.rival.share + 0.7, 0, 90);
+    if(state.rival.share < 60) state.rival.share = clamp(state.rival.share + 0.4, 0, 90);
   }
   /* 사기는 60을 향해 천천히 돌아온다 */
   state.morale += (60 - state.morale) * 0.004 * dt;
