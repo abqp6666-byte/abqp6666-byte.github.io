@@ -1165,13 +1165,6 @@ function drawScene(){
   ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
   ctx.fillStyle = "#080c16";
   ctx.fillRect(0, 0, view.w, view.h);
-  /* 위아래 여백을 벽/바닥 색으로 이어 붙인다 */
-  if(view.oy > 0){
-    ctx.fillStyle = "#efe2c2";
-    ctx.fillRect(0, 0, view.w, view.oy + 1);
-    ctx.fillStyle = "#d98b3f";
-    ctx.fillRect(0, view.oy + H * s - 1, view.w, view.h);
-  }
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(bgc, view.ox, view.oy, W * s, H * s);
 
@@ -1179,6 +1172,22 @@ function drawScene(){
   ctx.translate(view.ox, view.oy);
   ctx.scale(s, s);
   var now = Date.now();
+
+  /* 남는 여백에 벽/바닥 무늬를 이어 붙인다 (레터박스 제거) */
+  var padTop = view.oy / s, padBot = (view.h - view.oy - H * s) / s;
+  if(padTop > 0.5){
+    R(ctx, "#efe2c2", 0, -padTop, W, padTop + 1);
+    for(var px2 = 2; px2 < W; px2 += 10) R(ctx, "#e8dab8", px2, -padTop, 5, padTop + 1);
+  }
+  if(padBot > 0.5){
+    for(var py2 = H; py2 < H + padBot + 8; py2 += 8){
+      R(ctx, "#d98b3f", 0, py2, W, 8);
+      R(ctx, "#c47a30", 0, py2 + 7, W, 1);
+      R(ctx, "#e6a05a", 0, py2, W, 1);
+      var off2 = (Math.floor(py2 / 8) % 2) ? 20 : 0;
+      for(var px3 = off2; px3 < W; px3 += 44) R(ctx, "#c47a30", px3, py2, 1, 7);
+    }
+  }
 
   /* 회의실 · CEO 라벨 */
   txt(ctx, "MEETING", 6 + (58 + state.up.meeting * 10) / 2, 64, 4.2, "#ffe9c4", 800);
