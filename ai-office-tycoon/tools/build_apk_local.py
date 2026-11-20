@@ -113,8 +113,11 @@ def main():
     aligned = os.path.join(BUILD, "aligned.apk")
     run([zipalign, "-f", "-p", "4", with_dex, aligned])
 
-    # 7) debug keystore + apksigner
+    # 7) debug keystore + apksigner (키는 저장소에 보관해 서명이 바뀌지 않게 한다)
+    ks_src = os.path.join(ROOT, "tools", "debug.keystore")
     ks = os.path.join(BUILD, "debug.keystore")
+    if os.path.exists(ks_src):
+        shutil.copy2(ks_src, ks)
     if not os.path.exists(ks):
         run([keytool, "-genkeypair", "-v", "-keystore", ks, "-storepass", "android",
              "-alias", "androiddebugkey", "-keypass", "android",

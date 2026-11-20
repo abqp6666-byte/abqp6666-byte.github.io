@@ -655,10 +655,14 @@ var MEET = [
     [1,"월요일에 제일 먼저 오시잖아요. 그게 이유입니다."]
   ]}
 ];
-var MEET_SPOT = {
-  2:[{x:18,y:88},{x:44,y:88}],
-  3:[{x:16,y:88},{x:38,y:88},{x:60,y:88}]
-};
+var MEET_Y = 88;
+function meetSpots(n){
+  /* 회의실 테이블 폭에 맞춰 인원을 고르게 배치한다 */
+  var mw = 58 + state.up.meeting * 10;
+  var out = [], k;
+  for(k = 0; k < n; k++) out.push({x: 6 + mw * (k + 1) / (n + 1), y: MEET_Y});
+  return out;
+}
 
 /* ------------------ 미션 정의 ------------------ */
 var MDEF = [
@@ -1519,7 +1523,7 @@ function updateActors(dt){
             }
           };
         }(i));
-      } else if(now > l.bubNext && now > l.bubUntil && now > l.bubLock){
+      } else if(now > l.bubNext && now > l.bubUntil && now > l.bubLock && !mt){
         if(bubbleCount() >= 2){
           l.bubNext = now + 1800 + Math.random() * 3000;
         } else {
@@ -1612,7 +1616,7 @@ function startMeeting(){
   var topic = pool[Math.floor(Math.random() * pool.length)];
   var want = Math.min(topic.p, cand.length);
   var parts = cand.slice(0, want);
-  var spots = MEET_SPOT[want] || MEET_SPOT[2];
+  var spots = meetSpots(want);
 
   mt = {
     id: ++meetUid, topic: topic, parts: parts, seg: 0, phase: "walk",
