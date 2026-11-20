@@ -2008,7 +2008,7 @@ function lineHTML(l, wait){
          '<span class="say">' + esc(l.t) + '</span></div>';
 }
 function minutesHTML(){
-  var h = "";
+  var h = "", startIdx = 0;
   if(mt && mt.phase !== "done"){
     var liveNow = mt.phase === "talk";
     h += '<div class="mt"><div class="mhead">' +
@@ -2022,15 +2022,25 @@ function minutesHTML(){
     h += '<div>' + mt.resolved.map(function(l){ return lineHTML(l, false); }).join("");
     if(liveNow) h += '<div class="ln wait"><b>…</b><span class="say">다음 발언을 기다리는 중</span></div>';
     h += '</div></div>';
+  } else if(state.meetings.length && (Date.now() - state.meetings[0].at) < 45000){
+    /* 방금 끝난 회의는 전문을 그대로 보여준다 */
+    var m0 = state.meetings[0];
+    h += '<div class="mt"><div class="mhead"><span class="pin">방금 종료</span><h3>' + esc(m0.title) + '</h3></div>';
+    h += '<div class="meta">' + timeStr(m0.at) + ' · 참석 ' + m0.parts.length + '명 · 발언 ' + m0.lines.length + '개</div>';
+    h += '<div class="chiprow">' + m0.parts.map(whoChip).join("") + '</div>';
+    h += m0.lines.map(function(l){ return lineHTML(l, false); }).join("");
+    h += '<div class="reward">팀 사기 +10% (90초) · 회의 보너스 지급 완료</div></div>';
+    startIdx = 1;
   }
-  if(state.meetings.length){
-    h += '<div class="logbox" style="background:#141c31"><div class="lh">지난 회의록 (' + state.meetings.length + ')</div></div>';
-    state.meetings.forEach(function(m, idx){
+  if(state.meetings.length > startIdx){
+    h += '<div class="logbox" style="background:#141c31"><div class="lh">지난 회의록 (' + (state.meetings.length - startIdx) + ')</div></div>';
+    for(var mi = startIdx; mi < state.meetings.length; mi++){
+      var m = state.meetings[mi];
       h += '<div class="mt"><div class="mhead"><span class="pin">회의록</span><h3>' + esc(m.title) + '</h3></div>';
       h += '<div class="meta">' + timeStr(m.at) + ' · 참석 ' + m.parts.length + '명 · 발언 ' + m.lines.length + '개</div>';
       h += '<div class="chiprow">' + m.parts.map(whoChip).join("") + '</div>';
-      h += '<button class="mini grey" data-act="minutes" data-m="' + idx + '">대화 전문 보기</button></div>';
-    });
+      h += '<button class="mini grey" data-act="minutes" data-m="' + mi + '">대화 전문 보기</button></div>';
+    }
   }
   if(!h){
     h = '<div class="empty">아직 회의록이 없어요.<br>직원이 2명 이상이면 회의실에서 회의가 열려요.<br><br>· 회의실을 눌러도 볼 수 있어요</div>';
