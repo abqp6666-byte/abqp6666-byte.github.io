@@ -1006,7 +1006,7 @@ function aisleFor(i){
 function spawnLive(i){
   var s = seatOf(i);
   live[i] = {
-    x:s.x, y:s.y, mode:"work", t:0, next:3 + Math.random() * 8,
+    x:s.x, y:s.y, mode:"work", t:0, next:5 + Math.random() * 10,
     path:[], pi:0, spd:24 + Math.random() * 8, tick:Math.random() * 5,
     bubble:"", bubUntil:0, bubNext:2 + Math.random() * 5, hold:false
   };
@@ -1046,12 +1046,13 @@ function updateActors(dt){
         l.t = 0;
         var tg = TARGETS[Math.random() < 0.55 ? 0 : 1];
         var ax = aisleFor(i);
+        var lane = LANE + (i % 3) * 3;
         l.path = [
           {x:ax, y:seat.y},
-          {x:ax, y:LANE},
-          {x:tg.x, y:tg.y}
+          {x:ax, y:lane},
+          {x:tg.x + ((i % 4) - 1.5) * 8, y:lane}
         ];
-        l.pi = 0; l.mode = "walk"; l.hold = true;
+        l.pi = 0; l.mode = "walk"; l.hold = true; l.going = true;
         if(bubbleCount() < 2){
           l.bubble = BUB_WALK[Math.floor(Math.random() * BUB_WALK.length)];
           l.bubUntil = now + 3600;
@@ -1068,19 +1069,25 @@ function updateActors(dt){
       }
     } else if(l.mode === "walk"){
       var tgt = l.path[l.pi];
-      if(!tgt){ l.mode = "work"; l.t = 0; l.next = 6 + Math.random() * 10; continue; }
+      if(!tgt){ l.mode = "work"; l.t = 0; l.next = 12 + Math.random() * 14; continue; }
       var dx = tgt.x - l.x, dy = tgt.y - l.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
       var step = l.spd * dt;
       if(dist <= step){
         l.x = tgt.x; l.y = tgt.y; l.pi++;
         if(l.pi >= l.path.length){
-          l.mode = "deliver"; l.t = 0;
-          if(bubbleCount() < 2){
-            l.bubble = "확인 부탁드려요!";
-            l.bubUntil = now + 2400;
+          l.t = 0;
+          if(l.going){
+            l.mode = "deliver";
+            if(bubbleCount() < 2){
+              l.bubble = "확인 부탁드려요!";
+              l.bubUntil = now + 2400;
+            }
+            l.next = 2.2 + Math.random() * 1.6;
+          } else {
+            l.mode = "work"; l.hold = false;
+            l.next = 10 + Math.random() * 16;
           }
-          l.next = 2.2 + Math.random() * 1.6;
         }
       } else {
         l.x += dx / dist * step;
@@ -1091,12 +1098,13 @@ function updateActors(dt){
       if(l.t > l.next){
         l.t = 0;
         var ax2 = aisleFor(i);
+        var lane2 = LANE + (i % 3) * 3;
         l.path = [
-          {x:ax2, y:LANE},
+          {x:ax2, y:lane2},
           {x:ax2, y:seat.y},
           {x:seat.x, y:seat.y}
         ];
-        l.pi = 0; l.mode = "walk"; l.hold = true;
+        l.pi = 0; l.mode = "walk"; l.hold = true; l.going = false;
       }
     }
     if(l.mode === "work") l.hold = false;
