@@ -827,6 +827,12 @@ function drawBG(){
   /* 서류 */
   R(c, "#fffdf5", 124, 58, 12, 4);
   R(c, "#e2dbc9", 125, 59, 10, 1);
+  /* 키보드 · 서류 묶음 */
+  R(c, "#8b98a3", 130, 66, 16, 3);
+  R(c, "#e8eef7", 131, 67, 14, 1);
+  R(c, "#fffdf5", 154, 65, 9, 4);
+  R(c, "#d8d1c0", 155, 66, 7, 1);
+  R(c, "#9aa7b0", 96, 74, 76, 1);
   /* 명패 */
   if(state.up.plaque > 0){
     R(c, "#7a5a12", 148, 63, 20, 7);
@@ -843,9 +849,12 @@ function drawBG(){
   }
 
   /* 휴게실 (하단) */
-  R(c, "#b06c2c", 4, 232, 90, 24);
-  R(c, "#c07a34", 4, 232, 90, 1);
-  R(c, "#9a5c22", 4, 255, 90, 1);
+  R(c, "#a86a2a", 4, 231, 92, 26);
+  R(c, "#c98a4a", 6, 233, 88, 22);
+  R(c, "#b3742f", 6, 233, 88, 1);
+  R(c, "#b3742f", 6, 254, 88, 1);
+  R(c, "#b3742f", 6, 233, 1, 22);
+  R(c, "#b3742f", 93, 233, 1, 22);
   /* 화분 */
   R(c, "#8a4b1e", 9, 246, 11, 8);
   R(c, "#a65c26", 9, 246, 11, 2);
@@ -905,9 +914,11 @@ function drawDeskBG(c, d, i, hired){
     R(c, "#e2dbc9", x + 29, y - 2, 9, 1);
     R(c, "#0f1728", x + 11, y + 10, 26, 6);
   } else {
-    R(c, "#a86a2a", x + 20, y - 7, 8, 8);
-    R(c, "#c47a30", x + 21, y - 6, 6, 6);
-    R(c, "#f0c060", x + 23, y - 4, 2, 2);
+    R(c, "#7a4118", x + 20, y - 9, 2, 9);
+    R(c, "#c8763a", x + 13, y - 16, 16, 8);
+    R(c, "#8f4f1e", x + 13, y - 16, 16, 1);
+    R(c, "#f0c060", x + 20, y - 14, 2, 4);
+    R(c, "#f0c060", x + 19, y - 13, 4, 2);
     R(c, "#7a4118", x + 11, y + 10, 26, 6);
   }
 }
@@ -1145,7 +1156,7 @@ function drawScene(){
   for(var e = 0; e < 12; e++){
     if(!state.staff[e].hired){
       var dd = deskOf(e);
-      txt(ctx, "채용", dd.x + 24, dd.y + 13, 3.8, "#d9a05c", 800);
+      txt(ctx, "채용", dd.x + 24, dd.y + 13, 4.0, "#d9a05c", 800);
     }
   }
 
@@ -1163,23 +1174,23 @@ function drawScene(){
   for(var n = 0; n < 12; n++){
     if(!state.staff[n].hired || !live[n]) continue;
     var ln = live[n];
-    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 21.5, 4.4, "#ffffff", 800);
+    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 22, 5.2, "#ffffff", 800);
   }
-  outTxt(ctx, "대표님", ceo.x, ceo.y - 24, 4.4, "#ffd479", 800);
+  outTxt(ctx, "대표님", ceo.x, ceo.y - 25, 5.2, "#ffd479", 800);
 
   /* 책상 명패 */
   for(var p = 0; p < 12; p++){
     var dp = deskOf(p);
-    if(state.staff[p].hired) txt(ctx, ROLES[p].id, dp.x + 24, dp.y + 13, 3.6, "#ffe9c4", 800);
+    if(state.staff[p].hired) txt(ctx, ROLES[p].id, dp.x + 24, dp.y + 13, 4.0, "#ffe9c4", 800);
   }
 
   /* 말풍선 */
   for(var m = 0; m < 12; m++){
     if(!state.staff[m].hired || !live[m]) continue;
     var lm = live[m];
-    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 23.5, 4.6);
+    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 24, 5.3);
   }
-  if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 26, 4.6);
+  if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 27, 5.3);
 
   /* 부스트 오라 */
   if(now < state.boostUntil){
@@ -1282,9 +1293,12 @@ function renderSheet(){
       if(!s.hired){
         html += '<button class="mini" data-act="hire" data-i="' + i + '"' + (lock ? " disabled" : "") + '>₩' + won(hireCost(i)) + " 채용</button>";
       } else if(s.lv >= 10){
-        html += '<div class="pips"><i class="on"></i><i class="on"></i><i class="on"></i></div><span style="font-size:9px;color:#7be08e;font-weight:800">MAX</span>';
+        html += '<span style="font-size:9px;color:#7be08e;font-weight:800">MAX</span>';
       } else {
-        html += '<div class="pips"><i class="on"></i><i class="on"></i></div>';
+        html += '<div class="pips">';
+        var pl = Math.min(10, s.lv);
+        for(var q = 0; q < 10; q++) html += '<i class="' + (q < pl ? "on" : "") + '"></i>';
+        html += '</div>';
         html += '<button class="mini blue" data-act="lvup" data-i="' + i + '">₩' + won(lvCost(i)) + " 레벨업</button>";
       }
       html += '</div></div>';
@@ -1311,17 +1325,52 @@ function renderSheet(){
     state.missions.forEach(function(m, i){
       var d = MDEF[i], prog = missionProg(m), done = prog >= m.target;
       var pct = Math.min(100, Math.round(prog / m.target * 100));
-      html += '<div class="mis' + (m.got ? " done" : "") + '">';
+      html += '<div class="mis' + (m.got ? " done" : "") + '" data-mi="' + i + '">';
       html += '<div class="box">' + (m.got ? "✓" : "") + '</div>';
       html += '<div class="txt"><div class="t1">' + d.t(m.target) + '</div>';
-      html += '<div class="t2">' + won(Math.min(prog, m.target)) + ' / ' + won(m.target) + ' · 보상 ₩' + won(Math.round(520 * Math.pow(1.95, state.mRound - 1) * d.rw)) + '</div>';
-      html += '<div class="bar"><i style="width:' + pct + '%"></i></div></div>';
-      if(!m.got && done) html += '<button class="mini" data-act="claim" data-i="' + i + '">받기</button>';
-      else if(m.got) html += '<span style="font-size:9px;color:#7be08e;font-weight:800">완료</span>';
+      html += '<div class="t2" data-mi-t="' + i + '">' + won(Math.min(prog, m.target)) + ' / ' + won(m.target) + ' · 보상 ₩' + won(Math.round(520 * Math.pow(1.95, state.mRound - 1) * d.rw)) + '</div>';
+      html += '<div class="bar"><i data-mi-bar="' + i + '" style="width:' + pct + '%"></i></div></div>';
+      if(!m.got) html += '<button class="mini" data-act="claim" data-i="' + i + '"' + (done ? "" : " disabled") + '>받기</button>';
+      else html += '<span style="font-size:9px;color:#7be08e;font-weight:800">완료</span>';
       html += '</div>';
     });
   }
   body.innerHTML = html;
+}
+
+function refreshLive(){
+  if(!sheetKind) return;
+  var i, k, el;
+  if(sheetKind === "staff"){
+    var btns = document.querySelectorAll('#sheetBody [data-act="hire"], #sheetBody [data-act="lvup"]');
+    for(i = 0; i < btns.length; i++){
+      var b = btns[i], idx = parseInt(b.getAttribute("data-i"), 10);
+      var isHire = b.getAttribute("data-act") === "hire";
+      var cost = isHire ? hireCost(idx) : lvCost(idx);
+      b.disabled = (isHire && idx !== nextSlot()) || state.money < cost;
+    }
+    var sb = $("sheetSub");
+    if(sb) sb.textContent = hiredCount() + " / 12명 근무 중 · 총 " + won(ips()) + "원/초";
+  } else if(sheetKind === "shop"){
+    var ub = document.querySelectorAll('#sheetBody [data-act="buy"]');
+    for(i = 0; i < ub.length; i++){
+      var id = ub[i].getAttribute("data-id"), uu = null;
+      for(k = 0; k < UPGRADES.length; k++) if(UPGRADES[k].id === id) uu = UPGRADES[k];
+      if(uu) ub[i].disabled = state.money < upCost(uu);
+    }
+  } else if(sheetKind === "mission"){
+    for(i = 0; i < state.missions.length; i++){
+      var m = state.missions[i], d = MDEF[i];
+      var prog = missionProg(m), done = prog >= m.target;
+      var t = document.querySelector('[data-mi-t="' + i + '"]');
+      if(t) t.textContent = won(Math.min(prog, m.target)) + " / " + won(m.target) +
+        " · 보상 ₩" + won(Math.round(520 * Math.pow(1.95, state.mRound - 1) * d.rw));
+      var bar = document.querySelector('[data-mi-bar="' + i + '"]');
+      if(bar) bar.style.width = Math.min(100, Math.round(prog / m.target * 100)) + "%";
+      var cb = document.querySelector('#sheetBody [data-act="claim"][data-i="' + i + '"]');
+      if(cb) cb.disabled = !done;
+    }
+  }
 }
 
 function updateBadges(){
@@ -1513,12 +1562,10 @@ function loop(ts){
   if(hudAcc > 0.1){ hudAcc = 0; updateHUD(Date.now()); }
   saveAcc += dt;
   if(saveAcc > 6){ saveAcc = 0; save(); }
-  if(sheetKind === "mission" || sheetKind === "staff"){
-    missionRefreshAcc += dt;
-    if(missionRefreshAcc > 1.4){ missionRefreshAcc = 0; if(sheetKind) renderSheet(); }
-  }
+  refreshAcc += dt;
+  if(refreshAcc > 0.5){ refreshAcc = 0; refreshLive(); }
 }
-var missionRefreshAcc = 0;
+var refreshAcc = 0;
 
 /* =========================================================
    시작
