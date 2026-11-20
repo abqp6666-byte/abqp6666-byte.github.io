@@ -15,7 +15,7 @@
     savedAt: Date.now(), intro:true
   };
   try { localStorage.setItem('aiOfficeTycoon.save.v1', JSON.stringify(st)); } catch(e) {}
-  location.replace('./index.html?seeded=1');
+  location.replace('./index.html?seeded=' + Date.now());
 })();
 </script>
 </body>
