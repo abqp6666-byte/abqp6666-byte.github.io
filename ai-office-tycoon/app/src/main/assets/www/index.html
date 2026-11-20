@@ -1071,6 +1071,7 @@ function load(){
       c.done = true;
       if(!c.opts) c.opts = [["승인", 100, 10]];
       if(!c.from) c.from = "CS";
+      if(c.di == null) c.di = deptIndexById(c.from);
     });
     if(!st.log) st.log = [];
     if(!st.meetings) st.meetings = [];
@@ -1385,7 +1386,8 @@ function toCeo(card, oi){
   }
   state.inbox.push(card);
   if(oi >= 0 && live[oi] && !inMeeting(oi)) say(oi, "대표님 결재 필요합니다!", 3000, true);
-  var dept = deptOf(oi >= 0 ? oi : card.di * SEATS).name;
+  var dIdx = (card.di != null) ? card.di : 0;
+  var dept = DEPTS[dIdx].name;
   addLog("ceo", (oi >= 0 ? empName(oi) + " " + rankName(state.staff[oi].rank) + " · " : "") +
         card.title + " → 대표님 결재함");
   if(state.inbox.length === 1) toast("결재함에 새 서류 · " + dept, "");
@@ -1481,7 +1483,6 @@ function unlockFloor(fi){
   state.money -= F.cost;
   state.floors[fi] = true;
   state.ctr.floors++;
-  state.fi = fi;
   switchFloor(fi, true);
   SFX.promo();
   addLog("floor", F.name + " 해금 · " + F.desc + " 부서 입주");
@@ -2638,6 +2639,11 @@ function openSheet(kind){
   SFX.tap();
   updateTabs();
 }
+function renderKeep(){
+  var b = $("sheetBody"), y = b ? b.scrollTop : 0;
+  renderSheet();
+  if(b) b.scrollTop = y;
+}
 function closeSheet(){
   sheetKind = null;
   $("sheetWrap").classList.add("hidden");
@@ -3191,13 +3197,13 @@ function wireUI(){
       var hg = parseInt(btn.getAttribute("data-gi"), 10);
       if(hire(hg)){
         toast(empName(hg) + " · " + deptOf(hg).name + " 채용 완료!", "good");
-        renderSheet(); updateBadges(); buildFloorBar(); save();
+        renderKeep(); updateBadges(); buildFloorBar(); save();
       } else toast("자금이 부족해요", "bad");
     } else if(act === "lvup"){
       var lg = parseInt(btn.getAttribute("data-gi"), 10);
       if(levelUp(lg)){
         toast(empName(lg) + " 레벨 " + state.staff[lg].lv + " 달성!", "good");
-        renderSheet(); save();
+        renderKeep(); save();
       } else toast("자금이 부족해요", "bad");
     } else if(act === "promo"){
       var pg = parseInt(btn.getAttribute("data-gi"), 10);
@@ -3205,14 +3211,14 @@ function wireUI(){
       if(pr === true){
         toast(empName(pg) + " " + rankName(state.staff[pg].rank) + " 승진! 부서 전결 범위가 넓어졌어요", "gold");
         stampAt(r.left + r.width / 2, r.top + r.height / 2, "승진");
-        renderSheet(); save();
+        renderKeep(); save();
       } else if(pr === "lv") toast("레벨 " + promoNeedLv(pg) + " 이상이어야 승진할 수 있어요", "bad");
       else toast("자금이 부족해요", "bad");
     } else if(act === "buy"){
       var up = upById(btn.getAttribute("data-id"));
       if(up){
         var br = buyUp(up);
-        if(br === true){ renderSheet(); save(); }
+        if(br === true){ renderKeep(); save(); }
         else if(br === "floor") toast(FLOORS[up.fl].name + "을 먼저 해금해 주세요", "bad");
         else toast("자금이 부족해요", "bad");
       }
@@ -3333,7 +3339,7 @@ function tick(dt){
 
   /* 라이벌 점유율은 천천히 올라간다 */
   rivalAcc += dt;
-  if(rivalAcc > 14){
+  if(rivalAcc > 16){
     rivalAcc = 0;
     if(state.rival.share < 90) state.rival.share = clamp(state.rival.share + 0.7, 0, 90);
   }
