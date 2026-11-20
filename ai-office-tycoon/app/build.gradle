@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.howgrow.aioffice'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.howgrow.aioffice"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    buildTypes {
+        debug {
+            // 사이드로드용 APK: 서명은 기본 debug keystore 사용
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+/**
+ * index.html 이 게임의 유일한 원본이다.
+ * 빌드할 때마다 앱 assets 로 복사해서 웹 버전과 APK 내용이 어긋나지 않게 한다.
+ */
+def webSrc = rootProject.file('../index.html')
+def webDst = file("$projectDir/src/main/assets/www")
+
+tasks.register('copyWeb', Copy) {
+    from(webSrc)
+    into(webDst)
+    doFirst {
+        if (!webSrc.exists()) {
+            throw new GradleException("게임 원본 index.html 을 찾을 수 없습니다: ${webSrc}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'preBuild' }.configureEach {
+    dependsOn 'copyWeb'
+}
