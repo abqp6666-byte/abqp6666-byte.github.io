@@ -263,7 +263,7 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
    완전 오프라인 단일 파일 픽셀 게임
    ========================================================= */
 
-var W = 180, H = 260;                       // 게임 논리 해상도(픽셀)
+var W = 200, H = 266;                       // 게임 논리 해상도(픽셀)
 var SAVE_KEY = "aiOfficeTycoon.save.v1";
 var MAXH = 8 * 3600;                        // 오프라인 정산 최대 8시간
 
@@ -299,10 +299,11 @@ var ROLES = [
   {id:"LEGAL",  name:"누리", job:"계약 검토",   base:45, body:"#b9c2cf", head:"#eff3f9"},
   {id:"HR",     name:"민서", job:"인사 관리",   base:52, body:"#ff9f7a", head:"#ffeee6"}
 ];
-var DESK_COL = [8, 66, 124];
-var DESK_ROW = [104, 138, 172, 206];
-function deskOf(i){ return {x: DESK_COL[i % 3], y: DESK_ROW[Math.floor(i / 3)]}; }
-function seatOf(i){ var d = deskOf(i); return {x: d.x + 24, y: d.y}; }
+var DESK_COL = [4, 54, 104, 154];           // 4열 × 3줄 = 12석
+var DESK_ROW = [112, 158, 204];
+var DESK_W = 44, DESK_H = 16;
+function deskOf(i){ return {x: DESK_COL[i % 4], y: DESK_ROW[Math.floor(i / 4)]}; }
+function seatOf(i){ var d = deskOf(i); return {x: d.x + 22, y: d.y}; }
 
 /* ------------------ 시설 업그레이드 ------------------ */
 var UPGRADES = [
@@ -719,17 +720,16 @@ function resize(){
 /* =========================================================
    배경(정적) 그리기
    ========================================================= */
-function lib(c, x, y, cols, hs){
+function lib(c, x, y, cols){
   // 책장
-  R(c, "#24304a", x - 2, y - 2, 40, 32);
-  R(c, "#7a3f18", x, y, 36, 28);
-  R(c, "#5e2f11", x + 2, y + 2, 32, 24);
+  R(c, "#24304a", x - 2, y - 2, 44, 32);
+  R(c, "#7a3f18", x, y, 40, 28);
+  R(c, "#5e2f11", x + 2, y + 2, 36, 24);
   for(var row = 0; row < 3; row++){
     var by = y + 3 + row * 8;
-    R(c, "#4a2409", x + 2, by + 6, 32, 1);
-    var bx = x + 3;
-    var n = 0;
-    while(bx < x + 33){
+    R(c, "#4a2409", x + 2, by + 6, 36, 1);
+    var bx = x + 3, n = 0;
+    while(bx < x + 37){
       var bw = 1 + ((n + row) % 3);
       R(c, cols[(n + row * 3) % cols.length], bx, by, bw, 6);
       bx += bw + 1; n++;
@@ -754,172 +754,170 @@ function drawBG(){
   R(c, "#efe2c2", 0, 0, W, 36);
   for(var wx = 2; wx < W; wx += 10) R(c, "#e8dab8", wx, 0, 5, 33);
   R(c, "#d8c69c", 0, 36, W, 3);
-  R(c, "#b9a882", 0, 39, W, 3);
+  R(c, "#b9a882", 0, 39, W, 2);
 
   /* 창문 */
-  R(c, "#24304a", 4, 3, 54, 31);
-  R(c, "#8fd0ef", 7, 6, 48, 25);
-  R(c, "#a9cbe0", 10, 19, 9, 12);
-  R(c, "#93b9d2", 21, 14, 10, 17);
-  R(c, "#b6d6e8", 33, 21, 7, 10);
-  R(c, "#9dc3da", 42, 16, 10, 15);
-  R(c, "#eaf7ff", 24, 10, 7, 2);
-  R(c, "#eaf7ff", 40, 9, 5, 2);
-  R(c, "#dff2ff", 12, 24, 2, 2); R(c, "#dff2ff", 26, 18, 2, 2); R(c, "#dff2ff", 46, 22, 2, 2);
-  R(c, "#24304a", 30, 6, 2, 25);
-  R(c, "#cdd8e2", 4, 32, 54, 3);
+  R(c, "#24304a", 6, 3, 56, 31);
+  R(c, "#8fd0ef", 9, 6, 50, 25);
+  R(c, "#a9cbe0", 12, 19, 9, 12);
+  R(c, "#93b9d2", 23, 14, 10, 17);
+  R(c, "#b6d6e8", 35, 21, 7, 10);
+  R(c, "#9dc3da", 44, 16, 11, 15);
+  R(c, "#eaf7ff", 26, 10, 7, 2);
+  R(c, "#eaf7ff", 42, 9, 5, 2);
+  R(c, "#24304a", 32, 6, 2, 25);
+  R(c, "#cdd8e2", 6, 32, 56, 3);
 
   /* 화이트보드 */
-  R(c, "#24304a", 62, 5, 34, 27);
-  R(c, "#fbfaf2", 64, 7, 30, 23);
-  R(c, "#ffd24a", 67, 10, 6, 6);
-  R(c, "#7fd08a", 75, 10, 6, 6);
-  R(c, "#ff8fa8", 83, 10, 6, 6);
-  R(c, "#b9c2cf", 67, 20, 14, 1);
-  R(c, "#b9c2cf", 67, 23, 11, 1);
-  R(c, "#b9c2cf", 84, 19, 8, 1);
-  R(c, "#b9c2cf", 84, 22, 6, 1);
+  R(c, "#24304a", 66, 5, 38, 27);
+  R(c, "#fbfaf2", 68, 7, 34, 23);
+  R(c, "#ffd24a", 71, 10, 7, 7);
+  R(c, "#7fd08a", 80, 10, 7, 7);
+  R(c, "#ff8fa8", 89, 10, 7, 7);
+  R(c, "#b9c2cf", 71, 21, 16, 1);
+  R(c, "#b9c2cf", 71, 24, 12, 1);
+  R(c, "#b9c2cf", 90, 20, 9, 1);
+  R(c, "#b9c2cf", 90, 23, 6, 1);
 
   /* 시계 */
-  R(c, "#24304a", 100, 6, 13, 13);
-  R(c, "#f4f1e4", 101, 7, 11, 11);
-  R(c, "#24304a", 106, 9, 1, 4);
-  R(c, "#24304a", 106, 12, 3, 1);
+  R(c, "#24304a", 108, 6, 13, 13);
+  R(c, "#f4f1e4", 109, 7, 11, 11);
+  R(c, "#24304a", 114, 9, 1, 4);
+  R(c, "#24304a", 114, 12, 3, 1);
 
   /* 책장 */
-  lib(c, 116, 5, ["#ff6b6b","#ffd479","#7be08e","#5cc6e8","#a98bff","#ff9f7a"], 0);
+  lib(c, 128, 5, ["#ff6b6b", "#ffd479", "#7be08e", "#5cc6e8", "#a98bff", "#ff9f7a"]);
 
   /* 복사기 */
-  R(c, "#24304a", 158, 8, 17, 28);
-  R(c, "#cfd8e2", 160, 10, 13, 24);
-  R(c, "#aebbc8", 160, 10, 13, 3);
-  R(c, "#7f8c99", 162, 15, 9, 2);
-  R(c, "#e9f2fa", 162, 19, 9, 7);
-  R(c, "#9fb0bd", 162, 28, 9, 3);
+  R(c, "#24304a", 172, 8, 24, 28);
+  R(c, "#cfd8e2", 174, 10, 20, 24);
+  R(c, "#aebbc8", 174, 10, 20, 3);
+  R(c, "#7f8c99", 176, 15, 12, 2);
+  R(c, "#e9f2fa", 176, 19, 12, 8);
+  R(c, "#9fb0bd", 176, 30, 12, 3);
 
   /* 회의실 테이블 */
   var mlv = state.up.meeting;
-  var mw = 56 + mlv * 9;
-  R(c, "#3a2110", 7, 71, mw + 2, 3);
-  R(c, "#8f4f1e", 7, 62, mw, 9);
-  R(c, "#c8763a", 7, 55, mw, 8);
-  R(c, "#d98b4a", 7, 55, mw, 2);
-  R(c, "#6b3a15", 7, 70, mw, 1);
+  var mw = 58 + mlv * 10;
+  R(c, "#3a2110", 6, 70, mw + 1, 3);
+  R(c, "#8f4f1e", 6, 58, mw, 12);
+  R(c, "#7a4118", 6, 58, mw, 1);
+  R(c, "#c8763a", 6, 50, mw, 8);
+  R(c, "#d98b4a", 6, 50, mw, 2);
+  R(c, "#6b3a15", 6, 69, mw, 1);
   for(var ch = 0; ch < (2 + mlv); ch++){
-    var cxp = 15 + ch * 16;
-    R(c, "#24304a", cxp, 74, 9, 9);
-    R(c, "#33406e", cxp + 1, 75, 7, 6);
+    var cxp = 11 + ch * 17;
+    R(c, "#24304a", cxp, 72, 9, 9);
+    R(c, "#3d4c72", cxp + 1, 73, 7, 6);
   }
-  R(c, "#7a4118", 30, 58, 12, 2);
 
   /* CEO 책상 */
-  R(c, "#3a3f4d", 94, 80, 80, 3);
-  R(c, "#a9b7c1", 96, 70, 76, 11);
-  R(c, "#dfe7ec", 96, 62, 76, 9);
-  R(c, "#eef3f7", 96, 62, 76, 2);
-  R(c, "#8b98a3", 96, 71, 76, 9);
-  R(c, "#c3ced7", 96, 70, 76, 1);
+  R(c, "#3a3f4d", 98, 76, 98, 3);
+  R(c, "#a9b7c1", 100, 64, 94, 12);
+  R(c, "#8b98a3", 100, 65, 94, 10);
+  R(c, "#dfe7ec", 100, 56, 94, 8);
+  R(c, "#eef3f7", 100, 56, 94, 2);
+  R(c, "#c3ced7", 100, 63, 94, 1);
   /* 모니터 */
-  R(c, "#151b2b", 100, 52, 16, 10);
-  R(c, "#3f8fb5", 101, 53, 14, 8);
-  R(c, "#7fd9f5", 103, 55, 5, 2);
-  R(c, "#151b2b", 107, 62, 2, 1);
-  /* 서류 */
-  R(c, "#fffdf5", 124, 58, 12, 4);
-  R(c, "#e2dbc9", 125, 59, 10, 1);
-  /* 키보드 · 서류 묶음 */
-  R(c, "#8b98a3", 130, 66, 16, 3);
-  R(c, "#e8eef7", 131, 67, 14, 1);
-  R(c, "#fffdf5", 154, 65, 9, 4);
-  R(c, "#d8d1c0", 155, 66, 7, 1);
-  R(c, "#9aa7b0", 96, 74, 76, 1);
+  R(c, "#151b2b", 104, 44, 17, 12);
+  R(c, "#3f8fb5", 105, 45, 15, 10);
+  R(c, "#7fd9f5", 107, 47, 5, 2);
+  R(c, "#151b2b", 112, 56, 2, 1);
+  /* 키보드 · 서류 */
+  R(c, "#8b98a3", 126, 58, 16, 3);
+  R(c, "#e8eef7", 127, 59, 14, 1);
+  R(c, "#fffdf5", 146, 57, 10, 4);
+  R(c, "#d8d1c0", 147, 58, 8, 1);
   /* 명패 */
   if(state.up.plaque > 0){
-    R(c, "#7a5a12", 148, 63, 20, 7);
-    R(c, "#ffd479", 149, 64, 18, 5);
-    R(c, "#fff3cd", 150, 65, 6, 1);
+    R(c, "#7a5a12", 160, 65, 28, 8);
+    R(c, "#ffd479", 161, 66, 26, 6);
+    R(c, "#fff3cd", 163, 67, 8, 1);
   } else {
-    R(c, "#0f1728", 149, 64, 18, 6);
+    R(c, "#0f1728", 161, 66, 26, 7);
   }
+  /* 대표님 (책상 앞판에 가려 앉은 모습) */
+  drawCEO(c, 140, 64, ceoBob);
+  /* 명패 글자 자리는 오버레이에서 그린다 */
 
   /* 책상들 */
   for(var i = 0; i < 12; i++){
-    var d = deskOf(i), hired = state.staff[i].hired;
-    drawDeskBG(c, d, i, hired);
+    drawDeskBG(c, deskOf(i), state.staff[i].hired);
   }
 
   /* 휴게실 (하단) */
-  R(c, "#a86a2a", 4, 231, 92, 26);
-  R(c, "#c98a4a", 6, 233, 88, 22);
-  R(c, "#b3742f", 6, 233, 88, 1);
-  R(c, "#b3742f", 6, 254, 88, 1);
-  R(c, "#b3742f", 6, 233, 1, 22);
-  R(c, "#b3742f", 93, 233, 1, 22);
+  R(c, "#a86a2a", 4, 227, 96, 32);
+  R(c, "#c98a4a", 6, 229, 92, 28);
+  R(c, "#b3742f", 6, 229, 92, 1);
+  R(c, "#b3742f", 6, 256, 92, 1);
+  R(c, "#b3742f", 6, 229, 1, 28);
+  R(c, "#b3742f", 97, 229, 1, 28);
   /* 화분 */
-  R(c, "#8a4b1e", 9, 246, 11, 8);
-  R(c, "#a65c26", 9, 246, 11, 2);
-  R(c, "#3f9e57", 10, 238, 9, 8);
-  R(c, "#56bd6c", 12, 234, 5, 6);
-  R(c, "#2f7d42", 11, 241, 7, 2);
+  R(c, "#8a4b1e", 9, 246, 12, 9);
+  R(c, "#a65c26", 9, 246, 12, 2);
+  R(c, "#3f9e57", 10, 236, 10, 10);
+  R(c, "#56bd6c", 12, 232, 6, 7);
+  R(c, "#2f7d42", 11, 241, 8, 2);
   /* 문 */
-  R(c, "#24304a", 148, 226, 30, 32);
-  R(c, "#8a5a30", 150, 228, 26, 30);
-  R(c, "#7a4c26", 152, 232, 22, 2);
-  R(c, "#7a4c26", 152, 240, 22, 2);
-  R(c, "#c9d3dd", 170, 242, 3, 3);
+  R(c, "#24304a", 150, 224, 32, 38);
+  R(c, "#8a5a30", 152, 226, 28, 36);
+  R(c, "#7a4c26", 154, 231, 24, 2);
+  R(c, "#7a4c26", 154, 240, 24, 2);
+  R(c, "#7a4c26", 154, 249, 24, 2);
+  R(c, "#c9d3dd", 175, 242, 3, 4);
 
   if(state.up.espresso > 0){
-    R(c, "#24304a", 26, 232, 18, 24);
-    R(c, "#4a5468", 28, 234, 14, 20);
-    R(c, "#2b3444", 29, 236, 12, 6);
-    R(c, "#ffd479", 30, 237, 3, 2);
-    R(c, "#8b98a3", 31, 244, 8, 5);
-    R(c, "#dfe7ec", 31, 250, 3, 3);
-    R(c, "#dfe7ec", 36, 250, 3, 3);
-    for(var b = state.up.espresso; b > 0; b--) R(c, "#7be08e", 24 + b * 2, 230, 2, 2);
+    R(c, "#24304a", 26, 230, 20, 26);
+    R(c, "#4a5468", 28, 232, 16, 22);
+    R(c, "#2b3444", 29, 234, 14, 6);
+    R(c, "#ffd479", 30, 235, 3, 2);
+    R(c, "#8b98a3", 31, 243, 10, 6);
+    R(c, "#dfe7ec", 32, 250, 3, 3);
+    R(c, "#dfe7ec", 37, 250, 3, 3);
+    for(var b = state.up.espresso; b > 0; b--) R(c, "#7be08e", 24 + b * 2, 228, 2, 2);
   }
   if(state.up.server > 0){
-    R(c, "#1b2437", 48, 230, 20, 26);
-    R(c, "#2b3444", 50, 232, 16, 22);
+    R(c, "#1b2437", 50, 228, 22, 28);
+    R(c, "#2b3444", 52, 230, 18, 24);
     for(var s2 = 0; s2 < 5; s2++){
-      R(c, "#3d4a63", 51, 234 + s2 * 4, 14, 3);
-      R(c, s2 % 2 ? "#7be08e" : "#5cc6e8", 62, 235 + s2 * 4, 2, 1);
+      R(c, "#3d4a63", 53, 232 + s2 * 4, 16, 3);
+      R(c, s2 % 2 ? "#7be08e" : "#5cc6e8", 66, 233 + s2 * 4, 2, 1);
     }
-    for(var b2 = state.up.server; b2 > 0; b2--) R(c, "#5cc6e8", 46 + b2 * 2, 228, 2, 2);
+    for(var b2 = state.up.server; b2 > 0; b2--) R(c, "#5cc6e8", 48 + b2 * 2, 226, 2, 2);
   }
   if(state.up.air > 0){
-    R(c, "#24304a", 72, 234, 14, 22);
-    R(c, "#dfe7ec", 74, 236, 10, 18);
-    R(c, "#b9c7d6", 75, 239, 8, 2);
-    R(c, "#b9c7d6", 75, 243, 8, 2);
-    R(c, "#9dd4ff", 76, 247, 6, 3);
-    for(var a2 = state.up.air; a2 > 0; a2--) R(c, "#9dd4ff", 70 + a2 * 2, 232, 2, 2);
+    R(c, "#24304a", 76, 232, 16, 24);
+    R(c, "#dfe7ec", 78, 234, 12, 20);
+    R(c, "#b9c7d6", 79, 237, 10, 2);
+    R(c, "#b9c7d6", 79, 242, 10, 2);
+    R(c, "#9dd4ff", 80, 247, 8, 3);
+    for(var a2 = state.up.air; a2 > 0; a2--) R(c, "#9dd4ff", 74 + a2 * 2, 230, 2, 2);
   }
 }
 
-function drawDeskBG(c, d, i, hired){
-  var x = d.x, y = d.y, w = 48, h = 20;
+function drawDeskBG(c, d, hired){
+  var x = d.x, y = d.y, w = DESK_W, h = DESK_H;
   R(c, "#3a2110", x + 1, y + h, w, 2);
-  R(c, "#8f4f1e", x, y + 7, w, h - 7);
-  R(c, "#7a4118", x, y + 7, w, 1);
-  R(c, "#c8763a", x, y, w, 7);
+  R(c, "#8f4f1e", x, y + 6, w, h - 6);
+  R(c, "#7a4118", x, y + 6, w, 1);
+  R(c, "#c8763a", x, y, w, 6);
   R(c, "#d98b4a", x, y, w, 2);
-  R(c, "#6b3a15", x, y + h - 2, w, 2);
+  R(c, "#6b3a15", x, y + h - 1, w, 1);
   if(hired){
-    R(c, "#151b2b", x + 5, y - 9, 15, 10);
-    R(c, "#3f8fb5", x + 6, y - 8, 13, 8);
-    R(c, "#7fd9f5", x + 7, y - 6, 4, 2);
-    R(c, "#24304a", x + 11, y, 3, 1);
-    R(c, "#fffdf5", x + 28, y - 3, 11, 3);
-    R(c, "#e2dbc9", x + 29, y - 2, 9, 1);
-    R(c, "#0f1728", x + 11, y + 10, 26, 6);
+    R(c, "#151b2b", x + 4, y - 8, 14, 9);
+    R(c, "#3f8fb5", x + 5, y - 7, 12, 7);
+    R(c, "#7fd9f5", x + 6, y - 5, 4, 2);
+    R(c, "#24304a", x + 10, y - 1, 2, 1);
+    R(c, "#fffdf5", x + 23, y - 3, 10, 3);
+    R(c, "#e2dbc9", x + 24, y - 2, 8, 1);
+    R(c, "#0f1728", x + 10, y + 9, 24, 5);
   } else {
-    R(c, "#7a4118", x + 20, y - 9, 2, 9);
-    R(c, "#c8763a", x + 13, y - 16, 16, 8);
-    R(c, "#8f4f1e", x + 13, y - 16, 16, 1);
-    R(c, "#f0c060", x + 20, y - 14, 2, 4);
-    R(c, "#f0c060", x + 19, y - 13, 4, 2);
-    R(c, "#7a4118", x + 11, y + 10, 26, 6);
+    R(c, "#7a4118", x + 20, y - 8, 2, 8);
+    R(c, "#c8763a", x + 13, y - 15, 16, 8);
+    R(c, "#8f4f1e", x + 13, y - 15, 16, 1);
+    R(c, "#f0c060", x + 20, y - 13, 2, 4);
+    R(c, "#f0c060", x + 19, y - 12, 4, 2);
+    R(c, "#7a4118", x + 10, y + 9, 24, 5);
   }
 }
 
@@ -933,65 +931,62 @@ function drawBot(c, x, y, role, lv, walking, tick){
   by -= bob;
   R(c, "rgba(0,0,0,.22)", bx - 5, y + 0.5, 11, 2);
   /* 다리 */
-  R(c, "#2b3444", bx - 3, by - 4 + step, 2, 4 - step);
-  R(c, "#2b3444", bx + 1, by - 4 + (1 - step), 2, 3 + step);
+  R(c, "#2b3444", bx - 3, by - 3 + step, 2, 3 - step);
+  R(c, "#2b3444", bx + 1, by - 3 + (1 - step), 2, 2 + step);
   /* 몸통 */
-  R(c, "#24304a", bx - 5, by - 9, 10, 6);
-  R(c, role.body, bx - 4, by - 8, 8, 4);
-  R(c, "#ffffff", bx - 1, by - 7, 2, 2);
+  R(c, "#24304a", bx - 5, by - 7, 10, 5);
+  R(c, role.body, bx - 4, by - 6, 8, 3);
+  R(c, "#ffffff", bx - 1, by - 6, 2, 2);
   /* 팔 */
-  R(c, "#24304a", bx - 6, by - 8 + step, 1, 4);
-  R(c, "#24304a", bx + 5, by - 8 + (1 - step), 1, 4);
+  R(c, "#24304a", bx - 6, by - 6 + step, 1, 4);
+  R(c, "#24304a", bx + 5, by - 6 + (1 - step), 1, 4);
   /* 머리 */
-  R(c, "#24304a", bx - 5, by - 16, 10, 8);
-  R(c, role.head, bx - 4, by - 15, 8, 6);
-  R(c, "#24304a", bx - 3, by - 13, 6, 4);
-  R(c, "#9ef1ff", bx - 2, by - 12, 1, 1);
-  R(c, "#9ef1ff", bx + 1, by - 12, 1, 1);
+  R(c, "#24304a", bx - 5, by - 13, 10, 6);
+  R(c, role.head, bx - 4, by - 12, 8, 4);
+  R(c, "#24304a", bx - 3, by - 11, 6, 3);
+  R(c, "#9ef1ff", bx - 2, by - 10, 1, 1);
+  R(c, "#9ef1ff", bx + 1, by - 10, 1, 1);
   /* 안테나 */
-  R(c, "#24304a", bx, by - 18, 1, 2);
-  R(c, lv >= 5 ? "#ffd479" : "#7be08e", bx - 1, by - 19, 2, 1);
+  R(c, "#24304a", bx, by - 15, 1, 2);
+  R(c, lv >= 5 ? "#ffd479" : "#7be08e", bx - 1, by - 16, 2, 1);
 }
 
-function drawCEO(c, x, y, tick){
-  var bx = Math.round(x), by = Math.round(y);
-  var bob = Math.sin(tick * 2) > 0 ? 1 : 0;
-  by -= bob;
-  R(c, "rgba(0,0,0,.22)", bx - 6, y + 0.5, 13, 2);
-  /* 다리 */
-  R(c, "#1e2740", bx - 4, by - 5, 3, 5);
-  R(c, "#1e2740", bx + 1, by - 5, 3, 5);
-  /* 정장 */
-  R(c, "#1b2437", bx - 6, by - 12, 12, 8);
-  R(c, "#2b3a5c", bx - 5, by - 11, 10, 6);
-  R(c, "#e8eef7", bx - 2, by - 11, 4, 3);
-  R(c, "#d9534f", bx - 1, by - 10, 2, 5);
-  /* 팔 + 커피 */
-  R(c, "#1b2437", bx - 7, by - 11, 2, 5);
-  R(c, "#1b2437", bx + 5, by - 11, 2, 4);
-  R(c, "#fbfaf2", bx + 6, by - 10, 3, 3);
-  R(c, "#8a4b1e", bx + 6, by - 10, 3, 1);
+function drawCEO(c, x, y, bob){
+  var bx = Math.round(x), by = Math.round(y) - (bob ? 1 : 0);
+  /* 정장 몸통 */
+  R(c, "#1b2437", bx - 7, by - 9, 14, 9);
+  R(c, "#2b3a5c", bx - 6, by - 8, 12, 7);
+  R(c, "#e8eef7", bx - 2, by - 8, 4, 3);
+  R(c, "#d9534f", bx - 1, by - 7, 2, 6);
+  /* 팔 */
+  R(c, "#1b2437", bx - 8, by - 8, 2, 6);
+  R(c, "#1b2437", bx + 6, by - 8, 2, 4);
+  /* 커피 */
+  R(c, "#fbfaf2", bx + 7, by - 6, 3, 3);
+  R(c, "#8a4b1e", bx + 7, by - 6, 3, 1);
   /* 머리 */
-  R(c, "#1b2437", bx - 5, by - 20, 10, 9);
-  R(c, "#f2c39b", bx - 4, by - 18, 8, 7);
-  R(c, "#3b2416", bx - 5, by - 20, 10, 3);
-  R(c, "#3b2416", bx - 5, by - 18, 1, 2);
-  R(c, "#3b2416", bx + 4, by - 18, 1, 2);
-  R(c, "#1b2437", bx - 3, by - 15, 2, 1);
-  R(c, "#1b2437", bx + 1, by - 15, 2, 1);
-  R(c, "#c96a5a", bx - 1, by - 13, 2, 1);
+  R(c, "#1b2437", bx - 5, by - 18, 10, 10);
+  R(c, "#f2c39b", bx - 4, by - 16, 8, 7);
+  R(c, "#3b2416", bx - 5, by - 18, 10, 4);
+  R(c, "#3b2416", bx - 5, by - 14, 1, 2);
+  R(c, "#3b2416", bx + 4, by - 14, 1, 2);
+  R(c, "#1b2437", bx - 3, by - 13, 2, 1);
+  R(c, "#1b2437", bx + 1, by - 13, 2, 1);
+  R(c, "#c96a5a", bx - 1, by - 11, 2, 1);
 }
 
 /* =========================================================
+/* =========================================================
    활동 캐릭터
    ========================================================= */
-var LANE = 96;
-var TARGETS = [{x:134, y:100}, {x:41, y:96}];
-var ceo = {x:132, y:64, bubble:"", bubUntil:0, next:6};
+var LANE = 100;
+var TARGETS = [{x:147, y:100}, {x:40, y:98}];
+var ceo = {x:140, y:64, bubble:"", bubUntil:0, next:6};
+var ceoBob = false;
 
 function aisleFor(i){
-  var col = i % 3;
-  return col === 2 ? 119 : 61;
+  var col = i % 4;
+  return col === 0 ? 51 : (col === 1 ? 101 : 151);
 }
 function spawnLive(i){
   var s = seatOf(i);
@@ -1139,9 +1134,8 @@ function drawScene(){
   var now = Date.now();
 
   /* 회의실 · CEO 라벨 */
-  txt(ctx, "MEETING", 30, 66, 4.2, "#ffe9c4", 800);
-  txt(ctx, "CEO", 124, 67, 4.6, "#f4f8fc", 800);
-  txt(ctx, "휴게실", 49, 228, 4.2, "#ffe0b0", 800);
+  txt(ctx, "MEETING", 6 + (58 + state.up.meeting * 10) / 2, 64, 4.2, "#ffe9c4", 800);
+  txt(ctx, "CEO", 174, 69.6, 4.2, state.up.plaque > 0 ? "#5a3f06" : "#9fb0c8", 800);
 
   /* 의자/책상 위 모니터 앞 직원 */
   var order = [];
@@ -1156,7 +1150,7 @@ function drawScene(){
   for(var e = 0; e < 12; e++){
     if(!state.staff[e].hired){
       var dd = deskOf(e);
-      txt(ctx, "채용", dd.x + 24, dd.y + 13, 4.0, "#d9a05c", 800);
+      txt(ctx, "채용", dd.x + 22, dd.y + 11.6, 3.8, "#d9a05c", 800);
     }
   }
 
@@ -1168,15 +1162,13 @@ function drawScene(){
     if(l.hold && l.mode === "walk") R(ctx, "#fffdf5", Math.round(l.x) + 5, Math.round(l.y) - 8, 4, 4);
   }
 
-  drawCEO(ctx, ceo.x, ceo.y, performance.now() / 1000);
-
   /* 이름표 */
   for(var n = 0; n < 12; n++){
     if(!state.staff[n].hired || !live[n]) continue;
     var ln = live[n];
-    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 22, 5.2, "#ffffff", 800);
+    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 18, 5.0, "#ffffff", 800);
   }
-  outTxt(ctx, "대표님", ceo.x, ceo.y - 25, 5.2, "#ffd479", 800);
+  outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
 
   /* 책상 명패 */
   for(var p = 0; p < 12; p++){
@@ -1188,9 +1180,9 @@ function drawScene(){
   for(var m = 0; m < 12; m++){
     if(!state.staff[m].hired || !live[m]) continue;
     var lm = live[m];
-    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 24, 5.3);
+    if(lm.bubble && now < lm.bubUntil) bubbleBox(ctx, lm.bubble, lm.x, lm.y - 20, 5.0);
   }
-  if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 27, 5.3);
+  if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 5.0);
 
   /* 부스트 오라 */
   if(now < state.boostUntil){
@@ -1557,6 +1549,8 @@ function loop(ts){
   var dt = Math.min(0.12, Math.max(0, (ts - lastT) / 1000));
   lastT = ts;
   tick(dt);
+  var nb = (Math.floor(Date.now() / 560) % 2) === 0;
+  if(nb !== ceoBob){ ceoBob = nb; drawBG(); }
   drawScene();
   hudAcc += dt;
   if(hudAcc > 0.1){ hudAcc = 0; updateHUD(Date.now()); }
