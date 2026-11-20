@@ -3010,10 +3010,14 @@ function renderSheet(){
 
 function refreshMinutes(){
   if(sheetKind !== "minutes") return;
+  if(!mt || mt.phase !== "talk") return;
   var body = $("sheetBody");
   var box = body.querySelector(".mt");
   if(!box) return;
-  body.innerHTML = minutesHTML();
+  var tmp = document.createElement("div");
+  tmp.innerHTML = minutesHTML();
+  var nf = tmp.firstElementChild;
+  if(nf) box.parentNode.replaceChild(nf, box);   /* 진행 중인 회의 블록만 갱신 */
 }
 
 function refreshLive(){
@@ -3056,7 +3060,12 @@ function refreshLive(){
     }
   } else if(sheetKind === "rival"){
     var rv = $("sheetBody").querySelector(".rvbox");
-    if(rv) rv.outerHTML = rivalHTML().split('<div class="stat2">')[0];
+    if(rv){
+      var pctEl = rv.querySelector(".rvt span");
+      if(pctEl) pctEl.textContent = Math.round(state.rival.share) + "%";
+      var barEl = rv.querySelector(".rvbar i");
+      if(barEl) barEl.style.width = Math.round(state.rival.share) + "%";
+    }
   }
 }
 
