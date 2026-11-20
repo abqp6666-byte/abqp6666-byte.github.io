@@ -6,7 +6,9 @@
 | | |
 |---|---|
 | 웹 (바로 플레이) | https://abqp6666-byte.github.io/ai-office-tycoon/ |
-| APK 다운로드 | [Releases](https://github.com/abqp6666-byte/abqp6666-byte.github.io/releases/latest) |
+| APK 다운로드 | [ai-office-tycoon.apk](https://github.com/abqp6666-byte/abqp6666-byte.github.io/releases/download/v1.0.0/ai-office-tycoon.apk) |
+
+![플레이 화면](art/screenshot-phone.png)
 
 ## 게임 소개
 
