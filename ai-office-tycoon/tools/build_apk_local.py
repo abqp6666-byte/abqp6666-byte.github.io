@@ -23,8 +23,8 @@ BT = os.path.join(SDK, "build-tools", "34.0.0")
 PLATFORM = os.path.join(SDK, "platforms", "android-34", "android.jar")
 PKG = "com.howgrow.aioffice"
 NAME = "ai-office-tycoon"
-VER_CODE = "1"
-VER_NAME = "1.0.0"
+VER_CODE = "2"
+VER_NAME = "1.1.0"
 
 BUILD = os.path.join(ROOT, "build", "local")
 DIST = os.path.join(ROOT, "dist")

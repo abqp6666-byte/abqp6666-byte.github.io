@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>오늘도 바쁜 AI 사무실 · AI Office Tycoon</title>
+<title>오늘도 바쁜 AI 사무실 · 도트 오피스 타이쿤</title>
 <style>
 :root{
   --ink:#0a0e1a; --panel:#1c2542; --panel2:#27335c; --panel3:#33406e;
@@ -33,11 +33,11 @@ body{
 /* ---------- header ---------- */
 #hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 12px 5px;flex:0 0 auto;}
 .hdr-l{min-width:0;}
-.kicker{font-size:8px;letter-spacing:2.2px;font-weight:700;color:#7f92c4;line-height:1;}
+.kicker{font-size:8px;letter-spacing:1.6px;font-weight:700;color:#7f92c4;line-height:1;}
 h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff;line-height:1.1;
    text-shadow:2px 2px 0 #05070f;}
 .hdr-r{display:flex;align-items:center;gap:6px;flex:0 0 auto;}
-.badge{font-size:9px;font-weight:800;letter-spacing:.6px;background:var(--panel2);color:var(--gold);
+.badge{font-size:9px;font-weight:800;letter-spacing:.2px;background:var(--panel2);color:var(--gold);
   border:2px solid var(--ink);padding:3px 6px;box-shadow:0 2px 0 var(--ink);white-space:nowrap;}
 .iconbtn{width:30px;height:28px;display:grid;place-items:center;font-size:13px;background:var(--panel2);
   color:var(--txt);border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);padding:0;cursor:pointer;line-height:1;}
@@ -73,6 +73,15 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 .toast.out{animation:toastOut .3s ease-in forwards;}
 @keyframes toastOut{to{opacity:0;transform:translateY(-8px);}}
 
+/* 회의 중 배지 (캔버스 위) */
+.meetbadge{position:absolute;right:7px;bottom:7px;z-index:7;display:flex;align-items:center;gap:4px;
+  font-family:inherit;font-size:10.5px;font-weight:800;color:#20160a;
+  background:linear-gradient(#ffe1a0,#ffbe4d);border:2px solid var(--ink);
+  box-shadow:0 3px 0 var(--ink);padding:6px 9px;cursor:pointer;line-height:1;
+  animation:mbPulse 1.6s ease-in-out infinite;}
+@keyframes mbPulse{50%{transform:translateY(-2px);}}
+.meetbadge:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink);}
+
 /* ---------- quickbar ---------- */
 #quickbar{display:flex;gap:6px;padding:6px 10px 4px;flex:0 0 auto;}
 .qbtn{flex:1;position:relative;display:flex;align-items:center;justify-content:center;gap:5px;
@@ -87,14 +96,15 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 .qbtn .sub{font-size:9px;font-weight:700;opacity:.75;}
 
 /* ---------- tabs ---------- */
-#tabs{display:flex;gap:5px;padding:4px 10px calc(6px + env(safe-area-inset-bottom,0px));flex:0 0 auto;}
+#tabs{display:flex;gap:4px;padding:4px 8px calc(6px + env(safe-area-inset-bottom,0px));flex:0 0 auto;}
 #tabs button{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;
-  font-family:inherit;font-size:11px;font-weight:800;color:var(--dim);background:var(--panel);
-  border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:6px 2px 5px;cursor:pointer;}
+  font-family:inherit;font-size:10px;font-weight:800;color:var(--dim);background:var(--panel);
+  border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:6px 1px 5px;cursor:pointer;
+  letter-spacing:-.3px;}
 #tabs button .ico{font-size:13px;line-height:1;}
 #tabs button.on{color:#20160a;background:linear-gradient(#ffe1a0,#ffc663);}
 #tabs button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink);}
-#tabs button b{position:absolute;top:-6px;right:-3px;min-width:16px;height:16px;font-size:9px;line-height:14px;
+#tabs button b{position:absolute;top:-6px;right:-3px;min-width:16px;height:16px;font-size:8px;line-height:14px;
   text-align:center;background:var(--red);color:#fff;border:2px solid var(--ink);padding:0 3px;}
 .hidden{display:none !important;}
 
@@ -119,10 +129,13 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
   animation:cardIn .22s ease-out both;}
 @keyframes cardIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 .card .top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-.chip{font-size:8px;font-weight:800;letter-spacing:.5px;padding:2px 5px;color:#0b1020;border:1px solid #000;
+.chip{font-size:8px;font-weight:800;letter-spacing:.2px;padding:2px 5px;color:#0b1020;border:1px solid #000;
   white-space:nowrap;}
 .card h3{margin:0;font-size:12.5px;font-weight:800;letter-spacing:-.3px;line-height:1.2;flex:1;}
-.card p{margin:0 0 8px;font-size:11px;line-height:1.45;color:#c3cfeb;letter-spacing:-.2px;}
+.card p{margin:0 0 6px;font-size:11px;line-height:1.45;color:#c3cfeb;letter-spacing:-.2px;}
+.lineup{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:7px;}
+.tag{font-size:8.5px;font-weight:800;padding:2px 5px;color:#0b1020;border:1px solid #000;white-space:nowrap;}
+.tag.dark{background:#39435f;color:#c7d2ec;}
 .opts{display:flex;flex-direction:column;gap:5px;}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:inherit;
   font-size:11.5px;font-weight:700;text-align:left;color:var(--txt);background:var(--panel2);
@@ -142,14 +155,17 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 .swatch:after{content:"";position:absolute;left:3px;top:4px;width:16px;height:5px;background:rgba(10,14,26,.55);}
 .row .meta{flex:1;min-width:0;}
 .row .nm{font-size:12px;font-weight:800;letter-spacing:-.2px;}
+.row .nm .rk{font-size:10px;font-weight:800;}
 .row .nm em{font-style:normal;font-size:9px;font-weight:800;color:var(--gold);margin-left:4px;}
 .row .jb{font-size:10px;color:var(--dim);font-weight:700;margin-top:1px;}
 .row .inc{font-size:10px;font-weight:800;color:var(--green);margin-top:2px;}
+.row .scope{font-size:9px;font-weight:800;color:#9fb0c7;margin-top:1px;}
 .row .act{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
 .mini{font-family:inherit;font-size:10.5px;font-weight:800;color:#20160a;background:linear-gradient(#ffe1a0,#ffc04d);
   border:2px solid var(--ink);box-shadow:0 2px 0 var(--ink);padding:6px 8px;cursor:pointer;line-height:1;white-space:nowrap;}
 .mini:active{transform:translateY(2px);box-shadow:none;}
 .mini.blue{background:linear-gradient(#bfe9ff,#6cc6ee);color:#08202c;}
+.mini.purple{background:linear-gradient(#e2d6ff,#b79bff);color:#150a2c;}
 .mini[disabled]{background:#39435f;color:#8b95b3;box-shadow:0 2px 0 #1a2136;transform:none;cursor:default;}
 .mini.grey{background:#3a4566;color:#b9c4e0;}
 .pips{display:flex;gap:2px;}
@@ -169,14 +185,41 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 .mis .bar{height:4px;background:#0f1730;border:1px solid #000;margin-top:4px;overflow:hidden;}
 .mis .bar i{display:block;height:100%;background:var(--blue);width:0%;}
 
+/* ---------- 회의록 ---------- */
+.mt{background:var(--panel);border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:9px 10px;
+  animation:cardIn .22s ease-out both;}
+.mt .mhead{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.mt h3{margin:0;font-size:12.5px;font-weight:800;letter-spacing:-.3px;line-height:1.25;flex:1;}
+.live{font-size:8px;font-weight:800;padding:2px 5px;color:#2a0a0a;background:var(--red);border:1px solid #000;
+  white-space:nowrap;animation:blink 1.2s steps(2,end) infinite;}
+@keyframes blink{50%{opacity:.4;}}
+.pin{font-size:8px;font-weight:800;padding:2px 5px;color:#0b1020;background:#93a4cf;border:1px solid #000;white-space:nowrap;}
+.mt .meta{font-size:9.5px;color:var(--dim);font-weight:700;margin-bottom:6px;}
+.chiprow{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px;}
+.who{font-size:9px;font-weight:800;padding:2px 5px;color:#0b1020;border:1px solid #000;background:#9fb0c7;white-space:nowrap;}
+.who .w{font-weight:900;opacity:.75;}
+.ln{display:flex;gap:6px;font-size:11px;line-height:1.45;margin-bottom:5px;color:#dbe4f7;}
+.ln b{font-size:9.5px;color:var(--gold);white-space:nowrap;font-weight:800;padding-top:1px;}
+.ln b i{font-style:normal;font-size:8px;color:var(--dim);font-weight:700;}
+.ln .say{flex:1;letter-spacing:-.15px;}
+.ln.wait .say{color:#7f8db0;font-style:italic;}
+.reward{font-size:10px;font-weight:800;color:var(--green);margin-top:6px;}
+
+/* ---------- 결재 로그 ---------- */
+.logbox{background:#141c31;border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:8px 9px;}
+.logbox .lh{font-size:9px;font-weight:800;color:#93a4cf;letter-spacing:.4px;margin-bottom:5px;}
+.logrow{display:flex;gap:6px;font-size:10px;line-height:1.45;color:#c3cfeb;margin-bottom:4px;align-items:flex-start;}
+.logrow .lt{font-size:8px;font-weight:800;padding:1px 4px;border:1px solid #000;color:#0b1020;white-space:nowrap;margin-top:1px;}
+.logrow .ls{flex:1;letter-spacing:-.2px;}
+
 /* ---------- modal ---------- */
 #modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:22px;
   background:rgba(4,7,14,.72);}
-.mbox{width:100%;max-width:330px;background:#18213c;border:3px solid var(--ink);
+.mbox{width:100%;max-width:330px;max-height:86vh;overflow-y:auto;background:#18213c;border:3px solid var(--ink);
   box-shadow:0 6px 0 var(--ink);padding:16px 15px 14px;animation:pop .24s cubic-bezier(.2,1.2,.4,1) both;}
 @keyframes pop{from{transform:scale(.88);opacity:0;}to{transform:none;opacity:1;}}
 .mbox h2{margin:0 0 3px;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff;}
-.mbox .kick{font-size:8px;letter-spacing:2px;color:#7f92c4;font-weight:700;}
+.mbox .kick{font-size:8px;letter-spacing:1.4px;color:#7f92c4;font-weight:700;}
 .mbox p{margin:8px 0 0;font-size:11.5px;line-height:1.6;color:#c3cfeb;letter-spacing:-.2px;}
 .mbox .big{font-size:22px;font-weight:800;color:var(--gold);text-align:center;margin:12px 0 2px;
   letter-spacing:-.5px;}
@@ -185,6 +228,8 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
   background:linear-gradient(#ffe1a0,#ffbe4d);border:2px solid var(--ink);box-shadow:0 4px 0 var(--ink);
   padding:11px;cursor:pointer;}
 .mbox .go:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink);}
+.mbox .mline{display:flex;gap:6px;font-size:11px;line-height:1.5;color:#dbe4f7;margin-bottom:6px;}
+.mbox .mline b{font-size:9.5px;color:var(--gold);white-space:nowrap;}
 
 .stamp{position:fixed;z-index:40;pointer-events:none;font-size:26px;font-weight:900;color:#ff5a5a;
   border:4px solid #ff5a5a;padding:2px 10px;transform:rotate(-11deg);opacity:0;
@@ -202,12 +247,12 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 <div id="app">
   <header id="hdr">
     <div class="hdr-l">
-      <div class="kicker">HOWGROW AI · OFFICE</div>
+      <div class="kicker">AI 사무실 운영일지</div>
       <h1>오늘도 바쁜 AI 사무실</h1>
     </div>
     <div class="hdr-r">
       <button id="muteBtn" class="iconbtn" aria-label="소리">🔊</button>
-      <div class="badge">STAFF ×<span id="staffN">0</span></div>
+      <div class="badge">직원 <span id="staffN">0</span>명</div>
     </div>
   </header>
 
@@ -216,7 +261,7 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
     <div class="hud-mid">
       <div class="hud-line">
         <span id="ips">+0/초</span>
-        <span class="hud-lv">Lv.<b id="lv">1</b> <span id="lvBonus"></span></span>
+        <span class="hud-lv">레벨 <b id="lv">1</b> <span id="lvBonus"></span></span>
       </div>
       <div class="xpbar"><i id="xpfill"></i></div>
     </div>
@@ -225,6 +270,7 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
   <main id="stage">
     <canvas id="cv"></canvas>
     <div id="toastLayer"></div>
+    <button class="meetbadge hidden" id="meetBadge">🗣 회의 중! 보기</button>
   </main>
 
   <div id="quickbar">
@@ -237,6 +283,7 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
     <button data-tab="staff"><span class="ico">🤖</span>직원</button>
     <button data-tab="shop"><span class="ico">🏢</span>시설</button>
     <button data-tab="mission"><span class="ico">✅</span>할 일</button>
+    <button data-tab="minutes"><span class="ico">🗣</span>회의록<b class="hidden" id="tabMeetN">회의</b></button>
   </nav>
 </div>
 
@@ -260,13 +307,15 @@ h1{margin:3px 0 0;font-size:15px;font-weight:800;letter-spacing:-.4px;color:#fff
 "use strict";
 
 /* =========================================================
-   오늘도 바쁜 AI 사무실 · AI Office Tycoon
+   오늘도 바쁜 AI 사무실 · 도트 오피스 타이쿤
+   v1.1.0 — 직급 · 전결/상신 · 회의록
    완전 오프라인 단일 파일 픽셀 게임
    ========================================================= */
 
 var W = 200, H = 266;                       // 게임 논리 해상도(픽셀)
-var SAVE_KEY = "aiOfficeTycoon.save.v1";
+var SAVE_KEY = "aiOfficeTycoon.save.v1";    // 기존 세이브를 그대로 읽는다
 var MAXH = 8 * 3600;                        // 오프라인 정산 최대 8시간
+var VER = "1.1.0";
 
 function $(id){ return document.getElementById(id); }
 function R(c, col, x, y, w, h){
@@ -284,21 +333,26 @@ function won(n){
   else s = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return (neg ? "-" : "") + s;
 }
+function pad2(n){ return n < 10 ? "0" + n : "" + n; }
+function timeStr(t){
+  var d = new Date(t);
+  return (d.getMonth() + 1) + "/" + d.getDate() + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+}
 
-/* ------------------ 직원 정의 ------------------ */
+/* ------------------ 직원 정의 (부서명은 전부 한글) ------------------ */
 var ROLES = [
-  {id:"CS",     name:"미소", job:"고객 응대",   base:8,  body:"#5cc6e8", head:"#eaf6ff"},
-  {id:"QUOTE",  name:"계상", job:"견적 산출",   base:10, body:"#ffb347", head:"#fff1d9"},
-  {id:"REPORT", name:"차곡", job:"보고서 정리", base:12, body:"#8e7cff", head:"#eee9ff"},
-  {id:"DATA",   name:"소리", job:"데이터 분석", base:15, body:"#5ad1a8", head:"#e3fff4"},
-  {id:"BOOKING",name:"두리", job:"예약 접수",   base:18, body:"#ff8fa8", head:"#ffeaf0"},
-  {id:"DOCS",   name:"영수", job:"문서 관리",   base:21, body:"#9dd4ff", head:"#e9f5ff"},
-  {id:"COST",   name:"다온", job:"원가 계산",   base:25, body:"#7be08e", head:"#e9ffef"},
-  {id:"PR",     name:"새봄", job:"홍보 문구",   base:29, body:"#ffd479", head:"#fffbe9"},
-  {id:"DEV",    name:"하나", job:"개발",        base:34, body:"#6fa8ff", head:"#e9f0ff"},
-  {id:"DESIGN", name:"마루", job:"디자인",      base:39, body:"#c98bff", head:"#f6ebff"},
-  {id:"LEGAL",  name:"누리", job:"계약 검토",   base:45, body:"#b9c2cf", head:"#eff3f9"},
-  {id:"HR",     name:"민서", job:"인사 관리",   base:52, body:"#ff9f7a", head:"#ffeee6"}
+  {id:"CS",     name:"미소", dept:"고객지원팀", job:"고객 응대",   base:8,  body:"#5cc6e8", head:"#eaf6ff"},
+  {id:"QUOTE",  name:"계상", dept:"견적관리팀", job:"견적 산출",   base:10, body:"#ffb347", head:"#fff1d9"},
+  {id:"REPORT", name:"차곡", dept:"보고서팀",   job:"보고서 정리", base:12, body:"#8e7cff", head:"#eee9ff"},
+  {id:"DATA",   name:"소리", dept:"데이터팀",   job:"데이터 분석", base:15, body:"#5ad1a8", head:"#e3fff4"},
+  {id:"BOOKING",name:"두리", dept:"예약관리팀", job:"예약 접수",   base:18, body:"#ff8fa8", head:"#ffeaf0"},
+  {id:"DOCS",   name:"영수", dept:"문서관리팀", job:"문서 관리",   base:21, body:"#9dd4ff", head:"#e9f5ff"},
+  {id:"COST",   name:"다온", dept:"재무회계팀", job:"원가 계산",   base:25, body:"#7be08e", head:"#e9ffef"},
+  {id:"PR",     name:"새봄", dept:"홍보팀",     job:"홍보 문구",   base:29, body:"#ffd479", head:"#fffbe9"},
+  {id:"DEV",    name:"하나", dept:"개발팀",     job:"개발",        base:34, body:"#6fa8ff", head:"#e9f0ff"},
+  {id:"DESIGN", name:"마루", dept:"디자인팀",   job:"디자인",      base:39, body:"#c98bff", head:"#f6ebff"},
+  {id:"LEGAL",  name:"누리", dept:"법무팀",     job:"계약 검토",   base:45, body:"#b9c2cf", head:"#eff3f9"},
+  {id:"HR",     name:"민서", dept:"인사팀",     job:"인사 관리",   base:52, body:"#ff9f7a", head:"#ffeee6"}
 ];
 var DESK_COL = [4, 54, 104, 154];           // 4열 × 3줄 = 12석
 var DESK_ROW = [112, 158, 204];
@@ -306,16 +360,37 @@ var DESK_W = 44, DESK_H = 16;
 function deskOf(i){ return {x: DESK_COL[i % 4], y: DESK_ROW[Math.floor(i / 4)]}; }
 function seatOf(i){ var d = deskOf(i); return {x: d.x + 22, y: d.y + 2}; }
 
+/* ------------------ 직급 ------------------ */
+var RANKS = [
+  {n:"인턴", c:"#aab6cc"},
+  {n:"대리", c:"#7be08e"},
+  {n:"과장", c:"#5cc6e8"},
+  {n:"차장", c:"#a98bff"},
+  {n:"부장", c:"#ffb347"},
+  {n:"이사", c:"#ffd479"}
+];
+var MAXRANK = RANKS.length - 1;
+var CEO_NEED = 9;                            // 대표님(플레이어) 전용
+function rankName(r){
+  if(typeof r !== "number" || isNaN(r)) r = 0;
+  return RANKS[clamp(Math.round(r), 0, MAXRANK)].n;
+}
+function rankColor(r){
+  if(typeof r !== "number" || isNaN(r)) r = 0;
+  return RANKS[clamp(Math.round(r), 0, MAXRANK)].c;
+}
+
 /* ------------------ 시설 업그레이드 ------------------ */
 var UPGRADES = [
-  {id:"meeting",  name:"회의실 확장",     desc:"테이블이 길어지고 협업이 빨라져요.", mult:0.10, cost:1100, step:2.1, max:3},
-  {id:"espresso", name:"에스프레소 머신", desc:"카페인은 곧 생산력입니다.",         mult:0.12, cost:900,  step:2.0, max:3},
-  {id:"air",      name:"공기청정기",      desc:"맑은 공기, 맑은 정신.",             mult:0.08, cost:1500, step:2.0, max:3},
-  {id:"server",   name:"AI 서버랙",       desc:"추론 속도가 쭉 올라가요.",          mult:0.18, cost:2600, step:2.2, max:3},
-  {id:"plaque",   name:"황금 명패",       desc:"품격이 곧 영업이에요.",             mult:0.15, cost:4200, step:2.2, max:3}
+  {id:"meeting",  name:"회의실 확장",     desc:"테이블이 길어지고 협업이 빨라져요.", mult:0.09, cost:2200, step:2.1, max:3},
+  {id:"espresso", name:"에스프레소 머신", desc:"카페인은 곧 생산력입니다.",         mult:0.11, cost:1800, step:2.0, max:3},
+  {id:"air",      name:"공기청정기",      desc:"맑은 공기, 맑은 정신.",             mult:0.07, cost:2800, step:2.0, max:3},
+  {id:"server",   name:"AI 서버랙",       desc:"추론 속도가 쭉 올라가요.",          mult:0.16, cost:5200, step:2.2, max:3},
+  {id:"plaque",   name:"황금 명패",       desc:"품격이 곧 영업이에요.",             mult:0.13, cost:7800, step:2.2, max:3}
 ];
 
 /* ------------------ 결재 카드 (38종) ------------------ */
+/* [부서, 제목, 설명, 선택지[이름,금액,경험치], (선택) "CEO" = 대표님 전용] */
 var CARDS = [
   ["QUOTE","견적 승인 요청","거래처에서 오늘 안으로 회신을 달래요. 단가를 확정해 주세요.",
     [["정가로 승인",240,16],["10% 할인",170,26],["일단 보류",70,8]]],
@@ -352,7 +427,7 @@ var CARDS = [
   ["DEV","야간 장애 대응","지금 장애가 났어요. 새벽에 나가야 할까요?",
     [["즉시 출동 결재",-50,34],["내일 오전 처리",120,12],["외주 호출",200,20]]],
   ["PR","인플루언서 협찬","팔로워 30만 크리에이터가 협찬을 제안했어요.",
-    [["300만원 협찬",320,26],["50만원 소규모",180,16],["정중히 거절",40,6]]],
+    [["300만원 협찬",320,26],["50만원 소규모",180,16],["정중히 거절",40,6]],"CEO"],
   ["DESIGN","명함 디자인","새 명함을 뽑을 때가 됐어요.",
     [["도트 명함",170,22],["미니멀 검정",110,12],["대표님 사진 크게",80,18]]],
   ["REPORT","보고 스타일","대표님은 어떤 보고를 좋아하실까요?",
@@ -369,14 +444,14 @@ var CARDS = [
     [["전액 환불",-60,24],["교환 안내",80,14],["정책대로 처리",100,10]]],
   ["COST","커피 원두 구매","원두가 떨어졌어요. 뭘 살까요?",
     [["원두 5kg",160,18],["캡슐 200개",120,12],["믹스 커피 대량",60,20]]],
-  ["DEV","신규 기능 우선순위","다음 스프린트에 뭘 만들까요?",
-    [["자동 결재 시스템",320,26],["팀 채팅",240,18],["다크모드",150,20]]],
+  ["DEV","신규 기능 우선순위","다음 작업에 뭘 만들까요?",
+    [["자동 결재 시스템",320,26],["팀 채팅",240,18],["다크모드",150,20]],"CEO"],
   ["HR","생일 파티","이번 주 생일 직원이 한 명 있어요.",
     [["케이크 결재",110,22],["손편지",40,26],["축하 메일",20,8]]],
   ["PR","SNS 톤앤매너","공식 계정 말투를 정해야 해요.",
     [["친근한 반말",180,16],["정중한 존댓말",140,14],["도트 이모티콘 가득",160,22]]],
   ["QUOTE","해외 견적","해외 거래처에서 달러 결제를 원해요.",
-    [["USD 결제",300,26],["KRW 고정",200,14],["에스크로 도입",180,22]]],
+    [["달러 결제",300,26],["원화 고정",200,14],["에스크로 도입",180,22]]],
   ["DESIGN","사무실 인테리어","벽지가 좀 낡았어요. 바꿀까요?",
     [["도트 벽지",230,20],["원목 패널",180,16],["그대로 두기",60,4]]],
   ["REPORT","월간 실적 정리","이번 달 숫자를 정리할 시간이에요.",
@@ -386,14 +461,32 @@ var CARDS = [
   ["BOOKING","예약금 환불","고객님이 예약금 환불을 요청했어요.",
     [["즉시 환불",90,20],["다음 예약 크레딧",150,16],["규정상 불가",30,6]]],
   ["LEGAL","상표 출원","서비스 이름을 상표로 낼까요?",
-    [["국내만 출원",250,22],["국내 + 해외",400,34],["나중에",50,4]]],
+    [["국내만 출원",250,22],["국내 + 해외",400,34],["나중에",50,4]],"CEO"],
   ["DEV","정전 발생!","사무실 전원이 나갔어요. 서버가 위험해요.",
     [["비상 발전기 가동",-100,30],["손으로 마감",80,18],["오늘은 휴무",30,8]]],
   ["CS","택배 오배송","다른 고객님 물건이 우리 앞으로 왔어요.",
     [["반송 접수",110,16],["교환 요청",140,12],["그냥 쓰기",40,4]]],
   ["HR","대표님 아이디어","대표님이 갑자기 좋은 생각이 났대요. 바로 회의?",
-    [["즉시 회의 소집",180,24],["메모만 남기기",120,10],["점심 먹고",80,14]]]
+    [["즉시 회의 소집",180,24],["메모만 남기기",120,10],["점심 먹고",80,14]],"CEO"]
 ];
+
+/* 결재 권한 등급 — 카드의 금액 규모로 필요 직급이 정해진다 */
+function cardNeed(c){
+  if(c[4] === "CEO") return CEO_NEED;
+  var mx = 0, i;
+  for(i = 0; i < c[3].length; i++) if(c[3][i][1] > mx) mx = c[3][i][1];
+  if(mx >= 320) return CEO_NEED;   // 대표님 전용
+  if(mx >= 260) return 5;          // 이사
+  if(mx >= 220) return 4;          // 부장
+  if(mx >= 170) return 3;          // 차장
+  if(mx >= 110) return 2;          // 과장
+  if(mx >= 60)  return 1;          // 대리
+  return 0;                        // 인턴
+}
+function needLabel(n){
+  if(n >= CEO_NEED) return "대표님 전용";
+  return rankName(n) + " 이상";
+}
 
 /* ------------------ 말풍선 대사 ------------------ */
 var BUB = {
@@ -405,7 +498,7 @@ var BUB = {
   DOCS:["문서 12장 스캔!","파일 정리 중...","결재 서류 왔어요!"],
   COST:["원가 계산 끝!","영수증 정리 중...","예산 초과예요!"],
   PR:["홍보 문구 완성!","카피 3개 뽑았어요!","트렌드 검색 중..."],
-  DEV:["빌드 성공!","버그 잡았어요!","커밋 푸시!"],
+  DEV:["빌드 성공!","버그 잡았어요!","커밋 올리는 중!"],
   DESIGN:["시안 3개 완성!","도트 찍는 중...","색 조합 고민 중..."],
   LEGAL:["계약 검토 완료!","조항 확인 중...","서명 받으세요!"],
   HR:["면접 2명 완료!","급여 정리 중...","생일자 확인!"]
@@ -414,6 +507,159 @@ var BUB_GEN = ["...","집중!","당 충전 필요!","잠깐 멍...","커피 한 
 var BUB_WALK = ["보고서 완성!","확인 부탁드려요!","결재 올릴게요!","대표님! 잠깐!"];
 var CEO_BUB = ["결재 부탁해요!","커피 한 잔 하자","오늘도 화이팅","좋았어!","숫자가 예쁘네"];
 
+/* ------------------ 회의 주제 (22종) ------------------ */
+/* l: [발언자 번호, 대사] — {n0}~{n2} 이름, {r0}~{r2} 직급, {d0}~{d2} 부서 */
+var MEET = [
+  {t:"서버비 절감 대책 회의", p:3, l:[
+    [0,"{d0} 쪽에서 이번 달 클라우드 요금 봤어? 지난달보다 40% 올랐대."],
+    [1,"봤지. {n0} {r0} 말대로 {d1}에서 로그를 너무 많이 쌓아둔 것 같아."],
+    [2,"그럼 로그 보관 기간을 7일로 줄이죠. {d2}에서 바로 적용할게요."],
+    [0,"좋아. 절감액은 다음 회의에서 보고하고, 대표님께는 제가 정리해 올릴게."],
+    [1,"회의록에 '원인: 우리가 너무 성실했다'라고 적어둘까?"]
+  ]},
+  {t:"대표님 커피 취향 분석", p:2, l:[
+    [0,"대표님 커피는 하루 세 잔. 오전엔 아메리카노, 오후엔 달달한 거."],
+    [1,"{n0} {r0}, 그건 분석이 아니라 관찰일기 같은데."],
+    [0,"아니, {d0} 데이터로 보면 오후 3시 결재 승인률이 12% 올라가."],
+    [1,"그럼 오후 3시에 디저트를 올려볼까요? {d1} 예산으로."],
+    [0,"좋아. 커피값은 복지비로, 효과는 실적으로."]
+  ]},
+  {t:"고객 문의 매크로 개편", p:2, l:[
+    [0,"{d0} 문의 답변이 너무 딱딱해. '안녕하세요'만 스무 번 반복돼."],
+    [1,"그럼 매크로를 세 가지로 나누죠. 사과형, 안내형, 칭찬형."],
+    [0,"칭찬형은 뭐라고 써?"],
+    [1,"'문의해 주셔서 감사합니다, 덕분에 저희가 성장했습니다.' 어때요?"],
+    [0,"좋아, 그건 {d0}에 바로 반영할게. 칭찬으로 바뀌면 보너스."]
+  ]},
+  {t:"야근 간식 메뉴 투표", p:3, l:[
+    [0,"오늘 야근 간식 투표 열었는데 {n1} {r1}이 치킨에 한 표 던졌대."],
+    [1,"당연하죠. {d1}은 밤에 치킨이 있어야 돌아가요."],
+    [2,"{d2}은 김밥에 한 표. 기름진 건 다음 날 업무에 안 좋아요."],
+    [0,"그럼 반반으로 시키고, 남는 건 탕비실에 두는 걸로."],
+    [2,"회의록에 '만장일치: 반반'이라고 적어주세요."]
+  ]},
+  {t:"신규 프로젝트 일정 조율", p:3, l:[
+    [0,"신규 프로젝트 마감이 3주 뒤인데 {d1} 일정이 아직 안 잡혔어요."],
+    [1,"저희는 2주면 됩니다. 다만 {d2} 확인이 먼저예요."],
+    [2,"확인은 이틀이면 돼요. 대신 중간 점검을 한 번 넣죠."],
+    [0,"그럼 1주차 설계, 2주차 구현, 3주차 점검으로 확정하겠습니다."],
+    [1,"3주차에 또 회의하는 거 아니죠?"]
+  ]},
+  {t:"회의실 예약 전쟁", p:2, l:[
+    [0,"오늘 회의실 예약표가 또 꼬였어요. 세 팀이 같은 시간에 잡았대요."],
+    [1,"그건 {n0} {r0}이 캘린더를 안 보고 잡은 거잖아요."],
+    [0,"아니에요, 저는 봤는데 {d1} 쪽에서 중복으로 올렸어요."],
+    [1,"좋아요, 이참에 예약은 한 사람만 하기로 규칙을 정하죠."],
+    [0,"찬성. 규칙 이름은 '회의실은 한 명만'으로."]
+  ]},
+  {t:"탕비실 냉장고 이름표 작전", p:2, l:[
+    [0,"냉장고에 이름 없는 요구르트가 세 개나 있어요."],
+    [1,"범인은 아마 {d1}. 저번에도 제 푸딩이..."],
+    [0,"이름표를 붙이면 해결될까요?"],
+    [1,"이름표에 유통기한까지요. 그러면 최소한 양심은 남습니다."],
+    [0,"좋아요, {d0}에서 이름표 스티커를 뽑아올게요."]
+  ]},
+  {t:"사무실 온도 분쟁 조정", p:2, l:[
+    [0,"{d0}은 26도가 적당하다는데 {d1}은 22도래요."],
+    [1,"22도에서 일이 잘 되는 건 사실이에요. 손이 차면 정신이 맑아지죠."],
+    [0,"그럼 24도로 타협하고, 추우면 담요를 지급하는 걸로."],
+    [1,"담요에 회사 로고를 넣으면 홍보도 되겠네요."]
+  ]},
+  {t:"챗봇 말투 회의", p:2, l:[
+    [0,"우리 챗봇이 아직도 '문의 사항을 입력하십시오'라고 해요."],
+    [1,"그건 너무 공무원 같아요. '무엇이 궁금하세요?'로 바꾸죠."],
+    [0,"이모티콘도 넣을까요?"],
+    [1,"한 개까지만요. 두 개부터는 안 읽은 느낌이 나요."]
+  ]},
+  {t:"주간 보고서 분량 줄이기", p:3, l:[
+    [0,"주간 보고서가 스무 장이에요. 대표님은 세 줄만 원하신다는데."],
+    [1,"{d1} 보고서는 특히 길어요. 근거를 다 넣어서요."],
+    [2,"근거는 부록으로 빼죠. {d2}에서 압축하는 방법을 알고 있어요."],
+    [0,"좋아요. 본문 세 줄, 부록 무제한. 이걸로 정리합니다."],
+    [1,"부록이 스무 장이 되면 그건 그때 다시 회의하죠."]
+  ]},
+  {t:"복사기 앞 질서 규칙", p:2, l:[
+    [0,"복사기 앞에 대기 줄이 없어서 아침마다 실랑이가 나요."],
+    [1,"그럼 종이에 번호표를 붙이죠. {d1}에서 인쇄하면 돼요."],
+    [0,"그 번호표를 복사하러 또 줄 서야 하는 건 아니죠?"],
+    [1,"...그럼 그냥 마음의 줄을 서는 걸로."]
+  ]},
+  {t:"승진 축하 파티 예산", p:3, l:[
+    [0,"이번에 승진자 축하 파티를 하면 예산이 얼마나 들까요?"],
+    [1,"{d1} 계산으로는 케이크와 음료 해서 20만원 정도예요."],
+    [2,"{d2}은 10만원으로도 충분하다고 봐요. 대신 손편지를 꼭."],
+    [0,"그럼 15만원에 손편지까지. 절충안으로 올릴게요."],
+    [1,"승진은 축하받는 맛에 하는 거니까요."]
+  ]},
+  {t:"점심 메뉴 로테이션", p:2, l:[
+    [0,"점심 메뉴가 매주 똑같아요. 김치찌개, 김치찌개, 김치찌개."],
+    [1,"그럼 요일별로 정하죠. 월 한식, 화 중식, 수 일식."],
+    [0,"목은? {d1}이 좋아하는 양식?"],
+    [1,"목은 자유, 금은 회식 후보로 남겨두는 걸로."]
+  ]},
+  {t:"클라우드 요금 폭탄", p:3, l:[
+    [0,"이번 달 클라우드 청구서가 예상보다 두 배 나왔어요."],
+    [1,"{d1}에서 확인해 보니 테스트 서버가 꺼지지 않았어요."],
+    [2,"{d2}에서 자동 종료 스크립트를 넣을 수 있어요. 반나절이면 돼요."],
+    [0,"그럼 오늘 안에 넣고, 다음 청구서로 확인하죠."],
+    [2,"이번엔 정말 꺼지는지 제가 직접 보겠습니다."]
+  ]},
+  {t:"이모티콘 사용 규정", p:2, l:[
+    [0,"업무 메신저에 이모티콘이 너무 많아요. 메시지보다 이모티콘이 길어요."],
+    [1,"그럼 규정을 만들죠. 한 메시지에 세 개까지."],
+    [0,"보고서에도 쓰면 안 되겠죠?"],
+    [1,"보고서에는 0개. 대신 잘한 사람에게는 이모티콘 한 봉지."]
+  ]},
+  {t:"재택근무 신청서 양식", p:2, l:[
+    [0,"재택 신청서가 열두 장이에요. 승인받기가 논문 쓰기 같아요."],
+    [1,"{d1}에서 세 줄로 줄일 수 있어요. 날짜, 사유, 연락처."],
+    [0,"승인은 누가 하죠?"],
+    [1,"팀장 승인 후 대표님께 한 줄 보고. 그게 전부입니다."]
+  ]},
+  {t:"신입 온보딩 매뉴얼", p:3, l:[
+    [0,"새로 온 AI 직원이 첫날 뭘 해야 하는지 아무도 안 알려줬대요."],
+    [1,"{d1}에서 체크리스트를 만들었어요. 계정, 자리, 커피 순서로요."],
+    [2,"{d2}은 첫 주에 '모르면 물어보기' 교육을 추가하고 싶어요."],
+    [0,"좋아요. 첫날은 커피, 첫 주는 질문. 이걸 매뉴얼 첫 장에 넣죠."],
+    [1,"질문을 많이 하면 칭찬하는 규칙도 넣어주세요."]
+  ]},
+  {t:"대표님 생일 준비", p:3, l:[
+    [0,"다음 주가 대표님 생일이에요. 아무도 모르는 척하고 있어요."],
+    [1,"{d1}에서 케이크를 준비할 수 있어요. 초는 숫자로 할까요?"],
+    [2,"숫자는 위험해요. {d2}은 그냥 촛불 하나를 추천해요."],
+    [0,"좋아요. 조용히, 그러나 확실하게. 예산은 비밀 지출로."],
+    [2,"회의록에도 안 남기는 걸로 하죠. 이건 기밀입니다."]
+  ]},
+  {t:"회식 장소 후보 검토", p:2, l:[
+    [0,"회식 장소 후보가 세 곳인데 어디가 좋을까요?"],
+    [1,"{d1} 쪽은 고기집, {d0}은 조용한 곳, 나머지 하나는 노래방이 붙어 있어요."],
+    [0,"고기 먹고 조용히 얘기하다가 노래는 선택으로 하죠."],
+    [1,"완벽한 절충안이네요. 예약은 제가 할게요."]
+  ]},
+  {t:"로그 알림 피로 줄이기", p:2, l:[
+    [0,"밤새 알림이 300개 왔어요. 다 읽다가 아침이 됐어요."],
+    [1,"{d1}에서 심각도별로 묶을 수 있어요. 빨강, 노랑, 초록."],
+    [0,"초록은 아예 안 보이게 해도 되나요?"],
+    [1,"네, 대신 하루 한 번 요약으로 보내드릴게요. 그게 진짜 알림이죠."]
+  ]},
+  {t:"회의 줄이기 회의", p:2, l:[
+    [0,"회의가 너무 많다는 의견이 있어서 회의를 하나 열었어요."],
+    [1,"아이러니하지만 필요한 회의네요. {d1}은 하루 두 개만 하고 싶어요."],
+    [0,"그럼 정기 회의를 반으로 줄이고, 대신 회의록을 꼭 남기죠."],
+    [1,"좋아요. '회의는 줄이되 기록은 남긴다'로 정리합니다."]
+  ]},
+  {t:"화분 물 주기 당번", p:2, l:[
+    [0,"화분이 시들어 가요. 물 주는 담당이 없어서요."],
+    [1,"{d1}에서 당번표를 만들면 되겠네요. 월요일은 {n0} {r0}."],
+    [0,"왜 제가 월요일이죠?"],
+    [1,"월요일에 제일 먼저 오시잖아요. 그게 이유입니다."]
+  ]}
+];
+var MEET_SPOT = {
+  2:[{x:18,y:88},{x:44,y:88}],
+  3:[{x:16,y:88},{x:38,y:88},{x:60,y:88}]
+};
+
 /* ------------------ 미션 정의 ------------------ */
 var MDEF = [
   {k:"approved", base:8,    t:function(n){ return "결재 " + n + "건 처리"; },      rw:1},
@@ -421,7 +667,8 @@ var MDEF = [
   {k:"upgrade",  base:1,    t:function(n){ return "시설 " + n + "개 업그레이드"; }, rw:1.6},
   {k:"earned",   base:6000, t:function(n){ return "누적 " + won(n) + "원 벌기"; },  rw:1.2},
   {k:"levelups", base:3,    t:function(n){ return "직원 레벨업 " + n + "회"; },     rw:1.2},
-  {k:"quick",    base:4,    t:function(n){ return "빠른 결재 " + n + "회"; },       rw:1}
+  {k:"quick",    base:4,    t:function(n){ return "빠른 결재 " + n + "회"; },       rw:1},
+  {k:"promo",    base:1,    t:function(n){ return "직원 승진 " + n + "회"; },       rw:1.5}
 ];
 
 /* =========================================================
@@ -430,6 +677,8 @@ var MDEF = [
 var state = null;
 var live = [];
 var uidC = 0;
+var meetUid = 0;
+var mt = null;                 // 진행 중인 회의
 var nowMs = Date.now();
 
 function buildMissions(round){
@@ -443,12 +692,14 @@ function buildMissions(round){
 
 function newState(){
   var st = {
-    v:1, money:380, totalEarned:0, xp:0, level:1, approved:0, quick:0,
-    staff:[], up:{}, inbox:[], ctr:{approved:0,hired:0,upgrade:0,earned:0,levelups:0,quick:0},
-    mRound:1, missions:[], nextCardAt:0, muted:false, boostUntil:0, boostReadyAt:0,
-    savedAt:Date.now(), intro:false
+    v:2, money:380, totalEarned:0, xp:0, level:1, approved:0, quick:0,
+    staff:[], up:{}, inbox:[], log:[], meetings:[], autoCount:0,
+    ctr:{approved:0,hired:0,upgrade:0,earned:0,levelups:0,quick:0,promo:0},
+    mRound:1, missions:[], nextCardAt:0, nextMeetAt:0, buffUntil:0,
+    muted:false, boostUntil:0, boostReadyAt:0,
+    savedAt:Date.now(), intro:false, updNote:""
   };
-  for(var i=0;i<12;i++) st.staff.push({hired:false, lv:1});
+  for(var i=0;i<12;i++) st.staff.push({hired:false, lv:1, rank:0});
   for(var u=0;u<UPGRADES.length;u++) st.up[UPGRADES[u].id] = 0;
   st.missions = buildMissions(1);
   return st;
@@ -461,21 +712,51 @@ function save(){
   }catch(e){}
 }
 
+/* v1.0.0 세이브도 그대로 읽고, 새 필드는 기본값으로 채운다 */
 function load(){
   var raw = null;
   try{ raw = localStorage.getItem(SAVE_KEY); }catch(e){}
   if(!raw) return null;
   try{
     var st = JSON.parse(raw);
-    if(!st || st.v !== 1) return null;
+    if(!st || (st.v !== 1 && st.v !== 2)) return null;
     var base = newState();
+    var fromV1 = (st.v === 1);
     for(var k in base){ if(!(k in st)) st[k] = base[k]; }
     if(!st.staff || st.staff.length !== 12) st.staff = base.staff;
     for(var u=0;u<UPGRADES.length;u++){ if(typeof st.up[UPGRADES[u].id] !== "number") st.up[UPGRADES[u].id] = 0; }
     if(!st.missions || !st.missions.length) st.missions = buildMissions(st.mRound||1);
+    while(st.missions.length < MDEF.length){
+      var mi = st.missions.length;
+      st.missions.push({k:MDEF[mi].k, target:1, got:false});
+    }
     if(!st.inbox) st.inbox = [];
+    /* v1 세이브에 남아 있던 결재 카드도 새 규칙으로 읽을 수 있게 채운다 */
+    st.inbox.forEach(function(c){
+      if(typeof c.need !== "number") c.need = (typeof c.ci === "number" && CARDS[c.ci]) ? cardNeed(CARDS[c.ci]) : CEO_NEED;
+      if(typeof c.by !== "number") c.by = -1;
+      if(typeof c.scale !== "number" || !c.scale) c.scale = 1;
+      c.done = true;
+      if(!c.opts) c.opts = [["승인", 100, 10]];
+    });
+    if(!st.log) st.log = [];
+    if(!st.meetings) st.meetings = [];
     if(!st.ctr) st.ctr = base.ctr;
-    st.staff.forEach(function(s){ if(!s.lv) s.lv = 1; });
+    if(typeof st.ctr.promo !== "number") st.ctr.promo = 0;
+    if(typeof st.autoCount !== "number") st.autoCount = 0;
+    if(typeof st.nextMeetAt !== "number") st.nextMeetAt = 0;
+    if(typeof st.buffUntil !== "number") st.buffUntil = 0;
+    st.staff.forEach(function(s){
+      if(!s.lv) s.lv = 1;
+      if(typeof s.rank !== "number" || isNaN(s.rank)) s.rank = 0;
+      s.rank = clamp(Math.round(s.rank), 0, MAXRANK);
+    });
+    if(fromV1){
+      /* v1 세이브: 레벨만큼 쌓인 경력을 직급으로 인정 (최대 차장) */
+      st.staff.forEach(function(s){ if(s.hired) s.rank = clamp(Math.floor((s.lv - 1) / 2), 0, 3); });
+      st.updNote = VER;
+    }
+    st.v = 2;
     return st;
   }catch(e){ return null; }
 }
@@ -513,6 +794,8 @@ var SFX = {
   coin:function(){ tone(1046,0.045,"square",0.09,0); tone(1568,0.09,"square",0.08,0.045); },
   hire:function(){ [523,659,784,1046].forEach(function(f,i){ tone(f,0.10,"square",0.09,i*0.065); }); },
   level:function(){ [659,880,1174].forEach(function(f,i){ tone(f,0.09,"square",0.085,i*0.055); }); },
+  promo:function(){ [523,659,784,1046,1318].forEach(function(f,i){ tone(f,0.11,"triangle",0.09,i*0.07); }); },
+  meet:function(){ [440,554,659].forEach(function(f,i){ tone(f,0.13,"triangle",0.07,i*0.09); }); },
   tap:function(){ tone(620,0.03,"square",0.05); },
   bad:function(){ tone(220,0.13,"sawtooth",0.09,0,110); },
   boost:function(){ [784,1046,1318].forEach(function(f,i){ tone(f,0.11,"triangle",0.09,i*0.06); }); }
@@ -522,27 +805,37 @@ var SFX = {
    경제 계산
    ========================================================= */
 function mult(){
-  var m = 1 + (state.level - 1) * 0.04;
+  var m = 1 + (state.level - 1) * 0.03;
   for(var i=0;i<UPGRADES.length;i++) m += UPGRADES[i].mult * state.up[UPGRADES[i].id];
+  if(Date.now() < state.buffUntil) m += 0.10;      // 회의 효과
   return m;
+}
+function rankMul(r){ return 1 + 0.22 * r; }
+function staffInc(i){
+  var s = state.staff[i];
+  return ROLES[i].base * (1 + 0.35 * (s.lv - 1)) * rankMul(s.rank);
 }
 function ips(now){
   var t = 0;
-  for(var i=0;i<12;i++){
-    if(state.staff[i].hired) t += ROLES[i].base * (1 + 0.35 * (state.staff[i].lv - 1));
-  }
+  for(var i=0;i<12;i++) if(state.staff[i].hired) t += staffInc(i);
   t *= mult();
   if(now && now < state.boostUntil) t *= 2;
   return t;
 }
 function hiredCount(){ var n=0; for(var i=0;i<12;i++) if(state.staff[i].hired) n++; return n; }
 function nextSlot(){ for(var i=0;i<12;i++) if(!state.staff[i].hired) return i; return -1; }
-function hireCost(i){ return Math.round(150 * Math.pow(1.58, i)); }
+function hireCost(i){ return Math.round(240 * Math.pow(1.78, i)); }
 function lvCost(i){
   var lv = state.staff[i].lv;
   if(lv >= 10) return Infinity;
-  return Math.round(95 * Math.pow(1.72, lv - 1) * (1 + i * 0.12));
+  return Math.round(140 * Math.pow(1.85, lv - 1) * (1 + i * 0.15));
 }
+function promoCost(i){
+  var r = state.staff[i].rank;
+  if(r >= MAXRANK) return Infinity;
+  return Math.round(900 * Math.pow(3.0, r) * (1 + i * 0.08));
+}
+function promoNeedLv(i){ return 3 + state.staff[i].rank; }
 function needXp(lv){ return Math.round(110 * Math.pow(1.42, lv - 1)); }
 function upCost(u){
   var lv = state.up[u.id];
@@ -560,16 +853,16 @@ function addXp(n){
   }
   if(ups){
     SFX.level();
-    toast("Lv." + state.level + " 달성! 수익 +" + (ups * 4) + "%", "gold");
+    toast("레벨 " + state.level + " 달성! 수익 +" + (ups * 3) + "%", "gold");
   }
 }
 
 /* =========================================================
-   결재 카드
+   결재 카드 · 전결/상신
    ========================================================= */
 var CARD_CAP = 8;
 function cardScale(){
-  return 1 + state.approved * 0.035 + (state.level - 1) * 0.18;
+  return 1 + state.approved * 0.03 + (state.level - 1) * 0.14;
 }
 function pendingSet(){
   var set = {};
@@ -591,33 +884,134 @@ function pickCardIndex(){
   }
   return Math.floor(Math.random() * CARDS.length);
 }
-function spawnCard(){
-  if(state.inbox.length >= CARD_CAP) return null;
-  var ci = pickCardIndex(), c = CARDS[ci];
-  var card = {
-    uid: ++uidC, ci: ci, from: c[0], title: c[1], desc: c[2], opts: c[3],
-    scale: cardScale(), t: Date.now()
-  };
-  state.inbox.push(card);
-  alertStaff(card.from);
-  if(sheetKind === "inbox"){
-    var body = $("sheetBody");
-    if(state.inbox.length === 1) body.innerHTML = "";
-    body.insertAdjacentHTML("beforeend", cardHTML(card));
+function ownerIdx(roleId){
+  for(var i = 0; i < 12; i++) if(ROLES[i].id === roleId && state.staff[i].hired) return i;
+  return -1;
+}
+function findBoss(need, exclude){
+  var best = -1, i, r;
+  for(i = 0; i < 12; i++){
+    if(!state.staff[i].hired || i === exclude) continue;
+    if(inMeeting(i)) continue;
+    r = state.staff[i].rank;
+    if(r < need) continue;
+    if(best < 0 || r < state.staff[best].rank) best = i;
   }
-  updateBadges();
-  return card;
+  if(best >= 0) return best;
+  for(i = 0; i < 12; i++){
+    if(!state.staff[i].hired || i === exclude) continue;
+    r = state.staff[i].rank;
+    if(r < need) continue;
+    if(best < 0 || r < state.staff[best].rank) best = i;
+  }
+  return best;
+}
+function bestOptIdx(card){
+  var b = 0;
+  for(var i = 1; i < card.opts.length; i++) if(card.opts[i][1] > card.opts[b][1]) b = i;
+  return b;
+}
+function addLog(kind, text){
+  state.log.unshift({t:Date.now(), k:kind, s:text});
+  if(state.log.length > 40) state.log.length = 40;
 }
 function cardInterval(){
   var h = hiredCount();
   var avgLv = 0; for(var i=0;i<12;i++) if(state.staff[i].hired) avgLv += state.staff[i].lv;
   avgLv = h ? avgLv / h : 0;
-  return Math.max(3.0, 9.6 - h * 0.42 - avgLv * 0.12);
+  return Math.max(3.4, 10.2 - h * 0.38 - avgLv * 0.1);
 }
+
+function spawnCard(){
+  if(state.inbox.length >= CARD_CAP) return null;
+  var ci = pickCardIndex(), c = CARDS[ci];
+  var card = {
+    uid: ++uidC, ci: ci, from: c[0], title: c[1], desc: c[2], opts: c[3],
+    scale: cardScale(), need: cardNeed(c), t: Date.now(), by: -1, done: false
+  };
+  handleCard(card);
+  return card;
+}
+
+/* 카드 한 장이 회사 안에서 어떻게 처리되는지 결정 */
+function handleCard(card){
+  var need = card.need;
+  var oi = ownerIdx(card.from);
+  card.by = oi;
+  if(need >= CEO_NEED || oi < 0){ toCeo(card, oi); return; }
+  if(state.staff[oi].rank >= need){ selfApprove(card, oi); return; }
+  var bi = findBoss(need, oi);
+  if(bi < 0){ toCeo(card, oi); return; }
+  escalate(card, oi, bi);
+}
+
+/* 자체 전결 — 본인 권한으로 끝나는 소액 건 */
+function selfApprove(card, oi){
+  if(!inMeeting(oi)) say(oi, "자체 결재 완료!", 2400, true);
+  setTimeout(function(){
+    settleAuto(card, oi, -1, 0.55, "자체 결재");
+    if(!inMeeting(oi)) say(oi, "처리 완료!", 2000, true);
+  }, 500);
+}
+
+/* 상신 — 더 높은 직급의 상사 자리로 걸어가 결재를 받는다 */
+function escalate(card, oi, bi){
+  var bossRank = rankName(state.staff[bi].rank);
+  if(inMeeting(oi)){
+    setTimeout(function(){ settleAuto(card, oi, bi, 0.6, "상신 결재"); }, 900);
+    return;
+  }
+  var seat = seatOf(bi);
+  var tgt = {x: seat.x - 13, y: seat.y};
+  goTo(oi, tgt.x, tgt.y, function(){
+    say(oi, bossRank + "님 결재 부탁해요!", 2800, true);
+    setTimeout(function(){
+      if(!state.staff[bi].hired){ settleAuto(card, oi, -1, 0.55, "자체 결재"); return; }
+      say(bi, "전결 승인!", 2400, true);
+      settleAuto(card, oi, bi, 0.6, "상신 결재");
+    }, 850);
+  });
+  /* 이동이 길어져도 결재는 반드시 처리된다 */
+  setTimeout(function(){ settleAuto(card, oi, bi, 0.6, "상신 결재"); }, 6000);
+}
+
+function settleAuto(card, oi, bi, factor, label){
+  if(card.done) return;
+  card.done = true;
+  var b = bestOptIdx(card), o = card.opts[b];
+  var gain = Math.round(o[1] * card.scale * factor);
+  var xp = Math.max(1, Math.round(o[2] * (1 + state.level * 0.05) * 0.3));
+  state.money = Math.max(0, state.money + gain);
+  if(gain > 0){ state.totalEarned += gain; state.ctr.earned += gain; }
+  state.autoCount++;
+  addXp(xp);
+  var who = ROLES[oi].name + " " + rankName(state.staff[oi].rank);
+  var s = who + " · " + card.title + " → " + label + " (+₩" + won(Math.max(0, gain)) + ")";
+  if(bi >= 0) s = who + " → " + ROLES[bi].name + " " + rankName(state.staff[bi].rank) + " · " + card.title + " " + label + " (+₩" + won(Math.max(0, gain)) + ")";
+  addLog(bi >= 0 ? "esc" : "self", s);
+  toast((bi >= 0 ? "상신 결재 · " : "자체 결재 · ") + ROLES[oi].name + " " + rankName(state.staff[oi].rank) +
+        " +₩" + won(Math.max(0, gain)), gain > 0 ? "good" : "");
+  if(gain > 0) SFX.coin();
+  save();
+}
+
+/* 대표님(플레이어) 결재함으로 올라옴 */
+function toCeo(card, oi){
+  card.done = true;
+  state.inbox.push(card);
+  if(oi >= 0 && live[oi] && !inMeeting(oi)) say(oi, "대표님 결재 필요합니다!", 3000, true);
+  var dept = roleById(card.from).dept;
+  addLog("ceo", (oi >= 0 ? ROLES[oi].name + " " + rankName(state.staff[oi].rank) + " · " : "") +
+        card.title + " → 대표님 결재함");
+  if(state.inbox.length === 1) toast("결재함에 새 서류 · " + dept, "");
+  if(sheetKind === "inbox") renderSheet();
+  updateBadges();
+}
+
 function approveCard(card, oi, isQuick){
   var o = card.opts[oi];
   if(!o) return null;
-  var gain = Math.round(o[1] * card.scale * (isQuick ? 0.8 : 1));
+  var gain = Math.round(o[1] * card.scale * (isQuick ? 0.9 : 1));
   var xp = Math.max(1, Math.round(o[2] * (1 + state.level * 0.05)));
   state.money = Math.max(0, state.money + gain);
   if(gain > 0){ state.totalEarned += gain; state.ctr.earned += gain; }
@@ -632,7 +1026,7 @@ function approveCard(card, oi, isQuick){
 }
 
 /* =========================================================
-   채용 · 레벨업 · 시설
+   채용 · 레벨업 · 승진 · 시설
    ========================================================= */
 function hire(i){
   var c = hireCost(i);
@@ -641,11 +1035,13 @@ function hire(i){
   state.money -= c;
   state.staff[i].hired = true;
   state.staff[i].lv = 1;
+  state.staff[i].rank = 0;
   state.ctr.hired++;
   SFX.hire();
   spawnLive(i);
   bubblesFor(i, ROLES[i].name + " 합류!", 2600);
   drawBG();
+  addLog("hire", ROLES[i].name + " " + ROLES[i].dept + " 인턴으로 입사");
   return true;
 }
 function levelUp(i){
@@ -656,7 +1052,20 @@ function levelUp(i){
   s.lv++;
   state.ctr.levelups++;
   SFX.level();
-  bubblesFor(i, "Lv." + s.lv + "! 힘낼게요!", 2400);
+  bubblesFor(i, "레벨 " + s.lv + "! 힘낼게요!", 2400);
+  return true;
+}
+function promote(i){
+  var s = state.staff[i], c = promoCost(i);
+  if(!s.hired || s.rank >= MAXRANK) { SFX.bad(); return false; }
+  if(s.lv < promoNeedLv(i)) { SFX.bad(); return "lv"; }
+  if(state.money < c) { SFX.bad(); return "money"; }
+  state.money -= c;
+  s.rank++;
+  state.ctr.promo++;
+  SFX.promo();
+  bubblesFor(i, rankName(s.rank) + " 승진!", 3000);
+  addLog("promo", ROLES[i].name + " " + ROLES[i].dept + " " + rankName(s.rank) + "으로 승진");
   return true;
 }
 function buyUp(u){
@@ -668,7 +1077,7 @@ function buyUp(u){
   state.ctr.upgrade++;
   SFX.hire();
   drawBG();
-  toast(u.name + " Lv." + (lv + 1) + " 설치 완료!", "good");
+  toast(u.name + " 레벨 " + (lv + 1) + " 설치 완료!", "good");
   return true;
 }
 
@@ -681,8 +1090,8 @@ function claimMission(i){
   var m = state.missions[i];
   if(!m || m.got || !missionDone(m)) { SFX.bad(); return false; }
   var d = MDEF[i];
-  var reward = Math.round(520 * Math.pow(1.95, (state.mRound - 1)) * d.rw);
-  var xp = Math.round(28 * state.mRound);
+  var reward = Math.round(480 * Math.pow(1.9, (state.mRound - 1)) * d.rw);
+  var xp = Math.round(26 * state.mRound);
   state.money += reward; state.totalEarned += reward; state.ctr.earned += reward;
   m.got = true;
   addXp(xp);
@@ -690,9 +1099,9 @@ function claimMission(i){
   toast("미션 완료! +₩" + won(reward), "gold");
   if(state.missions.every(function(x){ return x.got; })){
     state.mRound++;
-    state.ctr = {approved:0,hired:0,upgrade:0,earned:0,levelups:0,quick:0};
+    state.ctr = {approved:0,hired:0,upgrade:0,earned:0,levelups:0,quick:0,promo:0};
     state.missions = buildMissions(state.mRound);
-    toast("새로운 할 일 목록 도착! ROUND " + state.mRound, "gold");
+    toast("새로운 할 일 도착! " + state.mRound + "회차", "gold");
   }
   return true;
 }
@@ -943,9 +1352,9 @@ function drawDeskFront(c, d, hired){
   R(c, "#d98b4a", x, y, w, 2);
   R(c, "#6b3a15", x, y + h - 1, w, 1);
   if(hired){
-    R(c, "#0f1728", x + 10, y + 9, 24, 5);
+    R(c, "#0f1728", x + 7, y + 8, 30, 7);       // 이름 명패 판
   } else {
-    R(c, "#7a4118", x + 10, y + 9, 24, 5);
+    R(c, "#7a4118", x + 7, y + 8, 30, 7);
   }
 }
 
@@ -1004,7 +1413,6 @@ function drawCEO(c, x, y, bob){
 }
 
 /* =========================================================
-/* =========================================================
    활동 캐릭터
    ========================================================= */
 var LANE = 96;
@@ -1019,16 +1427,25 @@ function aisleFor(i){
 function spawnLive(i){
   var s = seatOf(i);
   live[i] = {
-    x:s.x, y:s.y, mode:"work", t:0, next:5 + Math.random() * 10,
-    path:[], pi:0, spd:24 + Math.random() * 8, tick:Math.random() * 5,
-    bubble:"", bubUntil:0, bubNext:2 + Math.random() * 5, hold:false
+    x:s.x, y:s.y, mode:"work", t:0, next:6 + Math.random() * 10,
+    path:null, pi:0, spd:26 + Math.random() * 8, tick:Math.random() * 5,
+    bubble:"", bubUntil:0, bubNext:2 + Math.random() * 5, bubLock:0,
+    done:null, standUntil:0, meet:false
   };
 }
+function say(i, text, ms, lock){
+  var l = live[i]; if(!l) return;
+  var now = Date.now();
+  if(lock && now < l.bubLock && l.bubble) return;
+  l.bubble = text;
+  l.bubUntil = now + ms;
+  if(lock) l.bubLock = now + ms;
+}
+function bubblesFor(i, text, ms){ say(i, text, ms, true); }
 function alertStaff(roleId){
   for(var i = 0; i < 12; i++){
-    if(ROLES[i].id === roleId && state.staff[i].hired && live[i]){
-      live[i].bubble = "!";
-      live[i].bubUntil = Date.now() + 2200;
+    if(ROLES[i].id === roleId && state.staff[i].hired && live[i] && !inMeeting(i)){
+      say(i, "!", 2200, false);
       return;
     }
   }
@@ -1039,38 +1456,66 @@ function bubbleCount(){
   if(ceo.bubble && now < ceo.bubUntil) n++;
   return n;
 }
-function bubblesFor(i, text, ms){
+
+function pathTo(i, tx, ty){
+  var l = live[i], seat = seatOf(i), ax = aisleFor(i);
+  var lane = LANE + (i % 3) * 3;
+  var pts = [];
+  if(Math.abs(l.y - lane) < 3 && Math.abs(l.x - ax) < 3){
+    pts.push({x:tx, y:lane});
+  } else if(Math.abs(l.y - lane) < 3){
+    pts.push({x:ax, y:lane});
+    pts.push({x:tx, y:lane});
+  } else {
+    pts.push({x:ax, y:l.y});
+    pts.push({x:ax, y:lane});
+    pts.push({x:tx, y:lane});
+  }
+  if(Math.abs(ty - lane) > 1) pts.push({x:tx, y:ty});
+  return pts;
+}
+function goTo(i, tx, ty, done){
   var l = live[i]; if(!l) return;
-  l.bubble = text; l.bubUntil = Date.now() + ms;
+  l.path = pathTo(i, tx, ty);
+  l.pi = 0;
+  l.mode = "walk";
+  l.done = done || null;
+}
+function goHome(i, done){
+  var s = seatOf(i);
+  goTo(i, s.x, s.y, function(){
+    var l = live[i];
+    if(l){ l.mode = "work"; l.t = 0; l.next = 10 + Math.random() * 14; }
+    if(done) done();
+  });
 }
 
 function updateActors(dt){
-  var now = Date.now();
-  for(var i = 0; i < 12; i++){
+  var now = Date.now(), i;
+  for(i = 0; i < 12; i++){
     var s = state.staff[i], l = live[i];
     if(!s.hired || !l) continue;
     l.tick += dt;
-    var d = deskOf(i), seat = seatOf(i);
 
     if(l.mode === "work"){
+      var seat = seatOf(i);
       l.x = seat.x; l.y = seat.y;
       l.t += dt;
-      if(l.t > l.next){
+      if(l.t > l.next && !inMeeting(i)){
         l.t = 0;
         var tg = TARGETS[Math.random() < 0.55 ? 0 : 1];
-        var ax = aisleFor(i);
-        var lane = LANE + (i % 3) * 3;
-        l.path = [
-          {x:ax, y:seat.y},
-          {x:ax, y:lane},
-          {x:tg.x + ((i % 4) - 1.5) * 8, y:lane}
-        ];
-        l.pi = 0; l.mode = "walk"; l.hold = true; l.going = true;
-        if(bubbleCount() < 2){
-          l.bubble = BUB_WALK[Math.floor(Math.random() * BUB_WALK.length)];
-          l.bubUntil = now + 3600;
-        }
-      } else if(now > l.bubNext && now > l.bubUntil){
+        var tx = tg.x + ((i % 4) - 1.5) * 8;
+        goTo(i, tx, tg.y, function(idx){
+          return function(){
+            var ll = live[idx], nn = Date.now();
+            ll.standUntil = nn + 2200;
+            ll.mode = "stand";
+            if(nn > ll.bubLock && bubbleCount() < 2){
+              say(idx, BUB_WALK[Math.floor(Math.random() * BUB_WALK.length)], 2600, false);
+            }
+          };
+        }(i));
+      } else if(now > l.bubNext && now > l.bubUntil && now > l.bubLock){
         if(bubbleCount() >= 2){
           l.bubNext = now + 1800 + Math.random() * 3000;
         } else {
@@ -1080,47 +1525,31 @@ function updateActors(dt){
           l.bubNext = l.bubUntil + 2500 + Math.random() * 5000;
         }
       }
+
     } else if(l.mode === "walk"){
+      if(!l.path || !l.path.length){ l.mode = "work"; continue; }
       var tgt = l.path[l.pi];
-      if(!tgt){ l.mode = "work"; l.t = 0; l.next = 12 + Math.random() * 14; continue; }
+      if(!tgt){
+        arrive(i);
+        continue;
+      }
       var dx = tgt.x - l.x, dy = tgt.y - l.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
       var step = l.spd * dt;
       if(dist <= step){
         l.x = tgt.x; l.y = tgt.y; l.pi++;
-        if(l.pi >= l.path.length){
-          l.t = 0;
-          if(l.going){
-            l.mode = "deliver";
-            if(bubbleCount() < 2){
-              l.bubble = "확인 부탁드려요!";
-              l.bubUntil = now + 2400;
-            }
-            l.next = 2.2 + Math.random() * 1.6;
-          } else {
-            l.mode = "work"; l.hold = false;
-            l.next = 10 + Math.random() * 16;
-          }
-        }
+        if(l.pi >= l.path.length) arrive(i);
       } else {
         l.x += dx / dist * step;
         l.y += dy / dist * step;
       }
-    } else if(l.mode === "deliver"){
-      l.t += dt;
-      if(l.t > l.next){
-        l.t = 0;
-        var ax2 = aisleFor(i);
-        var lane2 = LANE + (i % 3) * 3;
-        l.path = [
-          {x:ax2, y:lane2},
-          {x:ax2, y:seat.y},
-          {x:seat.x, y:seat.y}
-        ];
-        l.pi = 0; l.mode = "walk"; l.hold = true; l.going = false;
-      }
+
+    } else if(l.mode === "stand"){
+      if(now > l.standUntil && !inMeeting(i)) goHome(i);
+
+    } else if(l.mode === "meet"){
+      /* 회의 자리 고정 */
     }
-    if(l.mode === "work") l.hold = false;
   }
 
   /* CEO */
@@ -1132,6 +1561,159 @@ function updateActors(dt){
       ceo.bubUntil = Date.now() + 3000;
     }
   }
+}
+
+function arrive(i){
+  var l = live[i]; if(!l) return;
+  l.path = null; l.pi = 0;
+  var f = l.done; l.done = null;
+  l.mode = "stand";
+  l.standUntil = Date.now() + 2500;
+  if(f){ f(); return; }
+  var seat = seatOf(i);
+  if(Math.abs(l.x - seat.x) < 2 && Math.abs(l.y - seat.y) < 2){
+    l.mode = "work"; l.t = 0; l.next = 10 + Math.random() * 14;
+  }
+}
+
+/* =========================================================
+   회의
+   ========================================================= */
+function inMeeting(i){
+  if(!mt) return false;
+  for(var k = 0; k < mt.parts.length; k++) if(mt.parts[k] === i) return true;
+  return false;
+}
+function meetBadge(){
+  var b = $("meetBadge");
+  if(!b) return;
+  var on = !!(mt && mt.phase !== "done");
+  b.classList.toggle("hidden", !on);
+  if(on) b.textContent = "🗣 회의 중! 보기 (" + mt.parts.length + "명)";
+  var tb = $("tabMeetN");
+  if(tb) tb.classList.toggle("hidden", !on);
+}
+
+function startMeeting(){
+  var cand = [], i;
+  for(i = 0; i < 12; i++) if(state.staff[i].hired && live[i] && !inMeeting(i)) cand.push(i);
+  if(cand.length < 2){ state.nextMeetAt = Date.now() + 20000; return; }
+  for(i = cand.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = cand[i]; cand[i] = cand[j]; cand[j] = tmp;
+  }
+  var maxP = Math.min(3, cand.length);
+  var pool = MEET.filter(function(m){ return m.p <= maxP; });
+  if(!pool.length){ state.nextMeetAt = Date.now() + 20000; return; }
+  var topic = pool[Math.floor(Math.random() * pool.length)];
+  var want = Math.min(topic.p, cand.length);
+  var parts = cand.slice(0, want);
+  var spots = MEET_SPOT[want] || MEET_SPOT[2];
+
+  mt = {
+    id: ++meetUid, topic: topic, parts: parts, seg: 0, phase: "walk",
+    lines: topic.l, resolved: [], nextAt: 0, startedAt: Date.now(), arrived: 0
+  };
+  parts.forEach(function(idx, k){
+    if(!live[idx]) return;
+    goTo(idx, spots[k].x, spots[k].y, null);
+  });
+  /* 도착 판정: walk 모드가 끝나면 meet 로 고정 */
+  var mid = mt.id;
+  var check = setInterval(function(){
+    if(!mt || mt.id !== mid){ clearInterval(check); return; }
+    var done = 0;
+    mt.parts.forEach(function(idx){
+      var l = live[idx];
+      if(!l) { done++; return; }
+      if(l.mode !== "walk"){ done++; l.mode = "meet"; }
+    });
+    if(done >= mt.parts.length){
+      clearInterval(check);
+      mt.phase = "talk";
+      mt.nextAt = Date.now() + 600;
+      SFX.meet();
+      toast("회의 시작 · " + mt.topic.t, "gold");
+      addLog("meet", "회의 시작 · " + mt.topic.t);
+      meetBadge();
+      if(sheetKind === "minutes") renderSheet();
+    }
+  }, 220);
+}
+
+function mtFill(text, parts){
+  return String(text)
+    .replace(/\{n(\d)\}/g, function(m, d){ var p = parts[+d]; return p == null ? "동료" : ROLES[p].name; })
+    .replace(/\{r(\d)\}/g, function(m, d){ var p = parts[+d]; return p == null ? "사원" : rankName(state.staff[p].rank); })
+    .replace(/\{d(\d)\}/g, function(m, d){ var p = parts[+d]; return p == null ? "옆 팀" : ROLES[p].dept; });
+}
+function mtLines(topic, parts){
+  var out = [];
+  topic.l.forEach(function(ln){
+    if(ln[0] >= parts.length) return;
+    var idx = parts[ln[0]];
+    out.push({who: ROLES[idx].name, rank: state.staff[idx].rank, dept: ROLES[idx].dept, t: mtFill(ln[1], parts)});
+  });
+  return out;
+}
+
+function updateMeeting(){
+  var now = Date.now();
+  if(!mt){
+    if(now >= state.nextMeetAt && hiredCount() >= 2){
+      startMeeting();
+      if(!mt) return;
+    }
+    return;
+  }
+  if(mt.phase !== "talk") return;
+  if(now < mt.nextAt) return;
+  if(mt.seg < mt.lines.length){
+    var idx = mt.parts[mt.lines[mt.seg][0]];
+    var text = mtFill(mt.lines[mt.seg][1], mt.parts);
+    mt.resolved.push({
+      who: ROLES[idx].name, rank: state.staff[idx].rank, dept: ROLES[idx].dept, t: text
+    });
+    if(live[idx]){
+      var snip = text.length > 15 ? text.slice(0, 15) + "…" : text;
+      say(idx, snip, 2400, true);
+    }
+    mt.seg++;
+    mt.nextAt = now + 1500 + Math.random() * 700;
+    if(sheetKind === "minutes") refreshMinutes();
+  } else {
+    endMeeting();
+  }
+}
+
+function endMeeting(){
+  var m = mt;
+  mt = null;
+  var now = Date.now();
+  state.buffUntil = now + 90000;
+  var bonus = Math.round(Math.max(30, ips() * 8));
+  state.money += bonus;
+  state.totalEarned += bonus;
+  state.ctr.earned += bonus;
+  var rec = {
+    id: m.id, title: m.topic.t, at: now,
+    parts: m.parts.map(function(idx){ return {name: ROLES[idx].name, rank: state.staff[idx].rank, dept: ROLES[idx].dept}; }),
+    lines: m.resolved.slice()
+  };
+  state.meetings.unshift(rec);
+  if(state.meetings.length > 8) state.meetings.length = 8;
+  addLog("meet", "회의 종료 · " + rec.title + " · 팀 사기 +10% (90초)");
+  toast("회의 종료 · " + rec.title + " · 팀 사기 +10%", "good");
+  SFX.coin();
+  m.parts.forEach(function(idx){
+    var l = live[idx];
+    if(l){ l.mode = "stand"; l.standUntil = Date.now() + 600; goHome(idx); }
+  });
+  state.nextMeetAt = now + 45000 + Math.random() * 45000;
+  meetBadge();
+  updateBadges();
+  if(sheetKind === "minutes") renderSheet();
+  save();
 }
 
 /* =========================================================
@@ -1153,6 +1735,19 @@ function outTxt(c, t, x, y, size, col, weight, align){
   c.lineWidth = 2.2;
   c.strokeStyle = "rgba(8,12,22,.85)";
   c.strokeText(t, x, y);
+  c.fillStyle = col;
+  c.fillText(t, x, y);
+}
+/* 폭에 맞춰 글자 크기를 줄여 그린다 (명패가 잘리거나 겹치지 않게) */
+function fitTxt(c, t, x, y, size, maxW, col, weight){
+  var s = size;
+  c.font = (weight || 800) + " " + s + "px " + fontStack;
+  while(c.measureText(t).width > maxW && s > 2.2){
+    s -= 0.15;
+    c.font = (weight || 800) + " " + s + "px " + fontStack;
+  }
+  c.textAlign = "center";
+  c.textBaseline = "middle";
   c.fillStyle = col;
   c.fillText(t, x, y);
 }
@@ -1181,7 +1776,6 @@ function bubbleBox(c, t, cx, cyBottom, size){
 }
 
 function drawScene(){
-  var c = ctx;
   var s = view.s;
   ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
   ctx.fillStyle = "#080c16";
@@ -1194,7 +1788,7 @@ function drawScene(){
   ctx.scale(s, s);
   var now = Date.now();
 
-  /* 남는 여백에 벽/바닥 무늬를 이어 붙인다 (레터박스 제거) */
+  /* 남는 여백에 벽/바닥 무늬를 이어 붙인다 */
   var padTop = view.oy / s, padBot = (view.h - view.oy - H * s) / s;
   if(padTop > 0.5){
     R(ctx, "#efe2c2", 0, -padTop, W, padTop + 1);
@@ -1210,13 +1804,25 @@ function drawScene(){
     }
   }
 
-  /* 회의실 · CEO 라벨 */
-  txt(ctx, "MEETING", 6 + (58 + state.up.meeting * 10) / 2, 64, 4.2, "#ffe9c4", 800);
-  txt(ctx, "CEO", 175, 69.6, 4.0, state.up.plaque > 0 ? "#5a3f06" : "#93a3b8", 800);
+  /* 회의실 · 대표실 명패 */
+  var mw2 = 58 + state.up.meeting * 10;
+  fitTxt(ctx, "회의실", 6 + mw2 / 2, 63.6, 4.5, mw2 - 6, "#ffe9c4", 800);
+  fitTxt(ctx, "대표실", 175, 69.6, 3.8, 18, state.up.plaque > 0 ? "#5a3f06" : "#93a3b8", 800);
 
-  /* 의자/책상 위 모니터 앞 직원 */
-  var order = [];
-  for(var i = 0; i < 12; i++) order.push(i);
+  /* 회의 중 표시 */
+  if(mt && mt.phase !== "done"){
+    var pulse = 0.5 + 0.5 * Math.sin(now / 260);
+    var bx = 6 + mw2 / 2;
+    ctx.fillStyle = "rgba(255,122,122," + (0.65 + pulse * 0.35).toFixed(2) + ")";
+    ctx.fillRect(bx - 13, 41, 26, 7);
+    ctx.strokeStyle = "#0a0e1a"; ctx.lineWidth = 0.8;
+    ctx.strokeRect(bx - 12.6, 41.4, 25.2, 6.2);
+    fitTxt(ctx, "회의 중", bx, 44.7, 4.2, 22, "#2a0a0a", 800);
+  }
+
+  /* 직원 정렬 */
+  var order = [], i;
+  for(i = 0; i < 12; i++) order.push(i);
   order.sort(function(a, b){
     var ya = live[a] ? live[a].y : deskOf(a).y;
     var yb = live[b] ? live[b].y : deskOf(b).y;
@@ -1227,7 +1833,7 @@ function drawScene(){
   for(var e = 0; e < 12; e++){
     if(!state.staff[e].hired){
       var dd = deskOf(e);
-      txt(ctx, "채용", dd.x + 22, dd.y + 11.6, 3.8, "#d9a05c", 800);
+      fitTxt(ctx, "채용", dd.x + 22, dd.y + 11.6, 4.0, 26, "#f0c060", 800);
     }
   }
 
@@ -1236,25 +1842,25 @@ function drawScene(){
     if(!state.staff[i2].hired || !live[i2]) continue;
     var l = live[i2];
     drawBot(ctx, l.x, l.y, ROLES[i2], state.staff[i2].lv, l.mode === "walk", l.tick);
-    if(l.hold && l.mode === "walk") R(ctx, "#fffdf5", Math.round(l.x) + 5, Math.round(l.y) - 8, 4, 4);
   }
 
   /* 책상 본체 (직원 다리 가리기) */
   for(var f = 0; f < 12; f++) drawDeskFront(ctx, deskOf(f), state.staff[f].hired);
 
-  /* 이름표 */
-  for(var n = 0; n < 12; n++){
-    if(!state.staff[n].hired || !live[n]) continue;
-    var ln = live[n];
-    outTxt(ctx, ROLES[n].name, ln.x, ln.y - 17, 4.9, "#ffffff", 800);
-  }
-  outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
-
-  /* 책상 명패 */
+  /* 책상 명패 — 부서명(한글) */
   for(var p = 0; p < 12; p++){
     var dp = deskOf(p);
-    if(state.staff[p].hired) txt(ctx, ROLES[p].id, dp.x + 24, dp.y + 13, 4.0, "#ffe9c4", 800);
+    if(state.staff[p].hired) fitTxt(ctx, ROLES[p].dept, dp.x + 22, dp.y + 11.6, 4.4, 29, "#ffe9c4", 800);
   }
+
+  /* 이름표 — [직급] 이름 */
+  for(var n = 0; n < 12; n++){
+    if(!state.staff[n].hired || !live[n]) continue;
+    var ln = live[n], rn = state.staff[n].rank;
+    var label = (rn > 0 ? rankName(rn) + " " : "") + ROLES[n].name;
+    outTxt(ctx, label, ln.x, ln.y - 17, 4.6, rn > 0 ? rankColor(rn) : "#ffffff", 800);
+  }
+  outTxt(ctx, "대표님", ceo.x, ceo.y - 20, 5.0, "#ffd479", 800);
 
   /* 말풍선 */
   for(var m = 0; m < 12; m++){
@@ -1264,10 +1870,14 @@ function drawScene(){
   }
   if(ceo.bubble && now < ceo.bubUntil) bubbleBox(ctx, ceo.bubble, ceo.x, ceo.y - 22, 4.7);
 
-  /* 부스트 오라 */
+  /* 부스트/회의 오라 */
   if(now < state.boostUntil){
     var a = 0.10 + Math.sin(now / 180) * 0.05;
     ctx.fillStyle = "rgba(255,180,60," + a.toFixed(3) + ")";
+    ctx.fillRect(0, 0, W, H);
+  }
+  if(now < state.buffUntil){
+    ctx.fillStyle = "rgba(120,224,142,.05)";
     ctx.fillRect(0, 0, W, H);
   }
   ctx.restore();
@@ -1323,21 +1933,38 @@ function updateTabs(){
 function cardHTML(card){
   var ro = roleById(card.from);
   var h = '<div class="card" data-uid="' + card.uid + '">';
-  h += '<div class="top"><span class="chip" style="background:' + ro.body + '">' + esc(card.from) + '</span>';
-  h += '<h3>' + esc(card.title) + '</h3></div><p>' + esc(card.desc) + '</p><div class="opts">';
+  h += '<div class="top"><span class="chip" style="background:' + ro.body + '">' + esc(ro.dept) + '</span>';
+  h += '<h3>' + esc(card.title) + '</h3></div>';
+  h += '<p>' + esc(card.desc) + '</p>';
+  h += '<div class="lineup">';
+  h += '<span class="tag" style="background:' + (card.need >= CEO_NEED ? "#ff9f9f" : rankColor(card.need)) + '">결재권 ' +
+       esc(needLabel(card.need)) + '</span>';
+  if(card.by >= 0) h += '<span class="tag dark">올린 사람 · ' + esc(ROLES[card.by].name + " " + rankName(state.staff[card.by].rank)) + '</span>';
+  h += '</div><div class="opts">';
   card.opts.forEach(function(o, i){
     var m = Math.round(o[1] * card.scale);
     var xp = Math.round(o[2] * (1 + state.level * 0.05));
     h += '<button class="opt" data-act="approve" data-uid="' + card.uid + '" data-oi="' + i + '">';
     h += '<span class="lbl">' + esc(o[0]) + '</span>';
     h += '<span class="rw"><span class="m">' + (m < 0 ? "-" : "+") + "₩" + won(Math.abs(m)) + '</span> ';
-    h += '<span class="x">+' + xp + 'XP</span></span></button>';
+    h += '<span class="x">+' + xp + ' 경험치</span></span></button>';
   });
   return h + '</div></div>';
 }
+function logHTML(){
+  if(!state.log.length) return '<div class="logbox"><div class="lh">자체 결재 · 상신 기록</div><div class="logrow"><span class="ls" style="color:#7f8db0">직원이 결재를 처리하면 여기에 쌓여요.</span></div></div>';
+  var h = '<div class="logbox"><div class="lh">자체 결재 · 상신 기록</div>';
+  var col = {self:"#7be08e", esc:"#5cc6e8", ceo:"#ff9f9f", promo:"#ffd479", hire:"#c3cfeb", meet:"#a98bff"};
+  var nm = {self:"전결", esc:"상신", ceo:"대표", promo:"승진", hire:"채용", meet:"회의"};
+  state.log.slice(0, 8).forEach(function(e){
+    h += '<div class="logrow"><span class="lt" style="background:' + (col[e.k] || "#c3cfeb") + '">' +
+         (nm[e.k] || "기록") + '</span><span class="ls">' + esc(e.s) + '</span></div>';
+  });
+  return h + '</div>';
+}
 function inboxSub(){
   var sb = $("sheetSub");
-  if(sb && sheetKind === "inbox") sb.textContent = "올라온 서류 " + state.inbox.length + "건 · 확인만 눌러 주세요";
+  if(sb && sheetKind === "inbox") sb.textContent = "대표님 결재 대기 " + state.inbox.length + "건 · 아래에 결재 기록";
 }
 function removeCardEl(uid){
   var el = document.querySelector('#sheetBody .card[data-uid="' + uid + '"]');
@@ -1347,82 +1974,145 @@ function removeCardEl(uid){
     if(!state.inbox.length) renderSheet();
   }
 }
+function whoChip(p){
+  return '<span class="who"><span class="w">' + esc(rankName(p.rank)) + '</span> ' + esc(p.name) + " · " + esc(p.dept) + '</span>';
+}
+function lineHTML(l, wait){
+  return '<div class="ln' + (wait ? " wait" : "") + '"><b>' + esc(l.who) + ' <i>' + esc(rankName(l.rank)) + '</i></b>' +
+         '<span class="say">' + esc(l.t) + '</span></div>';
+}
+function minutesHTML(){
+  var h = "";
+  if(mt && mt.phase !== "done"){
+    var liveNow = mt.phase === "talk";
+    h += '<div class="mt"><div class="mhead">' +
+         (liveNow ? '<span class="live">회의 중</span>' : '<span class="pin">입장 중</span>') +
+         '<h3>' + esc(mt.topic.t) + '</h3></div>';
+    h += '<div class="meta">회의실 · 참석 ' + mt.parts.length + '명 · ' +
+         (liveNow ? (mt.resolved.length + " / " + mt.lines.length + " 발언") : "자리로 이동 중") + '</div>';
+    h += '<div class="chiprow">' + mt.parts.map(function(idx){
+      return whoChip({name: ROLES[idx].name, rank: state.staff[idx].rank, dept: ROLES[idx].dept});
+    }).join("") + '</div>';
+    h += '<div>' + mt.resolved.map(function(l){ return lineHTML(l, false); }).join("");
+    if(liveNow) h += '<div class="ln wait"><b>…</b><span class="say">다음 발언을 기다리는 중</span></div>';
+    h += '</div></div>';
+  }
+  if(state.meetings.length){
+    h += '<div class="logbox" style="background:#141c31"><div class="lh">지난 회의록 (' + state.meetings.length + ')</div></div>';
+    state.meetings.forEach(function(m, idx){
+      h += '<div class="mt"><div class="mhead"><span class="pin">회의록</span><h3>' + esc(m.title) + '</h3></div>';
+      h += '<div class="meta">' + timeStr(m.at) + ' · 참석 ' + m.parts.length + '명 · 발언 ' + m.lines.length + '개</div>';
+      h += '<div class="chiprow">' + m.parts.map(whoChip).join("") + '</div>';
+      h += '<button class="mini grey" data-act="minutes" data-m="' + idx + '">대화 전문 보기</button></div>';
+    });
+  }
+  if(!h){
+    h = '<div class="empty">아직 회의록이 없어요.<br>직원이 2명 이상이면 회의실에서 회의가 열려요.<br><br>· 회의실을 눌러도 볼 수 있어요</div>';
+  }
+  return h;
+}
 
 function renderSheet(){
   if(!sheetKind) return;
   var body = $("sheetBody"), title = $("sheetTitle"), sub = $("sheetSub");
-  var html = "";
+  var html = "", i;
 
   if(sheetKind === "inbox"){
     title.textContent = "결재함";
-    sub.textContent = "올라온 서류 " + state.inbox.length + "건 · 확인만 눌러 주세요";
+    sub.textContent = "대표님 결재 대기 " + state.inbox.length + "건 · 아래에 결재 기록";
     if(!state.inbox.length){
-      html = '<div class="empty">결재할 서류가 없어요.<br>직원들이 곧 올려요!<br><br>· 빠른 결재로 한 번에 처리할 수 있어요</div>';
+      html = '<div class="empty">대표님 결재로 올라온 서류가 없어요.<br>직원들이 작은 건은 자체 전결로 처리하고 있어요.<br><br>· 직급이 높은 직원일수록 큰 건까지 알아서 처리합니다</div>';
     } else {
       state.inbox.forEach(function(card){ html += cardHTML(card); });
     }
+    html += logHTML();
+
   } else if(sheetKind === "staff"){
     var n = hiredCount();
     title.textContent = "AI 직원";
-    sub.textContent = n + " / 12명 근무 중 · 총 " + won(ips()) + "원/초";
+    sub.textContent = n + " / 12명 근무 · 총 " + won(ips()) + "원/초";
     var ns = nextSlot();
-    for(var i = 0; i < 12; i++){
+    for(i = 0; i < 12; i++){
       var s = state.staff[i], ro = ROLES[i];
       var lock = !s.hired && i !== ns;
       html += '<div class="row' + (lock ? " locked" : "") + '">';
       html += '<div class="swatch" style="background:' + ro.body + '"></div>';
-      html += '<div class="meta"><div class="nm">' + ro.name + (s.hired ? '<em>Lv.' + s.lv + '</em>' : '') + '</div>';
-      html += '<div class="jb">' + ro.job + " · " + ro.id + '</div>';
+      html += '<div class="meta"><div class="nm">';
+      if(s.hired && s.rank > 0) html += '<span class="rk" style="color:' + rankColor(s.rank) + '">[' + rankName(s.rank) + ']</span> ';
+      html += ro.name + (s.hired ? '<em>레벨 ' + s.lv + '</em>' : '') + '</div>';
+      html += '<div class="jb">' + ro.dept + " · " + ro.job + '</div>';
       if(s.hired){
-        html += '<div class="inc">+' + won(ro.base * (1 + 0.35 * (s.lv - 1)) * mult()) + '/초</div>';
+        html += '<div class="inc">+' + won(staffInc(i) * mult()) + '/초</div>';
+        html += '<div class="scope">전결 ' + (s.rank >= MAXRANK ? "최고 등급" : rankName(s.rank) + "급 이하") + '</div>';
       }
       html += '</div><div class="act">';
       if(!s.hired){
         html += '<button class="mini" data-act="hire" data-i="' + i + '"' + (lock ? " disabled" : "") + '>₩' + won(hireCost(i)) + " 채용</button>";
-      } else if(s.lv >= 10){
-        html += '<span style="font-size:9px;color:#7be08e;font-weight:800">MAX</span>';
       } else {
         html += '<div class="pips">';
         var pl = Math.min(10, s.lv);
         for(var q = 0; q < 10; q++) html += '<i class="' + (q < pl ? "on" : "") + '"></i>';
         html += '</div>';
-        html += '<button class="mini blue" data-act="lvup" data-i="' + i + '">₩' + won(lvCost(i)) + " 레벨업</button>";
+        if(s.lv >= 10) html += '<span style="font-size:9px;color:#7be08e;font-weight:800">레벨 최대</span>';
+        else html += '<button class="mini blue" data-act="lvup" data-i="' + i + '">₩' + won(lvCost(i)) + " 레벨업</button>";
+        if(s.rank >= MAXRANK){
+          html += '<span style="font-size:9px;color:#ffd479;font-weight:800">이사 · 최고 직급</span>';
+        } else {
+          var canLv = s.lv >= promoNeedLv(i);
+          html += '<button class="mini purple" data-act="promo" data-i="' + i + '">승진 ₩' + won(promoCost(i)) +
+                  (canLv ? "" : " · 레벨" + promoNeedLv(i) + "↑") + '</button>';
+        }
       }
       html += '</div></div>';
     }
+
   } else if(sheetKind === "shop"){
     title.textContent = "사무실 시설";
     sub.textContent = "전체 수익 배율 ×" + mult().toFixed(2);
     UPGRADES.forEach(function(u){
       var lv = state.up[u.id], c = upCost(u), maxed = lv >= u.max;
       html += '<div class="row"><div class="swatch" style="background:#ffd479"></div>';
-      html += '<div class="meta"><div class="nm">' + u.name + '<em>Lv.' + lv + '</em></div>';
+      html += '<div class="meta"><div class="nm">' + u.name + '<em>레벨 ' + lv + '</em></div>';
       html += '<div class="jb">' + u.desc + '</div>';
       html += '<div class="inc">수익 +' + Math.round(u.mult * 100) + '% / 단계</div></div><div class="act">';
       html += '<div class="pips">';
       for(var k = 0; k < u.max; k++) html += '<i class="' + (k < lv ? "on" : "") + '"></i>';
       html += '</div>';
-      if(maxed) html += '<span style="font-size:9px;color:#7be08e;font-weight:800">MAX</span>';
+      if(maxed) html += '<span style="font-size:9px;color:#7be08e;font-weight:800">최대</span>';
       else html += '<button class="mini" data-act="buy" data-id="' + u.id + '">₩' + won(c) + " 설치</button>";
       html += '</div></div>';
     });
+
   } else if(sheetKind === "mission"){
     title.textContent = "오늘 할 일";
-    sub.textContent = "ROUND " + state.mRound + " · 달성하면 보너스";
+    sub.textContent = state.mRound + "회차 · 달성하면 보너스";
     state.missions.forEach(function(m, i){
       var d = MDEF[i], prog = missionProg(m), done = prog >= m.target;
       var pct = Math.min(100, Math.round(prog / m.target * 100));
       html += '<div class="mis' + (m.got ? " done" : "") + '" data-mi="' + i + '">';
       html += '<div class="box">' + (m.got ? "✓" : "") + '</div>';
       html += '<div class="txt"><div class="t1">' + d.t(m.target) + '</div>';
-      html += '<div class="t2" data-mi-t="' + i + '">' + won(Math.min(prog, m.target)) + ' / ' + won(m.target) + ' · 보상 ₩' + won(Math.round(520 * Math.pow(1.95, state.mRound - 1) * d.rw)) + '</div>';
+      html += '<div class="t2" data-mi-t="' + i + '">' + won(Math.min(prog, m.target)) + ' / ' + won(m.target) + ' · 보상 ₩' + won(Math.round(480 * Math.pow(1.9, state.mRound - 1) * d.rw)) + '</div>';
       html += '<div class="bar"><i data-mi-bar="' + i + '" style="width:' + pct + '%"></i></div></div>';
       if(!m.got) html += '<button class="mini" data-act="claim" data-i="' + i + '"' + (done ? "" : " disabled") + '>받기</button>';
       else html += '<span style="font-size:9px;color:#7be08e;font-weight:800">완료</span>';
       html += '</div>';
     });
+
+  } else if(sheetKind === "minutes"){
+    title.textContent = "회의록";
+    sub.textContent = mt && mt.phase === "talk" ? "회의가 진행 중이에요 · 실시간" : "회의실에서 열린 회의 기록";
+    html = minutesHTML();
   }
   body.innerHTML = html;
+}
+
+function refreshMinutes(){
+  if(sheetKind !== "minutes") return;
+  var body = $("sheetBody");
+  var box = body.querySelector(".mt");
+  if(!box) return;
+  body.innerHTML = minutesHTML();
 }
 
 function refreshLive(){
@@ -1430,6 +2120,8 @@ function refreshLive(){
   var i, k, el;
   if(sheetKind === "inbox"){
     inboxSub();
+    var lb = $("sheetBody").querySelector(".logbox");
+    if(lb) lb.outerHTML = logHTML();
   } else if(sheetKind === "staff"){
     var btns = document.querySelectorAll('#sheetBody [data-act="hire"], #sheetBody [data-act="lvup"]');
     for(i = 0; i < btns.length; i++){
@@ -1438,8 +2130,13 @@ function refreshLive(){
       var cost = isHire ? hireCost(idx) : lvCost(idx);
       b.disabled = (isHire && idx !== nextSlot()) || state.money < cost;
     }
+    var pb = document.querySelectorAll('#sheetBody [data-act="promo"]');
+    for(i = 0; i < pb.length; i++){
+      var pi = parseInt(pb[i].getAttribute("data-i"), 10);
+      pb[i].disabled = state.money < promoCost(pi) || state.staff[pi].lv < promoNeedLv(pi);
+    }
     var sb = $("sheetSub");
-    if(sb) sb.textContent = hiredCount() + " / 12명 근무 중 · 총 " + won(ips()) + "원/초";
+    if(sb) sb.textContent = hiredCount() + " / 12명 근무 · 총 " + won(ips()) + "원/초";
   } else if(sheetKind === "shop"){
     var ub = document.querySelectorAll('#sheetBody [data-act="buy"]');
     for(i = 0; i < ub.length; i++){
@@ -1450,10 +2147,11 @@ function refreshLive(){
   } else if(sheetKind === "mission"){
     for(i = 0; i < state.missions.length; i++){
       var m = state.missions[i], d = MDEF[i];
+      if(!d) continue;
       var prog = missionProg(m), done = prog >= m.target;
       var t = document.querySelector('[data-mi-t="' + i + '"]');
       if(t) t.textContent = won(Math.min(prog, m.target)) + " / " + won(m.target) +
-        " · 보상 ₩" + won(Math.round(520 * Math.pow(1.95, state.mRound - 1) * d.rw));
+        " · 보상 ₩" + won(Math.round(480 * Math.pow(1.9, state.mRound - 1) * d.rw));
       var bar = document.querySelector('[data-mi-bar="' + i + '"]');
       if(bar) bar.style.width = Math.min(100, Math.round(prog / m.target * 100)) + "%";
       var cb = document.querySelector('#sheetBody [data-act="claim"][data-i="' + i + '"]');
@@ -1470,6 +2168,7 @@ function updateBadges(){
   $("qCnt").textContent = n;
   $("qCnt").classList.toggle("hidden", !n);
   $("quickApprove").disabled = n === 0;
+  meetBadge();
 }
 
 function stampAt(x, y, text){
@@ -1481,6 +2180,20 @@ function stampAt(x, y, text){
   document.body.appendChild(el);
   requestAnimationFrame(function(){ el.classList.add("go"); });
   setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 700);
+}
+
+function openMinutesAt(idx){
+  var m = state.meetings[idx];
+  if(!m) return;
+  var h = '<div class="kick">회의록 · ' + timeStr(m.at) + '</div>';
+  h += '<h2>' + esc(m.title) + '</h2>';
+  h += '<div class="chiprow" style="margin-top:8px">' + m.parts.map(whoChip).join("") + '</div>';
+  m.lines.forEach(function(l){
+    h += '<div class="mline"><b>' + esc(l.who) + ' <i style="font-style:normal;font-size:8px;color:#93a4cf">' +
+         esc(rankName(l.rank)) + '</i></b><span style="flex:1">' + esc(l.t) + '</span></div>';
+  });
+  h += '<button class="go" data-close>닫기</button>';
+  showModal(h);
 }
 
 /* =========================================================
@@ -1499,6 +2212,10 @@ function wireUI(){
   $("modal").addEventListener("click", function(e){
     if(e.target.closest("[data-close]")) hideModal();
   });
+  $("meetBadge").addEventListener("click", function(){
+    sheetKind = null;
+    openSheet("minutes");
+  });
 
   $("sheetBody").addEventListener("click", function(e){
     var btn = e.target.closest("[data-act]");
@@ -1514,7 +2231,7 @@ function wireUI(){
       var res = approveCard(card, oi, false);
       if(res){
         stampAt(r.left + r.width / 2, r.top + r.height / 2, "승인");
-        toast((res.gain >= 0 ? "+" : "") + "₩" + won(res.gain) + " · +" + res.xp + "XP", res.gain >= 0 ? "good" : "bad");
+        toast((res.gain >= 0 ? "+" : "") + "₩" + won(res.gain) + " · +" + res.xp + " 경험치", res.gain >= 0 ? "good" : "bad");
         removeCardEl(uid);
         updateBadges();
         save();
@@ -1528,9 +2245,18 @@ function wireUI(){
     } else if(act === "lvup"){
       var li = parseInt(btn.getAttribute("data-i"), 10);
       if(levelUp(li)){
-        toast(ROLES[li].name + " Lv." + state.staff[li].lv + " 달성!", "good");
+        toast(ROLES[li].name + " 레벨 " + state.staff[li].lv + " 달성!", "good");
         renderSheet(); save();
       } else toast("자금이 부족해요", "bad");
+    } else if(act === "promo"){
+      var pi = parseInt(btn.getAttribute("data-i"), 10);
+      var pr = promote(pi);
+      if(pr === true){
+        toast(ROLES[pi].name + " " + rankName(state.staff[pi].rank) + " 승진! 전결 범위가 넓어졌어요", "gold");
+        stampAt(r.left + r.width / 2, r.top + r.height / 2, "승진");
+        renderSheet(); save();
+      } else if(pr === "lv") toast("레벨 " + promoNeedLv(pi) + " 이상이어야 승진할 수 있어요", "bad");
+      else toast("자금이 부족해요", "bad");
     } else if(act === "buy"){
       var uid2 = btn.getAttribute("data-id");
       var up = null;
@@ -1540,6 +2266,9 @@ function wireUI(){
     } else if(act === "claim"){
       var mi = parseInt(btn.getAttribute("data-i"), 10);
       if(claimMission(mi)){ renderSheet(); save(); }
+    } else if(act === "minutes"){
+      var mi2 = parseInt(btn.getAttribute("data-m"), 10);
+      openMinutesAt(mi2);
     }
   });
 
@@ -1549,7 +2278,7 @@ function wireUI(){
     var res = approveCard(card, 0, true);
     var b = $("quickApprove").getBoundingClientRect();
     stampAt(b.left + b.width / 2, b.top - 30, "승인");
-    if(res) toast("빠른 결재 · +₩" + won(res.gain) + " · +" + res.xp + "XP", "good");
+    if(res) toast("빠른 결재 · +₩" + won(res.gain) + " · +" + res.xp + " 경험치", "good");
     if(sheetKind === "inbox") removeCardEl(card.uid);
     updateBadges();
     save();
@@ -1569,17 +2298,26 @@ function wireUI(){
     var rect = cv.getBoundingClientRect();
     var lx = (ev.clientX - rect.left - view.ox) / view.s;
     var ly = (ev.clientY - rect.top - view.oy) / view.s;
-    for(var i = 0; i < 12; i++){
+    var i;
+    for(i = 0; i < 12; i++){
       if(!state.staff[i].hired || !live[i]) continue;
       var l = live[i];
       if(Math.abs(lx - l.x) < 8 && ly > l.y - 24 && ly < l.y + 3){
-        toast(ROLES[i].name + " · " + ROLES[i].job + " · Lv." + state.staff[i].lv + " · +" + won(ROLES[i].base * (1 + 0.35 * (state.staff[i].lv - 1)) * mult()) + "/초");
-        live[i].bubble = (state.inbox.length ? "결재 부탁드려요!" : "열심히 일할게요!");
-        live[i].bubUntil = Date.now() + 2500;
+        var s = state.staff[i];
+        toast(ROLES[i].name + " " + rankName(s.rank) + " · " + ROLES[i].dept + " · 레벨 " + s.lv +
+              " · +" + won(staffInc(i) * mult()) + "/초");
+        say(i, s.rank === 0 ? "열심히 배울게요!" : "맡겨 주세요!", 2500, true);
         SFX.tap();
         return;
       }
     }
+    /* 회의실 영역 */
+    var mw3 = 58 + state.up.meeting * 10;
+    if(lx > 3 && lx < 6 + mw3 + 4 && ly > 42 && ly < 84){
+      openSheet("minutes");
+      return;
+    }
+    /* 대표님 책상 */
     if(lx > 94 && lx < 174 && ly > 50 && ly < 82){
       openSheet("inbox");
       return;
@@ -1587,8 +2325,7 @@ function wireUI(){
     for(var k = 0; k < 12; k++){
       var d = deskOf(k);
       if(lx >= d.x - 2 && lx <= d.x + 50 && ly >= d.y - 12 && ly <= d.y + 24){
-        if(!state.staff[k].hired) openSheet("staff");
-        else openSheet("staff");
+        openSheet("staff");
         return;
       }
     }
@@ -1605,7 +2342,7 @@ function wireUI(){
 /* =========================================================
    루프
    ========================================================= */
-var lastT = 0, saveAcc = 0, hudAcc = 0;
+var lastT = 0, saveAcc = 0, hudAcc = 0, refreshAcc = 0;
 
 function tick(dt){
   var now = Date.now();
@@ -1620,11 +2357,13 @@ function tick(dt){
     state.nextCardAt = now + cardInterval() * 1000;
   }
   updateActors(dt);
+  updateMeeting();
 }
 
 function updateHUD(now){
   $("money").textContent = won(state.money);
-  $("ips").textContent = "+" + won(ips(now)) + "/초" + (now < state.boostUntil ? " ×2" : "");
+  var buff = now < state.buffUntil ? " · 회의 +10%" : "";
+  $("ips").textContent = "+" + won(ips(now)) + "/초" + (now < state.boostUntil ? " ×2" : "") + buff;
   $("lv").textContent = state.level;
   var need = needXp(state.level);
   $("xpfill").style.width = Math.min(100, state.xp / need * 100) + "%";
@@ -1656,16 +2395,17 @@ function loop(ts){
   refreshAcc += dt;
   if(refreshAcc > 0.5){ refreshAcc = 0; refreshLive(); }
 }
-var refreshAcc = 0;
 
 /* =========================================================
    시작
    ========================================================= */
 function init(){
   var loaded = load();
-  var offlineGain = 0, away = 0;
+  var offlineGain = 0, away = 0, updNote = "";
   if(loaded){
     state = loaded;
+    updNote = state.updNote || "";
+    state.updNote = "";
     away = (Date.now() - (state.savedAt || Date.now())) / 1000;
     if(away > 60 && state.staff.some(function(s){ return s.hired; })){
       offlineGain = ips() * Math.min(away, MAXH) * 0.5;
@@ -1679,10 +2419,13 @@ function init(){
     state = newState();
     state.nextCardAt = Date.now() + 5000;
   }
+  if(!state.nextMeetAt || state.nextMeetAt < Date.now() - 60000) state.nextMeetAt = Date.now() + 22000;
   soundOn = !state.muted;
   $("muteBtn").textContent = state.muted ? "🔇" : "🔊";
 
-  for(var i = 0; i < 12; i++) if(state.staff[i].hired) spawnLive(i);
+  uidC = 0;
+  for(var i = 0; i < state.inbox.length; i++) if(state.inbox[i].uid > uidC) uidC = state.inbox[i].uid;
+  for(var j = 0; j < 12; j++) if(state.staff[j].hired) spawnLive(j);
   drawBG();
   resize();
   wireUI();
@@ -1691,17 +2434,32 @@ function init(){
   requestAnimationFrame(loop);
 
   setTimeout(function(){
-    if(!state.intro){
+    if(updNote){
+      showModal(
+        '<div class="kick">업데이트 · 버전 ' + VER + '</div>' +
+        '<h2>사무실이 한 단계 커졌어요</h2>' +
+        '<p>이제 AI 직원에게 <b>직급</b>이 생겼어요.</p>' +
+        '<ul>' +
+        '<li>🪪 <b>직급</b> — 인턴 → 대리 → 과장 → 차장 → 부장 → 이사</li>' +
+        '<li>✅ <b>자체 전결</b> — 직급이 충분하면 직원이 알아서 처리</li>' +
+        '<li>🏃 <b>상신</b> — 부족하면 상사 자리로 걸어가 결재를 받아요</li>' +
+        '<li>🗣 <b>회의록</b> — 회의실에서 열린 회의를 실시간으로 읽을 수 있어요</li>' +
+        '</ul>' +
+        '<p style="font-size:10px;opacity:.7">기존 직원들은 그동안 쌓인 레벨만큼 직급을 인정받았어요.</p>' +
+        '<button class="go" data-close>사무실 열기</button>'
+      );
+    } else if(!state.intro){
       state.intro = true; save();
       showModal(
-        '<div class="kick">HOWGROW AI · OFFICE</div>' +
+        '<div class="kick">AI 사무실 · 사장실</div>' +
         '<h2>오늘도 바쁜 AI 사무실</h2>' +
         '<p>대표님, 오늘도 혼자 다 하실 건가요?<br>AI 직원을 채용하고, 결재만 눌러 주세요.</p>' +
         '<ul>' +
-        '<li>📥 <b>결재함</b> — 올라온 서류를 확인</li>' +
-        '<li>🤖 <b>직원</b> — 채용하고 레벨업</li>' +
+        '<li>📥 <b>결재함</b> — 직원이 올린 서류를 확인</li>' +
+        '<li>🤖 <b>직원</b> — 채용 · 레벨업 · 승진</li>' +
         '<li>🏢 <b>시설</b> — 사무실 업그레이드</li>' +
-        '<li>✅ <b>할 일</b> — 미션 달성 보너스</li>' +
+        '<li>✅ <b>할 일</b> — 달성 보너스</li>' +
+        '<li>🗣 <b>회의록</b> — 회의실 대화 엿보기</li>' +
         '</ul>' +
         '<p style="font-size:10px;opacity:.65">진행 상황은 자동으로 저장돼요.</p>' +
         '<button class="go" data-close>사무실 열기</button>'
@@ -1709,7 +2467,7 @@ function init(){
     } else if(offlineGain > 0){
       var hh = Math.floor(away / 3600), mm = Math.floor((away % 3600) / 60);
       showModal(
-        '<div class="kick">OFFLINE REPORT</div>' +
+        '<div class="kick">오프라인 정산</div>' +
         '<h2>자리를 비운 사이</h2>' +
         '<p>직원들이 열심히 일했어요. (' + (hh ? hh + "시간 " : "") + mm + "분)" +
         (away > MAXH ? "<br><span style=\"opacity:.6\">최대 8시간까지만 정산돼요</span>" : "") + '</p>' +
@@ -1720,6 +2478,8 @@ function init(){
       SFX.coin();
     }
   }, 420);
+
+  save();
 }
 
 init();
