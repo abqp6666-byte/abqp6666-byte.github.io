@@ -1420,7 +1420,7 @@ function drawCEO(c, x, y, bob){
    활동 캐릭터
    ========================================================= */
 var LANE = 96;
-var TARGETS = [{x:148, y:96}, {x:40, y:96}];
+var TARGETS = [{x:148, y:96}, {x:100, y:96}];
 var ceo = {x:148, y:64, bubble:"", bubUntil:0, next:6};
 var ceoBob = false;
 
@@ -1505,7 +1505,7 @@ function updateActors(dt){
       var seat = seatOf(i);
       l.x = seat.x; l.y = seat.y;
       l.t += dt;
-      if(l.t > l.next && !inMeeting(i)){
+      if(l.t > l.next && !inMeeting(i) && !mt){
         l.t = 0;
         var tg = TARGETS[Math.random() < 0.55 ? 0 : 1];
         var tx = tg.x + ((i % 4) - 1.5) * 8;
